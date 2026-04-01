@@ -1,0 +1,46 @@
+version: 2
+models:
+- name: week3_extractions
+  description: dbt schema for week3-document-refinery-extractions
+  columns:
+  - name: doc_id
+    description: ''
+    tests:
+    - not_null
+    - unique
+  - name: entities
+    description: ''
+    tests:
+    - not_null
+  - name: extracted_at
+    description: ''
+    tests:
+    - not_null
+  - name: extracted_facts
+    description: ''
+    tests:
+    - not_null
+  - name: extraction_model
+    description: ''
+    tests:
+    - not_null
+  - name: processing_time_ms
+    description: ''
+    tests:
+    - not_null
+  - name: source_hash
+    description: ''
+    tests:
+    - not_null
+  - name: source_path
+    description: ''
+    tests:
+    - not_null
+  - name: token_count.input
+    description: ''
+    tests:
+    - not_null
+  - name: token_count.output
+    description: ''
+    tests:
+    - not_null

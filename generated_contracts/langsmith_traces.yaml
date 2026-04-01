@@ -1,0 +1,123 @@
+kind: DataContract
+apiVersion: v3.0.0
+id: langsmith-trace-records
+info:
+  title: LangSmith Trace Export — Run Records
+  version: 1.0.0
+  owner: platform-team
+  description: One record per LLM/chain/tool run. Contains token counts, costs, and
+    timing.
+servers:
+  local:
+    type: local
+    path: outputs/traces/runs.jsonl
+    format: jsonl
+terms:
+  usage: Internal inter-system data contract. Do not publish.
+  limitations: All confidence fields must remain in 0.0-1.0 float range.
+schema:
+  completion_tokens:
+    type: integer
+    required: true
+    minimum: 113.0
+    maximum: 2709.0
+  end_time:
+    type: string
+    required: true
+    format: iso8601
+  error:
+    type: 'null'
+  id:
+    type: string
+    required: true
+    format: uuid
+    unique: true
+  inputs.criterion:
+    type: string
+  inputs.doc_id:
+    type: string
+    format: uuid
+    unique: true
+  inputs.evidence:
+    type: string
+  inputs.repo_url:
+    type: string
+  inputs.strategy:
+    type: string
+  inputs.target:
+    type: string
+  name:
+    type: string
+    required: true
+  outputs.argument:
+    type: string
+  outputs.confidence:
+    type: string
+  outputs.overall_score:
+    type: number
+    minimum: 3.5
+    maximum: 5.0
+  outputs.score:
+    type: integer
+    minimum: 1.0
+    maximum: 5.0
+  parent_run_id:
+    type: string
+    format: uuid
+    unique: true
+  prompt_tokens:
+    type: integer
+    required: true
+    minimum: 608.0
+    maximum: 7904.0
+  run_type:
+    type: string
+    required: true
+    enum:
+    - llm
+    - chain
+    - tool
+    - retriever
+    - embedding
+  session_id:
+    type: string
+    required: true
+    format: uuid
+    unique: true
+  start_time:
+    type: string
+    required: true
+    format: iso8601
+  tags:
+    type: array
+    required: true
+  total_cost:
+    type: number
+    required: true
+    minimum: 0.0051
+    maximum: 0.0571
+  total_tokens:
+    type: integer
+    required: true
+    minimum: 913.0
+    maximum: 9950.0
+quality:
+  type: SodaChecks
+  specification:
+    checks:
+    - missing_count(completion_tokens) = 0
+    - missing_count(end_time) = 0
+    - missing_count(id) = 0
+    - missing_count(name) = 0
+    - missing_count(prompt_tokens) = 0
+    - missing_count(run_type) = 0
+    - missing_count(session_id) = 0
+    - missing_count(start_time) = 0
+    - missing_count(tags) = 0
+    - missing_count(total_cost) = 0
+    - missing_count(total_tokens) = 0
+    - duplicate_count(id) = 0
+    - row_count >= 1
+lineage:
+  upstream: []
+  downstream: []

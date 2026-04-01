@@ -1,0 +1,82 @@
+kind: DataContract
+apiVersion: v3.0.0
+id: week1-intent-code-correlator
+info:
+  title: Week 1 Intent-Code Correlator — Intent Records
+  version: 1.0.0
+  owner: week1-team
+  description: One record per intent-code mapping. Links plain-English intent descriptions
+    to code references.
+servers:
+  local:
+    type: local
+    path: outputs/week1/intent_records.jsonl
+    format: jsonl
+terms:
+  usage: Internal inter-system data contract. Do not publish.
+  limitations: All confidence fields must remain in 0.0-1.0 float range.
+schema:
+  code_refs:
+    type: array
+    required: true
+  code_refs[*].confidence:
+    type: number
+    required: true
+    minimum: 0.0
+    maximum: 1.0
+    description: Confidence score. MUST be float 0.0-1.0. BREAKING CHANGE if changed
+      to 0-100.
+  code_refs[*].file:
+    type: string
+    required: true
+  code_refs[*].line_end:
+    type: integer
+    required: true
+    minimum: 51.0
+    maximum: 51.0
+  code_refs[*].line_start:
+    type: integer
+    required: true
+    minimum: 1.0
+    maximum: 1.0
+  code_refs[*].symbol:
+    type: string
+    required: true
+  created_at:
+    type: string
+    required: true
+    format: iso8601
+  description:
+    type: string
+    required: true
+  governance_tags:
+    type: array
+    required: true
+  intent_id:
+    type: string
+    required: true
+    format: uuid
+    unique: true
+quality:
+  type: SodaChecks
+  specification:
+    checks:
+    - missing_count(code_refs) = 0
+    - missing_count(created_at) = 0
+    - missing_count(description) = 0
+    - missing_count(governance_tags) = 0
+    - missing_count(intent_id) = 0
+    - duplicate_count(intent_id) = 0
+    - min(code_refs_confidence_min) >= 0.0
+    - max(code_refs_confidence_max) <= 1.0
+    - row_count >= 1
+lineage:
+  upstream: []
+  downstream:
+  - id: week2-digital-courtroom
+    description: week2-digital-courtroom consumes fields from this contract
+    fields_consumed:
+    - code_refs
+    breaking_if_changed:
+    - code_refs[*].file
+    - intent_id

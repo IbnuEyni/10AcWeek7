@@ -1,0 +1,164 @@
+version: 2
+models:
+- name: week2_verdicts
+  description: dbt schema for week2-digital-courtroom-verdicts
+  columns:
+  - name: confidence
+    description: Confidence score. MUST be float 0.0-1.0. BREAKING CHANGE if changed
+      to 0-100.
+    tests:
+    - not_null
+  - name: evaluated_at
+    description: ''
+    tests:
+    - not_null
+  - name: overall_score
+    description: ''
+    tests:
+    - not_null
+  - name: overall_verdict
+    description: ''
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - PASS
+        - FAIL
+        - WARN
+  - name: rubric_id
+    description: ''
+    tests:
+    - not_null
+  - name: rubric_version
+    description: ''
+    tests:
+    - not_null
+  - name: scores.chief_justice_synthesis.evidence
+    description: ''
+    tests:
+    - not_null
+  - name: scores.chief_justice_synthesis.notes
+    description: ''
+    tests:
+    - not_null
+  - name: scores.chief_justice_synthesis.score
+    description: ''
+    tests:
+    - not_null
+  - name: scores.git_forensic_analysis.evidence
+    description: ''
+    tests:
+    - not_null
+  - name: scores.git_forensic_analysis.notes
+    description: ''
+    tests:
+    - not_null
+  - name: scores.git_forensic_analysis.score
+    description: ''
+    tests:
+    - not_null
+  - name: scores.graph_orchestration.evidence
+    description: ''
+    tests:
+    - not_null
+  - name: scores.graph_orchestration.notes
+    description: ''
+    tests:
+    - not_null
+  - name: scores.graph_orchestration.score
+    description: ''
+    tests:
+    - not_null
+  - name: scores.judicial_nuance.evidence
+    description: ''
+    tests:
+    - not_null
+  - name: scores.judicial_nuance.notes
+    description: ''
+    tests:
+    - not_null
+  - name: scores.judicial_nuance.score
+    description: ''
+    tests:
+    - not_null
+  - name: scores.report_accuracy.evidence
+    description: ''
+    tests:
+    - not_null
+  - name: scores.report_accuracy.notes
+    description: ''
+    tests:
+    - not_null
+  - name: scores.report_accuracy.score
+    description: ''
+    tests:
+    - not_null
+  - name: scores.safe_tool_engineering.evidence
+    description: ''
+    tests:
+    - not_null
+  - name: scores.safe_tool_engineering.notes
+    description: ''
+    tests:
+    - not_null
+  - name: scores.safe_tool_engineering.score
+    description: ''
+    tests:
+    - not_null
+  - name: scores.state_management_rigor.evidence
+    description: ''
+    tests:
+    - not_null
+  - name: scores.state_management_rigor.notes
+    description: ''
+    tests:
+    - not_null
+  - name: scores.state_management_rigor.score
+    description: ''
+    tests:
+    - not_null
+  - name: scores.structured_output_enforcement.evidence
+    description: ''
+    tests:
+    - not_null
+  - name: scores.structured_output_enforcement.notes
+    description: ''
+    tests:
+    - not_null
+  - name: scores.structured_output_enforcement.score
+    description: ''
+    tests:
+    - not_null
+  - name: scores.swarm_visual.evidence
+    description: ''
+    tests:
+    - not_null
+  - name: scores.swarm_visual.notes
+    description: ''
+    tests:
+    - not_null
+  - name: scores.swarm_visual.score
+    description: ''
+    tests:
+    - not_null
+  - name: scores.theoretical_depth.evidence
+    description: ''
+    tests:
+    - not_null
+  - name: scores.theoretical_depth.notes
+    description: ''
+    tests:
+    - not_null
+  - name: scores.theoretical_depth.score
+    description: ''
+    tests:
+    - not_null
+  - name: target_ref
+    description: ''
+    tests:
+    - not_null
+  - name: verdict_id
+    description: ''
+    tests:
+    - not_null
+    - unique

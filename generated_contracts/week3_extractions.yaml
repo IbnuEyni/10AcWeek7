@@ -1,0 +1,133 @@
+kind: DataContract
+apiVersion: v3.0.0
+id: week3-document-refinery-extractions
+info:
+  title: Week 3 Document Refinery — Extraction Records
+  version: 1.0.0
+  owner: week3-team
+  description: One record per processed document. Contains extracted facts and entities.
+servers:
+  local:
+    type: local
+    path: outputs/week3/extractions.jsonl
+    format: jsonl
+terms:
+  usage: Internal inter-system data contract. Do not publish.
+  limitations: All confidence fields must remain in 0.0-1.0 float range.
+schema:
+  doc_id:
+    type: string
+    required: true
+    format: uuid
+    unique: true
+  entities:
+    type: array
+    required: true
+  entities[*].canonical_value:
+    type: string
+    required: true
+  entities[*].entity_id:
+    type: string
+    required: true
+    format: uuid
+  entities[*].name:
+    type: string
+    required: true
+  entities[*].type:
+    type: string
+    required: true
+    enum:
+    - PERSON
+    - ORG
+    - LOCATION
+    - DATE
+    - AMOUNT
+    - OTHER
+  extracted_at:
+    type: string
+    required: true
+    format: iso8601
+  extracted_facts:
+    type: array
+    required: true
+  extracted_facts[*].confidence:
+    type: number
+    required: true
+    minimum: 0.0
+    maximum: 1.0
+    description: Confidence score. MUST be float 0.0-1.0. BREAKING CHANGE if changed
+      to 0-100.
+  extracted_facts[*].entity_refs:
+    type: array
+    required: true
+  extracted_facts[*].fact_id:
+    type: string
+    required: true
+    format: uuid
+    unique: true
+  extracted_facts[*].page_ref:
+    type: integer
+    minimum: 0.0
+    maximum: 15.0
+  extracted_facts[*].source_excerpt:
+    type: string
+    required: true
+  extracted_facts[*].text:
+    type: string
+    required: true
+  extraction_model:
+    type: string
+    required: true
+  processing_time_ms:
+    type: integer
+    required: true
+    minimum: 200.0
+    maximum: 1082881.0
+  source_hash:
+    type: string
+    required: true
+    format: sha256
+    pattern: ^[a-f0-9]{64}$
+  source_path:
+    type: string
+    required: true
+  token_count.input:
+    type: integer
+    required: true
+    minimum: 200.0
+    maximum: 18400.0
+  token_count.output:
+    type: integer
+    required: true
+    minimum: 50.0
+    maximum: 4200.0
+quality:
+  type: SodaChecks
+  specification:
+    checks:
+    - missing_count(doc_id) = 0
+    - missing_count(entities) = 0
+    - missing_count(extracted_at) = 0
+    - missing_count(extracted_facts) = 0
+    - missing_count(extraction_model) = 0
+    - missing_count(processing_time_ms) = 0
+    - missing_count(source_hash) = 0
+    - missing_count(source_path) = 0
+    - missing_count(token_count.input) = 0
+    - missing_count(token_count.output) = 0
+    - duplicate_count(doc_id) = 0
+    - min(extracted_facts_confidence_min) >= 0.0
+    - max(extracted_facts_confidence_max) <= 1.0
+    - row_count >= 1
+lineage:
+  upstream: []
+  downstream:
+  - id: week4-brownfield-cartographer
+    description: week4-brownfield-cartographer consumes fields from this contract
+    fields_consumed:
+    - doc_id
+    - extracted_facts
+    - extraction_model
+    breaking_if_changed:
+    - extracted_facts[*].confidence
+    - doc_id

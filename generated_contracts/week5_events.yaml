@@ -1,0 +1,201 @@
+kind: DataContract
+apiVersion: v3.0.0
+id: week5-event-sourcing-platform-events
+info:
+  title: Week 5 Event Sourcing Platform — Event Records
+  version: 1.0.0
+  owner: week5-team
+  description: One record per domain event. Immutable event log with causation and
+    correlation tracking.
+servers:
+  local:
+    type: local
+    path: outputs/week5/events.jsonl
+    format: jsonl
+terms:
+  usage: Internal inter-system data contract. Do not publish.
+  limitations: All confidence fields must remain in 0.0-1.0 float range.
+schema:
+  aggregate_id:
+    type: string
+    required: true
+    format: uuid
+    unique: true
+  aggregate_type:
+    type: string
+    required: true
+  event_id:
+    type: string
+    required: true
+    format: uuid
+    unique: true
+  event_type:
+    type: string
+    required: true
+  metadata.causation_id:
+    type: string
+    format: uuid
+  metadata.correlation_id:
+    type: string
+    required: true
+    format: uuid
+  metadata.source_service:
+    type: string
+    required: true
+  metadata.user_id:
+    type: string
+    required: true
+  occurred_at:
+    type: string
+    required: true
+    format: iso8601
+  payload.agent_id:
+    type: string
+  payload.analysis_duration_ms:
+    type: integer
+    minimum: 1601.0
+    maximum: 4732.0
+  payload.anomaly_flags:
+    type: array
+  payload.applicant_id:
+    type: string
+  payload.application_id:
+    type: string
+  payload.approved_amount_usd:
+    type: number
+    minimum: 13390.08
+    maximum: 67205.35
+  payload.approved_by:
+    type: string
+  payload.assigned_agent_id:
+    type: string
+  payload.checks_required:
+    type: array
+  payload.conditions:
+    type: array
+  payload.confidence_score:
+    type: number
+    minimum: 0.61
+    maximum: 0.96
+  payload.context_source:
+    type: string
+  payload.context_token_count:
+    type: integer
+    minimum: 760.0
+    maximum: 4822.0
+  payload.contributing_agent_sessions:
+    type: array
+  payload.decision_basis_summary:
+    type: string
+  payload.effective_date:
+    type: string
+  payload.entity_id:
+    type: string
+  payload.entity_type:
+    type: string
+  payload.event_replay_from_position:
+    type: integer
+    minimum: 0.0
+    maximum: 0.0
+  payload.event_type:
+    type: string
+  payload.evidence_hash:
+    type: string
+  payload.final_decision:
+    type: string
+  payload.forced_refer:
+    type: boolean
+  payload.fraud_score:
+    type: number
+    minimum: 0.03
+    maximum: 0.13
+  payload.input_data_hash:
+    type: string
+  payload.interest_rate:
+    type: number
+    minimum: 6.59
+    maximum: 9.65
+  payload.loan_purpose:
+    type: string
+  payload.model_version:
+    type: string
+  payload.orchestrator_agent_id:
+    type: string
+  payload.override:
+    type: boolean
+  payload.override_reason:
+    type: string
+  payload.priority:
+    type: string
+  payload.recommendation:
+    type: string
+  payload.recommended_limit_usd:
+    type: number
+    minimum: 6990.2
+    maximum: 56740.07
+  payload.regulation_set_version:
+    type: string
+  payload.requested_amount_usd:
+    type: number
+    minimum: 7376.02
+    maximum: 99745.95
+  payload.reviewer_id:
+    type: string
+  payload.risk_tier:
+    type: string
+  payload.rule_id:
+    type: string
+  payload.rule_version:
+    type: string
+  payload.screening_model_version:
+    type: string
+  payload.session_id:
+    type: string
+  payload.source_stream_id:
+    type: string
+  payload.submission_channel:
+    type: string
+  payload.summary:
+    type: string
+  recorded_at:
+    type: string
+    required: true
+    format: iso8601
+  schema_version:
+    type: string
+    required: true
+  sequence_number:
+    type: integer
+    required: true
+    minimum: 1.0
+    maximum: 5.0
+quality:
+  type: SodaChecks
+  specification:
+    checks:
+    - missing_count(aggregate_id) = 0
+    - missing_count(aggregate_type) = 0
+    - missing_count(event_id) = 0
+    - missing_count(event_type) = 0
+    - missing_count(metadata.correlation_id) = 0
+    - missing_count(metadata.source_service) = 0
+    - missing_count(metadata.user_id) = 0
+    - missing_count(occurred_at) = 0
+    - missing_count(recorded_at) = 0
+    - missing_count(schema_version) = 0
+    - missing_count(sequence_number) = 0
+    - duplicate_count(event_id) = 0
+    - duplicate_count(aggregate_id) = 0
+    - row_count >= 1
+lineage:
+  upstream: []
+  downstream:
+  - id: week7-contract-enforcer
+    description: week7-contract-enforcer consumes fields from this contract
+    fields_consumed:
+    - event_type
+    - payload
+    - schema_version
+    breaking_if_changed:
+    - payload
+    - event_type

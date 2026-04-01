@@ -1,0 +1,111 @@
+kind: DataContract
+apiVersion: v3.0.0
+id: week4-brownfield-cartographer-lineage
+info:
+  title: Week 4 Brownfield Cartographer — Lineage Snapshots
+  version: 1.0.0
+  owner: week4-team
+  description: One record per lineage snapshot. Contains nodes and edges of the codebase
+    dependency graph.
+servers:
+  local:
+    type: local
+    path: outputs/week4/lineage_snapshots.jsonl
+    format: jsonl
+terms:
+  usage: Internal inter-system data contract. Do not publish.
+  limitations: All confidence fields must remain in 0.0-1.0 float range.
+schema:
+  captured_at:
+    type: string
+    required: true
+    format: iso8601
+  codebase_root:
+    type: string
+    required: true
+  edges:
+    type: array
+    required: true
+  edges[*].confidence:
+    type: number
+    minimum: 0.85
+    maximum: 0.85
+  edges[*].relationship:
+    type: string
+    enum:
+    - IMPORTS
+    - CALLS
+    - READS
+    - WRITES
+    - PRODUCES
+    - CONSUMES
+  edges[*].source:
+    type: string
+  edges[*].target:
+    type: string
+  git_commit:
+    type: string
+    required: true
+    pattern: ^[a-f0-9]{40}$
+  nodes:
+    type: array
+    required: true
+  nodes[*].label:
+    type: string
+    required: true
+  nodes[*].metadata.language:
+    type: string
+    required: true
+  nodes[*].metadata.last_modified:
+    type: string
+    required: true
+    format: iso8601
+  nodes[*].metadata.path:
+    type: string
+    required: true
+  nodes[*].metadata.purpose:
+    type: string
+    required: true
+  nodes[*].node_id:
+    type: string
+    required: true
+  nodes[*].type:
+    type: string
+    required: true
+    enum:
+    - FILE
+    - TABLE
+    - SERVICE
+    - MODEL
+    - PIPELINE
+    - EXTERNAL
+  snapshot_id:
+    type: string
+    required: true
+    format: uuid
+    unique: true
+quality:
+  type: SodaChecks
+  specification:
+    checks:
+    - missing_count(captured_at) = 0
+    - missing_count(codebase_root) = 0
+    - missing_count(edges) = 0
+    - missing_count(git_commit) = 0
+    - missing_count(nodes) = 0
+    - missing_count(snapshot_id) = 0
+    - duplicate_count(snapshot_id) = 0
+    - row_count >= 1
+lineage:
+  upstream: []
+  downstream:
+  - id: week7-violation-attributor
+    description: week7-violation-attributor consumes fields from this contract
+    fields_consumed:
+    - nodes
+    - edges
+    - git_commit
+    breaking_if_changed:
+    - nodes[*].node_id
+    - edges[*].source
+    - edges[*].target

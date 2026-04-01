@@ -1,0 +1,26 @@
+version: 2
+models:
+- name: week1_intent_records
+  description: dbt schema for week1-intent-code-correlator
+  columns:
+  - name: code_refs
+    description: ''
+    tests:
+    - not_null
+  - name: created_at
+    description: ''
+    tests:
+    - not_null
+  - name: description
+    description: ''
+    tests:
+    - not_null
+  - name: governance_tags
+    description: ''
+    tests:
+    - not_null
+  - name: intent_id
+    description: ''
+    tests:
+    - not_null
+    - unique

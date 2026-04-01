@@ -1,0 +1,96 @@
+version: 2
+models:
+- name: langsmith_traces
+  description: dbt schema for langsmith-trace-records
+  columns:
+  - name: completion_tokens
+    description: ''
+    tests:
+    - not_null
+  - name: end_time
+    description: ''
+    tests:
+    - not_null
+  - name: error
+    description: ''
+    tests: []
+  - name: id
+    description: ''
+    tests:
+    - not_null
+    - unique
+  - name: inputs.criterion
+    description: ''
+    tests: []
+  - name: inputs.doc_id
+    description: ''
+    tests:
+    - unique
+  - name: inputs.evidence
+    description: ''
+    tests: []
+  - name: inputs.repo_url
+    description: ''
+    tests: []
+  - name: inputs.strategy
+    description: ''
+    tests: []
+  - name: inputs.target
+    description: ''
+    tests: []
+  - name: name
+    description: ''
+    tests:
+    - not_null
+  - name: outputs.argument
+    description: ''
+    tests: []
+  - name: outputs.confidence
+    description: ''
+    tests: []
+  - name: outputs.overall_score
+    description: ''
+    tests: []
+  - name: outputs.score
+    description: ''
+    tests: []
+  - name: parent_run_id
+    description: ''
+    tests:
+    - unique
+  - name: prompt_tokens
+    description: ''
+    tests:
+    - not_null
+  - name: run_type
+    description: ''
+    tests:
+    - not_null
+    - accepted_values:
+        values:
+        - llm
+        - chain
+        - tool
+        - retriever
+        - embedding
+  - name: session_id
+    description: ''
+    tests:
+    - not_null
+    - unique
+  - name: start_time
+    description: ''
+    tests:
+    - not_null
+  - name: tags
+    description: ''
+    tests:
+    - not_null
+  - name: total_cost
+    description: ''
+    tests:
+    - not_null
+  - name: total_tokens
+    description: ''
+    tests:
+    - not_null

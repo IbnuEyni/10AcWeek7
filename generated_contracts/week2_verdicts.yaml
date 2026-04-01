@@ -1,0 +1,215 @@
+kind: DataContract
+apiVersion: v3.0.0
+id: week2-digital-courtroom-verdicts
+info:
+  title: Week 2 Digital Courtroom — Verdict Records
+  version: 1.0.0
+  owner: week2-team
+  description: One record per evaluation verdict. Contains rubric scores and overall
+    pass/fail/warn.
+servers:
+  local:
+    type: local
+    path: outputs/week2/verdicts.jsonl
+    format: jsonl
+terms:
+  usage: Internal inter-system data contract. Do not publish.
+  limitations: All confidence fields must remain in 0.0-1.0 float range.
+schema:
+  confidence:
+    type: number
+    required: true
+    minimum: 0.0
+    maximum: 1.0
+    description: Confidence score. MUST be float 0.0-1.0. BREAKING CHANGE if changed
+      to 0-100.
+  evaluated_at:
+    type: string
+    required: true
+    format: iso8601
+  overall_score:
+    type: integer
+    required: true
+    minimum: 1
+    maximum: 5
+  overall_verdict:
+    type: string
+    required: true
+    enum:
+    - PASS
+    - FAIL
+    - WARN
+  rubric_id:
+    type: string
+    required: true
+    format: sha256
+  rubric_version:
+    type: string
+    required: true
+  scores.chief_justice_synthesis.evidence:
+    type: array
+    required: true
+  scores.chief_justice_synthesis.notes:
+    type: string
+    required: true
+  scores.chief_justice_synthesis.score:
+    type: integer
+    required: true
+    minimum: 1
+    maximum: 5
+  scores.git_forensic_analysis.evidence:
+    type: array
+    required: true
+  scores.git_forensic_analysis.notes:
+    type: string
+    required: true
+  scores.git_forensic_analysis.score:
+    type: integer
+    required: true
+    minimum: 1
+    maximum: 5
+  scores.graph_orchestration.evidence:
+    type: array
+    required: true
+  scores.graph_orchestration.notes:
+    type: string
+    required: true
+  scores.graph_orchestration.score:
+    type: integer
+    required: true
+    minimum: 1
+    maximum: 5
+  scores.judicial_nuance.evidence:
+    type: array
+    required: true
+  scores.judicial_nuance.notes:
+    type: string
+    required: true
+  scores.judicial_nuance.score:
+    type: integer
+    required: true
+    minimum: 1
+    maximum: 5
+  scores.report_accuracy.evidence:
+    type: array
+    required: true
+  scores.report_accuracy.notes:
+    type: string
+    required: true
+  scores.report_accuracy.score:
+    type: integer
+    required: true
+    minimum: 1
+    maximum: 5
+  scores.safe_tool_engineering.evidence:
+    type: array
+    required: true
+  scores.safe_tool_engineering.notes:
+    type: string
+    required: true
+  scores.safe_tool_engineering.score:
+    type: integer
+    required: true
+    minimum: 1
+    maximum: 5
+  scores.state_management_rigor.evidence:
+    type: array
+    required: true
+  scores.state_management_rigor.notes:
+    type: string
+    required: true
+  scores.state_management_rigor.score:
+    type: integer
+    required: true
+    minimum: 1
+    maximum: 5
+  scores.structured_output_enforcement.evidence:
+    type: array
+    required: true
+  scores.structured_output_enforcement.notes:
+    type: string
+    required: true
+  scores.structured_output_enforcement.score:
+    type: integer
+    required: true
+    minimum: 1
+    maximum: 5
+  scores.swarm_visual.evidence:
+    type: array
+    required: true
+  scores.swarm_visual.notes:
+    type: string
+    required: true
+  scores.swarm_visual.score:
+    type: integer
+    required: true
+    minimum: 1
+    maximum: 5
+  scores.theoretical_depth.evidence:
+    type: array
+    required: true
+  scores.theoretical_depth.notes:
+    type: string
+    required: true
+  scores.theoretical_depth.score:
+    type: integer
+    required: true
+    minimum: 1
+    maximum: 5
+  target_ref:
+    type: string
+    required: true
+  verdict_id:
+    type: string
+    required: true
+    format: uuid
+    unique: true
+quality:
+  type: SodaChecks
+  specification:
+    checks:
+    - missing_count(confidence) = 0
+    - missing_count(evaluated_at) = 0
+    - missing_count(overall_score) = 0
+    - missing_count(overall_verdict) = 0
+    - missing_count(rubric_id) = 0
+    - missing_count(rubric_version) = 0
+    - missing_count(scores.chief_justice_synthesis.evidence) = 0
+    - missing_count(scores.chief_justice_synthesis.notes) = 0
+    - missing_count(scores.chief_justice_synthesis.score) = 0
+    - missing_count(scores.git_forensic_analysis.evidence) = 0
+    - missing_count(scores.git_forensic_analysis.notes) = 0
+    - missing_count(scores.git_forensic_analysis.score) = 0
+    - missing_count(scores.graph_orchestration.evidence) = 0
+    - missing_count(scores.graph_orchestration.notes) = 0
+    - missing_count(scores.graph_orchestration.score) = 0
+    - missing_count(scores.judicial_nuance.evidence) = 0
+    - missing_count(scores.judicial_nuance.notes) = 0
+    - missing_count(scores.judicial_nuance.score) = 0
+    - missing_count(scores.report_accuracy.evidence) = 0
+    - missing_count(scores.report_accuracy.notes) = 0
+    - missing_count(scores.report_accuracy.score) = 0
+    - missing_count(scores.safe_tool_engineering.evidence) = 0
+    - missing_count(scores.safe_tool_engineering.notes) = 0
+    - missing_count(scores.safe_tool_engineering.score) = 0
+    - missing_count(scores.state_management_rigor.evidence) = 0
+    - missing_count(scores.state_management_rigor.notes) = 0
+    - missing_count(scores.state_management_rigor.score) = 0
+    - missing_count(scores.structured_output_enforcement.evidence) = 0
+    - missing_count(scores.structured_output_enforcement.notes) = 0
+    - missing_count(scores.structured_output_enforcement.score) = 0
+    - missing_count(scores.swarm_visual.evidence) = 0
+    - missing_count(scores.swarm_visual.notes) = 0
+    - missing_count(scores.swarm_visual.score) = 0
+    - missing_count(scores.theoretical_depth.evidence) = 0
+    - missing_count(scores.theoretical_depth.notes) = 0
+    - missing_count(scores.theoretical_depth.score) = 0
+    - missing_count(target_ref) = 0
+    - missing_count(verdict_id) = 0
+    - duplicate_count(verdict_id) = 0
+    - min(confidence_min) >= 0.0
+    - max(confidence_max) <= 1.0
+    - row_count >= 1
+lineage:
+  upstream: []
+  downstream: []
