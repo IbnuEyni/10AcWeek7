@@ -1,0 +1,511 @@
+contract_id: week5-event-sourcing-platform-events
+captured_at: '2026-04-01T22:35:10.187293+00:00'
+columns:
+  aggregate_id:
+    type: string
+    null_fraction: 0.0
+    cardinality: 20
+    sample_values:
+    - loan-demo-2a7df24b
+    - compliance-demo-19e40f38
+    - compliance-demo-6cd38b46
+    - audit-demo-2a7df24b
+    - agent-session-demo-09766ab6
+  aggregate_type:
+    type: string
+    null_fraction: 0.0
+    cardinality: 4
+    sample_values:
+    - AuditLedger
+    - AgentSession
+    - ComplianceRecord
+    - LoanApplication
+  event_id:
+    type: string
+    null_fraction: 0.0
+    cardinality: 65
+    format: uuid
+    sample_values:
+    - 97027bfd-9886-4aaa-a201-6c0079f5fe5a
+    - 8f2c147f-5d09-4d09-97c3-af33ad1a0fc5
+    - 3a55740d-72e5-4492-97d8-5551fe843959
+    - 019faad9-8bef-4d05-8954-84121231eca3
+    - 0640714b-7d8a-4479-99e9-555253fdcf6c
+  event_type:
+    type: string
+    null_fraction: 0.0
+    cardinality: 11
+    sample_values:
+    - ApplicationSubmitted
+    - CreditAnalysisCompleted
+    - FraudScreeningCompleted
+    - DecisionGenerated
+    - AgentContextLoaded
+  metadata.causation_id:
+    type: string
+    null_fraction: 0.0769
+    cardinality: 60
+    format: uuid
+    sample_values:
+    - 2453ede3-a0aa-4856-b621-5e22953000f1
+    - 5199c874-b69f-4cab-96d8-ebde4c9cc283
+    - 47ca08fa-40e6-46f5-9359-3e150a7b50d7
+    - c53edc97-a6a0-4c22-b28c-f8eab82f2edd
+    - b57455e6-6f6e-40d0-adcd-6bdd6e6ddfa5
+  metadata.correlation_id:
+    type: string
+    null_fraction: 0.0
+    cardinality: 5
+    format: uuid
+    sample_values:
+    - fe72bf39-d5bb-46a2-b592-3f2b4767b4b7
+    - 6f32d057-a89f-4007-aceb-c6e83c2b08d3
+    - 2a433cbf-5c85-4172-8fb1-1739e5f4223e
+    - e773436f-4204-4f9e-86df-b5a309a83945
+    - 2c8ad17a-0835-4dee-8147-0d23c3e92a4f
+  metadata.source_service:
+    type: string
+    null_fraction: 0.0
+    cardinality: 1
+    sample_values:
+    - week5-ledger
+  metadata.user_id:
+    type: string
+    null_fraction: 0.0
+    cardinality: 10
+    sample_values:
+    - user-5
+    - user-4
+    - user-9
+    - user-10
+    - user-2
+  occurred_at:
+    type: string
+    null_fraction: 0.0
+    cardinality: 65
+    format: iso8601
+    sample_values:
+    - '2026-03-01T10:02:00Z'
+    - '2026-03-01T14:01:00Z'
+    - '2026-03-01T16:04:00Z'
+    - '2026-03-01T12:01:00Z'
+    - '2026-03-01T14:01:30Z'
+  payload.agent_id:
+    type: string
+    null_fraction: 0.7692
+    cardinality: 7
+    sample_values:
+    - agent-apex-1
+    - agent-apex-5
+    - agent-fraud-3
+    - agent-apex-2
+    - agent-apex-3
+  payload.analysis_duration_ms:
+    type: integer
+    null_fraction: 0.9231
+    cardinality: 5
+    stats:
+      min: 1601.0
+      max: 4732.0
+      mean: 2534.4
+      stddev: 1170.4926
+      p25: 1758.0
+      p50: 1828.0
+      p75: 2753.0
+      p95: 4336.2
+      p99: 4652.84
+  payload.anomaly_flags:
+    type: array
+    null_fraction: 0.9231
+    cardinality: 5
+  payload.applicant_id:
+    type: string
+    null_fraction: 0.9231
+    cardinality: 5
+    sample_values:
+    - applicant-27
+    - applicant-15
+    - applicant-8
+    - applicant-6
+    - applicant-43
+  payload.application_id:
+    type: string
+    null_fraction: 0.1538
+    cardinality: 5
+    sample_values:
+    - demo-19e40f38
+    - demo-6cd38b46
+    - demo-2a7df24b
+    - demo-09766ab6
+    - demo-c6949405
+  payload.approved_amount_usd:
+    type: number
+    null_fraction: 0.9231
+    cardinality: 5
+    stats:
+      min: 13390.08
+      max: 67205.35
+      mean: 42661.166
+      stddev: 20314.0039
+      p25: 26393.69
+      p50: 45442.54
+      p75: 60874.17
+      p95: 65939.114
+      p99: 66952.1028
+  payload.approved_by:
+    type: string
+    null_fraction: 0.9231
+    cardinality: 4
+    sample_values:
+    - reviewer-6
+    - reviewer-5
+    - reviewer-10
+    - reviewer-9
+  payload.assigned_agent_id:
+    type: string
+    null_fraction: 0.9231
+    cardinality: 3
+    sample_values:
+    - agent-apex-4
+    - agent-apex-2
+    - agent-apex-1
+  payload.checks_required:
+    type: array
+    null_fraction: 0.9231
+    cardinality: 1
+  payload.conditions:
+    type: array
+    null_fraction: 0.9231
+    cardinality: 1
+  payload.confidence_score:
+    type: number
+    null_fraction: 0.8462
+    cardinality: 9
+    stats:
+      min: 0.61
+      max: 0.96
+      mean: 0.764
+      stddev: 0.112
+      p25: 0.6825
+      p50: 0.755
+      p75: 0.84
+      p95: 0.9285
+      p99: 0.9537
+  payload.context_source:
+    type: string
+    null_fraction: 0.9231
+    cardinality: 3
+    sample_values:
+    - cold_start
+    - snapshot
+    - event_replay
+  payload.context_token_count:
+    type: integer
+    null_fraction: 0.9231
+    cardinality: 5
+    stats:
+      min: 760.0
+      max: 4822.0
+      mean: 2875.6
+      stddev: 1570.3714
+      p25: 1306.0
+      p50: 3532.0
+      p75: 3958.0
+      p95: 4649.2
+      p99: 4787.44
+  payload.contributing_agent_sessions:
+    type: array
+    null_fraction: 0.9231
+    cardinality: 5
+  payload.decision_basis_summary:
+    type: string
+    null_fraction: 0.9231
+    cardinality: 1
+    sample_values:
+    - Based on credit analysis and fraud screening results
+  payload.effective_date:
+    type: string
+    null_fraction: 0.9231
+    cardinality: 1
+    sample_values:
+    - '2026-03-01'
+  payload.entity_id:
+    type: string
+    null_fraction: 0.9231
+    cardinality: 5
+    sample_values:
+    - demo-19e40f38
+    - demo-6cd38b46
+    - demo-2a7df24b
+    - demo-09766ab6
+    - demo-c6949405
+  payload.entity_type:
+    type: string
+    null_fraction: 0.9231
+    cardinality: 1
+    sample_values:
+    - LoanApplication
+  payload.event_replay_from_position:
+    type: integer
+    null_fraction: 0.9231
+    cardinality: 1
+    stats:
+      min: 0.0
+      max: 0.0
+      mean: 0.0
+      stddev: 0.0
+      p25: 0.0
+      p50: 0.0
+      p75: 0.0
+      p95: 0.0
+      p99: 0.0
+  payload.event_type:
+    type: string
+    null_fraction: 0.9231
+    cardinality: 1
+    sample_values:
+    - ApplicationSubmitted
+  payload.evidence_hash:
+    type: string
+    null_fraction: 0.7692
+    cardinality: 15
+    sample_values:
+    - ba989fbdefc14fa387abc20cc30c7993
+    - ef2b5ab3d3eb4301b2b32f44ce461624
+    - 72cc0d953e2348f4820292a4f90e9f3e
+    - ac1a0b34cf7f479cbc7d2d9038ba5e03
+    - d9c2675934af43c1a840f14ea80eafcd
+  payload.final_decision:
+    type: string
+    null_fraction: 0.9231
+    cardinality: 2
+    sample_values:
+    - APPROVE
+    - DECLINE
+  payload.forced_refer:
+    type: boolean
+    null_fraction: 0.9231
+    cardinality: 2
+  payload.fraud_score:
+    type: number
+    null_fraction: 0.9231
+    cardinality: 4
+    stats:
+      min: 0.03
+      max: 0.13
+      mean: 0.09
+      stddev: 0.042
+      p25: 0.05
+      p50: 0.11
+      p75: 0.13
+      p95: 0.13
+      p99: 0.13
+  payload.input_data_hash:
+    type: string
+    null_fraction: 0.8462
+    cardinality: 10
+    sample_values:
+    - 8acecb824bc5431e90eb116d2fa45a64
+    - 300917805dd149d1b2663e471971452d
+    - 0fc2e8a026d64fb4b5d34c987c8f1f75
+    - cabdeffe5ffe4a469ec70846db370477
+    - ed5d4a5172124927b7ec9336df50bb08
+  payload.interest_rate:
+    type: number
+    null_fraction: 0.9231
+    cardinality: 5
+    stats:
+      min: 6.59
+      max: 9.65
+      mean: 8.5
+      stddev: 1.101
+      p25: 8.08
+      p50: 8.76
+      p75: 9.42
+      p95: 9.604
+      p99: 9.6408
+  payload.loan_purpose:
+    type: string
+    null_fraction: 0.9231
+    cardinality: 4
+    sample_values:
+    - business-expansion
+    - debt-consolidation
+    - home-improvement
+    - education
+  payload.model_version:
+    type: string
+    null_fraction: 0.8462
+    cardinality: 1
+    sample_values:
+    - apex-v2.1
+  payload.orchestrator_agent_id:
+    type: string
+    null_fraction: 0.9231
+    cardinality: 1
+    sample_values:
+    - orchestrator-1
+  payload.override:
+    type: boolean
+    null_fraction: 0.9231
+    cardinality: 2
+  payload.override_reason:
+    type: string
+    null_fraction: 0.9231
+    cardinality: 1
+    sample_values:
+    - ''
+  payload.priority:
+    type: string
+    null_fraction: 0.9231
+    cardinality: 3
+    sample_values:
+    - normal
+    - urgent
+    - high
+  payload.recommendation:
+    type: string
+    null_fraction: 0.9231
+    cardinality: 2
+    sample_values:
+    - REFER
+    - DECLINE
+  payload.recommended_limit_usd:
+    type: number
+    null_fraction: 0.9231
+    cardinality: 5
+    stats:
+      min: 6990.2
+      max: 56740.07
+      mean: 37133.146
+      stddev: 18989.9882
+      p25: 23649.23
+      p50: 44683.58
+      p75: 53602.65
+      p95: 56112.586
+      p99: 56614.5732
+  payload.regulation_set_version:
+    type: string
+    null_fraction: 0.9231
+    cardinality: 1
+    sample_values:
+    - 2026-Q1
+  payload.requested_amount_usd:
+    type: number
+    null_fraction: 0.9231
+    cardinality: 5
+    stats:
+      min: 7376.02
+      max: 99745.95
+      mean: 33999.666
+      stddev: 33584.8073
+      p25: 13137.08
+      p50: 23088.94
+      p75: 26650.34
+      p95: 85126.828
+      p99: 96822.1256
+  payload.reviewer_id:
+    type: string
+    null_fraction: 0.9231
+    cardinality: 4
+    sample_values:
+    - reviewer-3
+    - reviewer-8
+    - reviewer-7
+    - reviewer-2
+  payload.risk_tier:
+    type: string
+    null_fraction: 0.9231
+    cardinality: 3
+    sample_values:
+    - LOW
+    - MEDIUM
+    - HIGH
+  payload.rule_id:
+    type: string
+    null_fraction: 0.7692
+    cardinality: 3
+    sample_values:
+    - AML
+    - KYC
+    - SANCTIONS
+  payload.rule_version:
+    type: string
+    null_fraction: 0.7692
+    cardinality: 1
+    sample_values:
+    - 2026-Q1
+  payload.screening_model_version:
+    type: string
+    null_fraction: 0.9231
+    cardinality: 1
+    sample_values:
+    - fraud-v1.3
+  payload.session_id:
+    type: string
+    null_fraction: 0.8462
+    cardinality: 10
+    sample_values:
+    - 3a91c52a
+    - c2189ab3
+    - e5162a23
+    - b71d2d12
+    - 104eb72b
+  payload.source_stream_id:
+    type: string
+    null_fraction: 0.9231
+    cardinality: 5
+    sample_values:
+    - loan-demo-2a7df24b
+    - loan-demo-6cd38b46
+    - loan-demo-19e40f38
+    - loan-demo-09766ab6
+    - loan-demo-c6949405
+  payload.submission_channel:
+    type: string
+    null_fraction: 0.9231
+    cardinality: 2
+    sample_values:
+    - mobile
+    - api
+  payload.summary:
+    type: string
+    null_fraction: 0.9231
+    cardinality: 5
+    sample_values:
+    - Audit entry for application demo-c6949405
+    - Audit entry for application demo-09766ab6
+    - Audit entry for application demo-6cd38b46
+    - Audit entry for application demo-2a7df24b
+    - Audit entry for application demo-19e40f38
+  recorded_at:
+    type: string
+    null_fraction: 0.0
+    cardinality: 65
+    format: iso8601
+    sample_values:
+    - '2026-03-01T16:04:00Z'
+    - '2026-03-01T10:02:32Z'
+    - '2026-03-01T16:02:02Z'
+    - '2026-03-01T14:01:30Z'
+    - '2026-03-01T14:03:01Z'
+  schema_version:
+    type: string
+    null_fraction: 0.0
+    cardinality: 1
+    sample_values:
+    - '1.0'
+  sequence_number:
+    type: integer
+    null_fraction: 0.0
+    cardinality: 5
+    stats:
+      min: 1.0
+      max: 5.0
+      mean: 2.4615
+      stddev: 1.2779
+      p25: 1.0
+      p50: 2.0
+      p75: 3.0
+      p95: 5.0
+      p99: 5.0

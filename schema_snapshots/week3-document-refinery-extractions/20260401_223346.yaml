@@ -1,0 +1,214 @@
+contract_id: week3-document-refinery-extractions
+captured_at: '2026-04-01T22:33:46.125124+00:00'
+columns:
+  doc_id:
+    type: string
+    null_fraction: 0.0
+    cardinality: 16
+    format: uuid
+    sample_values:
+    - 0db50b75-4487-5312-b5fc-b65ee33cac82
+    - 0dc295ed-aeaf-50a5-929a-e59d94e68158
+    - 2e2654f7-57c9-5e0a-b942-3e137c510447
+    - 3cf1cd64-cc0a-54d0-8fb4-cfde7af40a05
+    - b1c99847-e2ef-52c4-ab3b-ca9cbdd84c8b
+  entities:
+    type: array
+    null_fraction: 0.0
+    cardinality: 64
+  entities[*].canonical_value:
+    type: string
+    null_fraction: 0.0
+    cardinality: 211
+    sample_values:
+    - appendix
+    - yewondwossen_eteffa___mr
+    - who_we_are
+    - capital
+    - the_federal
+  entities[*].entity_id:
+    type: string
+    null_fraction: 0.0
+    cardinality: 964
+    format: uuid
+    sample_values:
+    - 4d9bffda-a747-4c4f-ae6c-922ff3d47559
+    - 27b2bc13-9d9c-4959-a8d6-5b30793936d5
+    - 123d1eff-b8bf-4645-8c76-71cb9ba4cb58
+    - 18ae8327-2c8f-439f-9f11-4447ce5eb743
+    - 852fb432-2147-480a-ada4-cc983e30ce15
+  entities[*].name:
+    type: string
+    null_fraction: 0.0
+    cardinality: 211
+    sample_values:
+    - Dubai
+    - Earnings
+    - Both
+    - Months
+    - Shareholder Category
+  entities[*].type:
+    type: string
+    null_fraction: 0.0
+    cardinality: 6
+    sample_values:
+    - LOCATION
+    - AMOUNT
+    - OTHER
+    - PERSON
+    - DATE
+  extracted_at:
+    type: string
+    null_fraction: 0.0
+    cardinality: 64
+    format: iso8601
+    sample_values:
+    - '2026-03-07T13:19:36.459822Z'
+    - '2026-03-02T14:26:23.347665Z'
+    - '2026-03-07T11:25:07.822016Z'
+    - '2026-03-05T14:56:17.360956Z'
+    - '2026-03-06T11:06:35.359211Z'
+  extracted_facts:
+    type: array
+    null_fraction: 0.0
+    cardinality: 64
+  extracted_facts[*].confidence:
+    type: number
+    null_fraction: 0.0
+    cardinality: 3
+    stats:
+      min: 0.75
+      max: 0.85
+      mean: 0.7661
+      stddev: 0.0315
+      p25: 0.75
+      p50: 0.75
+      p75: 0.75
+      p95: 0.85
+      p99: 0.85
+  extracted_facts[*].entity_refs:
+    type: array
+    null_fraction: 0.0
+    cardinality: 584
+  extracted_facts[*].fact_id:
+    type: string
+    null_fraction: 0.0
+    cardinality: 799
+    format: uuid
+    sample_values:
+    - 48f16d85-bcbc-40de-b748-a8f92056064f
+    - ba803b68-f2a2-4eda-965f-9d41778c32c1
+    - cf9c4fa4-f1fc-4488-a1ea-b51fcb715240
+    - 0d5473e0-c889-4377-b6a9-c350d5f83a69
+    - d5973e6d-de87-4296-88a7-4e8d23aa6d60
+  extracted_facts[*].page_ref:
+    type: integer
+    null_fraction: 0.0238
+    cardinality: 85
+    stats:
+      min: 0.0
+      max: 91.0
+      mean: 25.2859
+      stddev: 29.1803
+      p25: 3.0
+      p50: 10.0
+      p75: 49.0
+      p95: 84.05
+      p99: 90.0
+  extracted_facts[*].source_excerpt:
+    type: string
+    null_fraction: 0.0
+    cardinality: 180
+    sample_values:
+    - ''
+    - XX
+    - '53 Import tax expenditure report: FY 201'
+    - IV
+    - '23 Import tax expenditure report: FY 201'
+  extracted_facts[*].text:
+    type: string
+    null_fraction: 0.0
+    cardinality: 202
+    sample_values:
+    - ''
+    - "33 Import tax expenditure report: FY 2018/19 \u2013 2020/21"
+    - "|  |  | Total\n--------------------------------------------------\n | Gen.Ins\
+      \ | Long Term Ins | 2018\nPROFIT PER ACCOUNTS | 63,938,378 | 1 4,693,457 | 78,631,835\n\
+      \ |  |  | \nAdd: |  |  | \nAmortization of Right Of Use (ROU) | 1,560,873 |\
+      \ 65,036 | 1 ,625,909\nInterest on least liability | 559,350 | 23,306 | 5 82,656\n\
+      Depreciation of fixed assets per IFRS | 2,147,526 | 5 6,609 | 2 ,204,136\nLess:\
+      \ |  |  | \nDepreciation of fixed assets per I.Tax Proc. | (2,659,528) | (110,814)\
+      \ | (2,770,342)\nRent Expenses fo"
+    - "14 Import tax expenditure report: FY 2018/19 \u2013 2020/21"
+    - 'Document processed: 2020_Audited_Financial_Statement_Report.pdf'
+  extraction_model:
+    type: string
+    null_fraction: 0.0
+    cardinality: 2
+    sample_values:
+    - claude-3-haiku-20240307
+    - claude-3-5-sonnet-20241022
+  processing_time_ms:
+    type: integer
+    null_fraction: 0.0
+    cardinality: 55
+    stats:
+      min: 200.0
+      max: 1082881.0
+      mean: 63848.5156
+      stddev: 153340.0064
+      p25: 3384.0
+      p50: 5525.0
+      p75: 47069.5
+      p95: 278533.1
+      p99: 596125.36
+  source_hash:
+    type: string
+    null_fraction: 0.0
+    cardinality: 16
+    format: sha256
+    sample_values:
+    - fcec82dc0d523268f9c001b2e029ec6a513a79de149f59f6c84e4bbaa95bacdc
+    - 3e4dc750c0b3011d4f043e357824ba7df66cebe2119de878f6f9e356977e9a57
+    - 056c935e4dfa223cbf0827a8ff2b43fc768869d129c80d83ee56c07445bb1dd8
+    - 4f830746a2e5ec9729d831448dae7c4d0de4c55498a62c71135aacc12bb2b29e
+    - 18ab98a5de0258b68181772bc5dedf86fb749aed0a706a2a7c719e2fc57c6b7f
+  source_path:
+    type: string
+    null_fraction: 0.0
+    cardinality: 16
+    format: path
+    sample_values:
+    - /data/documents/tax_expenditure_ethiopia_2021_22.pdf
+    - /data/documents/2013-E.C-Audit-finding-information.pdf
+    - /data/documents/Consumer Price Index July 2025.pdf
+    - /data/documents/2013-E.C-Procurement-information.pdf
+    - /data/documents/CBE Annual Report 2012-13.pdf
+  token_count.input:
+    type: integer
+    null_fraction: 0.0
+    cardinality: 8
+    stats:
+      min: 200.0
+      max: 18400.0
+      mean: 2203.125
+      stddev: 4203.6431
+      p25: 200.0
+      p50: 600.0
+      p75: 2400.0
+      p95: 12000.0
+      p99: 18400.0
+  token_count.output:
+    type: integer
+    null_fraction: 0.0
+    cardinality: 7
+    stats:
+      min: 50.0
+      max: 4200.0
+      mean: 624.2188
+      stddev: 1049.8509
+      p25: 50.0
+      p50: 150.0
+      p75: 1150.0
+      p95: 3750.0
+      p99: 4200.0

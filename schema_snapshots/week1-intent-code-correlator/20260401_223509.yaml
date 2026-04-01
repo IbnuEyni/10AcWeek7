@@ -1,0 +1,105 @@
+contract_id: week1-intent-code-correlator
+captured_at: '2026-04-01T22:35:09.100735+00:00'
+columns:
+  code_refs:
+    type: array
+    null_fraction: 0.0
+    cardinality: 19
+  code_refs[*].confidence:
+    type: number
+    null_fraction: 0.0
+    cardinality: 1
+    stats:
+      min: 0.85
+      max: 0.85
+      mean: 0.85
+      stddev: 0.0
+      p25: 0.85
+      p50: 0.85
+      p75: 0.85
+      p95: 0.85
+      p99: 0.85
+  code_refs[*].file:
+    type: string
+    null_fraction: 0.0
+    cardinality: 17
+    sample_values:
+    - src/utils/helper.ts
+    - src
+    - .
+    - .orchestration/active_intents.yaml
+    - src/math
+  code_refs[*].line_end:
+    type: integer
+    null_fraction: 0.0
+    cardinality: 1
+    stats:
+      min: 51.0
+      max: 51.0
+      mean: 51.0
+      stddev: 0.0
+      p25: 51.0
+      p50: 51.0
+      p75: 51.0
+      p95: 51.0
+      p99: 51.0
+  code_refs[*].line_start:
+    type: integer
+    null_fraction: 0.0
+    cardinality: 1
+    stats:
+      min: 1.0
+      max: 1.0
+      mean: 1.0
+      stddev: 0.0
+      p25: 1.0
+      p50: 1.0
+      p75: 1.0
+      p95: 1.0
+      p99: 1.0
+  code_refs[*].symbol:
+    type: string
+    null_fraction: 0.0
+    cardinality: 10
+    sample_values:
+    - execute_command
+    - ask_followup_question
+    - list_files
+    - search_files
+    - write_to_file
+  created_at:
+    type: string
+    null_fraction: 0.0
+    cardinality: 211
+    format: iso8601
+    sample_values:
+    - '2026-02-21T19:39:36.713Z'
+    - '2026-02-21T19:46:04.492Z'
+    - '2026-02-21T19:31:44.605Z'
+    - '2026-02-21T19:43:30.545Z'
+    - '2026-02-21T19:33:03.492Z'
+  description:
+    type: string
+    null_fraction: 0.0
+    cardinality: 20
+    sample_values:
+    - Implement basic math operations via update_todo_list
+    - Implement text manipulation utilities via write_to_file
+    - 'Agent action: select_active_intent via select_active_intent'
+    - Implement text manipulation utilities via read_file
+    - 'Agent action: attempt_completion via attempt_completion'
+  governance_tags:
+    type: array
+    null_fraction: 0.0
+    cardinality: 16
+  intent_id:
+    type: string
+    null_fraction: 0.0
+    cardinality: 211
+    format: uuid
+    sample_values:
+    - 79cb2852-25c8-4b1d-b769-97c9147509c5
+    - a62f0308-e627-42e0-a6fd-a74a680a6a37
+    - b2eacb43-675f-47e0-aa24-ff644e074bd8
+    - 4e4a5f7a-67da-4f5b-b540-5e6737a4ad66
+    - cdd924f1-9238-4977-b1a0-65862247a90c
