@@ -46,6 +46,23 @@ A column whose mean shifts from 0.80 to 73.9 because someone changed the scale f
 
 ---
 
+## System Architecture Overview
+
+The Data Contract Enforcer consists of six components, each building on the prior:
+
+| Component | Role | Key Input | Key Output |
+|---|---|---|---|
+| **ContractGenerator** | Auto-generates baseline contracts from existing system outputs | JSONL outputs from Weeks 1–5 + Week 4 lineage graph | Contract YAML (Bitol) + dbt schema.yml |
+| **ValidationRunner** | Executes all contract checks on a dataset snapshot | Dataset snapshot + contract YAML | Structured validation report (PASS/FAIL/WARN/ERROR per clause) |
+| **ViolationAttributor** | Traces violations back to the upstream commit that caused them | Validation failures + Week 4 lineage graph + git log | Blame chain: {file, author, commit, timestamp, confidence} |
+| **SchemaEvolutionAnalyzer** | Classifies schema changes and generates migration impact reports | Schema snapshots over time | Compatibility verdict + migration impact report + rollback plan |
+| **AI Contract Extensions** | Applies contracts to AI-specific data patterns | LangSmith trace JSONL, embedding vectors, Week 2 verdict records | Embedding drift score + output schema violation rate |
+| **ReportGenerator** | Auto-generates the Enforcer Report from live validation data | violation_log/ + validation_reports/ + ai_metrics.json | enforcer_report/report_data.json + report PDF |
+
+The Week 4 lineage graph is a **required dependency** for both ContractGenerator (downstream consumer injection) and ViolationAttributor (blame chain traversal). The violation log schema is designed to be consumed by Week 8's Sentinel without modification.
+
+---
+
 ## Question 1: Backward-Compatible vs. Breaking Schema Changes
 
 A **backward-compatible** change allows existing consumers to continue reading data without modification. A **breaking** change forces downstream consumers to update or fail silently.
