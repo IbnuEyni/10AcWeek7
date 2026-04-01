@@ -98,10 +98,8 @@ class ValidationRunner:
             self._check_unique(col_name, col_spec)
             self._check_format(col_name, col_spec)
 
-        # Quality checks
         self._check_row_count()
-
-        # Cross-field checks based on contract_id
+        self._execute_soda_checks()
         self._check_cross_references()
         self._check_temporal_order()
         self._check_token_sum()
@@ -172,8 +170,21 @@ class ValidationRunner:
             expected_py = type_map.get(expected_type)
             if not expected_py:
                 return
-            # For "number", accept both int and float
-            failing = [v for v in non_null if not isinstance(v, expected_py)]
+            # For "number", also accept string-encoded numerics (e.g. '1.0')
+            if expected_type == "number":
+                def is_number(v):
+                    if isinstance(v, (int, float)) and not isinstance(v, bool):
+                        return True
+                    if isinstance(v, str):
+                        try:
+                            float(v)
+                            return True
+                        except ValueError:
+                            return False
+                    return False
+                failing = [v for v in non_null if not is_number(v)]
+            else:
+                failing = [v for v in non_null if not isinstance(v, expected_py)]
             if failing:
                 self._add_result(
                     f"{self.contract_id}.{col_name}.type", col_name, "type",
@@ -373,29 +384,105 @@ class ValidationRunner:
             message=f"Table has {count} rows"
         )
 
+    def _execute_soda_checks(self):
+        """Execute Soda-style checks from quality.specification.checks in the contract."""
+        checks = (
+            self.contract.get("quality", {})
+            .get("specification", {})
+            .get("checks", [])
+        )
+        # Patterns we can execute: missing_count, duplicate_count, row_count
+        # Skip min/max aggregate checks (already covered by _check_range/_check_statistical_drift)
+        for check_str in checks:
+            check_str = check_str.strip()
+            try:
+                # missing_count(col) = 0
+                m = re.match(r'^missing_count\((.+?)\)\s*=\s*(\d+)$', check_str)
+                if m:
+                    col, expected_zero = m.group(1), int(m.group(2))
+                    vals = extract_values(self.records, col)
+                    null_count = sum(1 for v in vals if v is None)
+                    status = "PASS" if null_count == expected_zero else "FAIL"
+                    self._add_result(
+                        f"{self.contract_id}.soda.{col}.missing_count", col,
+                        "soda_missing_count", status,
+                        str(null_count), f"= {expected_zero}",
+                        "CRITICAL" if status == "FAIL" else "LOW",
+                        failing_count=null_count,
+                        message=f"missing_count({col}) = {null_count}, expected {expected_zero}"
+                    )
+                    continue
+
+                # duplicate_count(col) = 0
+                m = re.match(r'^duplicate_count\((.+?)\)\s*=\s*(\d+)$', check_str)
+                if m:
+                    col, expected_zero = m.group(1), int(m.group(2))
+                    vals = [v for v in extract_values(self.records, col) if v is not None]
+                    seen, dupes = set(), 0
+                    for v in vals:
+                        sv = str(v)
+                        if sv in seen:
+                            dupes += 1
+                        seen.add(sv)
+                    status = "PASS" if dupes == expected_zero else "FAIL"
+                    self._add_result(
+                        f"{self.contract_id}.soda.{col}.duplicate_count", col,
+                        "soda_duplicate_count", status,
+                        str(dupes), f"= {expected_zero}",
+                        "HIGH" if status == "FAIL" else "LOW",
+                        failing_count=dupes,
+                        message=f"duplicate_count({col}) = {dupes}, expected {expected_zero}"
+                    )
+                    continue
+
+                # row_count >= N
+                m = re.match(r'^row_count\s*>=\s*(\d+)$', check_str)
+                if m:
+                    expected_min = int(m.group(1))
+                    actual = len(self.records)
+                    status = "PASS" if actual >= expected_min else "FAIL"
+                    self._add_result(
+                        f"{self.contract_id}.soda.row_count", "_table_",
+                        "soda_row_count", status,
+                        str(actual), f">= {expected_min}",
+                        "CRITICAL" if status == "FAIL" else "LOW",
+                        message=f"row_count = {actual}, expected >= {expected_min}"
+                    )
+                    continue
+            except Exception as e:
+                self._add_result(
+                    f"{self.contract_id}.soda.{check_str[:40]}", "_soda_",
+                    "soda_check", "ERROR", str(e), check_str, "CRITICAL",
+                    message=f"Soda check failed: {e}"
+                )
+
     def _check_cross_references(self):
-        """Check entity_refs reference valid entity_ids (Week 3 specific)."""
-        if "week3" not in self.contract_id:
+        """Check entity_refs reference valid entity_ids — driven by contract schema cross_ref_fields."""
+        # Detect cross-ref from schema: fields named entity_refs with entities present
+        has_entities = any("entities" in k for k in self.contract.get("schema", {}))
+        has_entity_refs = any("entity_refs" in k for k in self.contract.get("schema", {}))
+        if not (has_entities and has_entity_refs):
             return
         try:
+            total_violations = 0
+            samples = []
             for i, record in enumerate(self.records):
                 entity_ids = {e["entity_id"] for e in record.get("entities", [])}
                 for fact in record.get("extracted_facts", []):
                     for ref in fact.get("entity_refs", []):
                         if ref not in entity_ids:
-                            self._add_result(
-                                f"{self.contract_id}.entity_refs.cross_ref", "extracted_facts[*].entity_refs",
-                                "relationship", "FAIL",
-                                f"entity_ref {ref} not in entities", "all entity_refs in entities[*].entity_id",
-                                "HIGH", failing_count=1,
-                                sample=[ref],
-                                message=f"Record {i}: entity_ref '{ref}' references non-existent entity"
-                            )
-                            return  # Report first failure
+                            total_violations += 1
+                            if len(samples) < 5:
+                                samples.append(ref)
+            status = "FAIL" if total_violations > 0 else "PASS"
             self._add_result(
                 f"{self.contract_id}.entity_refs.cross_ref", "extracted_facts[*].entity_refs",
-                "relationship", "PASS",
-                "all refs valid", "all entity_refs in entities[*].entity_id", "LOW"
+                "relationship", status,
+                f"{total_violations} invalid refs" if total_violations else "all refs valid",
+                "all entity_refs in entities[*].entity_id",
+                "HIGH" if total_violations > 0 else "LOW",
+                failing_count=total_violations, sample=samples,
+                message=f"{total_violations} entity_refs reference non-existent entities" if total_violations else ""
             )
         except Exception as e:
             self._add_result(
@@ -404,12 +491,13 @@ class ValidationRunner:
             )
 
     def _check_temporal_order(self):
-        """Check recorded_at >= occurred_at (Week 5), end_time > start_time (traces)."""
-        cid = self.contract_id
+        """Check temporal ordering — driven by schema field presence, not contract_id."""
+        schema = self.contract.get("schema", {})
         pairs = []
-        if "week5" in cid:
+        # Detect temporal pairs from schema
+        if "recorded_at" in schema and "occurred_at" in schema:
             pairs.append(("recorded_at", "occurred_at"))
-        if "langsmith" in cid or "trace" in cid:
+        if "end_time" in schema and "start_time" in schema:
             pairs.append(("end_time", "start_time"))
         for later_field, earlier_field in pairs:
             try:
@@ -421,7 +509,7 @@ class ValidationRunner:
                         violations += 1
                 status = "FAIL" if violations > 0 else "PASS"
                 self._add_result(
-                    f"{cid}.{later_field}.temporal_order", f"{later_field} vs {earlier_field}",
+                    f"{self.contract_id}.{later_field}.temporal_order", f"{later_field} vs {earlier_field}",
                     "temporal_order", status,
                     f"{violations} violations", f"{later_field} >= {earlier_field}",
                     "HIGH" if violations > 0 else "LOW",
@@ -430,13 +518,14 @@ class ValidationRunner:
                 )
             except Exception as e:
                 self._add_result(
-                    f"{cid}.{later_field}.temporal_order", f"{later_field} vs {earlier_field}",
+                    f"{self.contract_id}.{later_field}.temporal_order", f"{later_field} vs {earlier_field}",
                     "temporal_order", "ERROR", str(e), f"{later_field} >= {earlier_field}", "CRITICAL"
                 )
 
     def _check_token_sum(self):
-        """Check total_tokens = prompt_tokens + completion_tokens (traces)."""
-        if "langsmith" not in self.contract_id and "trace" not in self.contract_id:
+        """Check total_tokens = prompt_tokens + completion_tokens — driven by schema field presence."""
+        schema = self.contract.get("schema", {})
+        if not ("total_tokens" in schema and "prompt_tokens" in schema and "completion_tokens" in schema):
             return
         try:
             violations = 0
@@ -462,8 +551,11 @@ class ValidationRunner:
             )
 
     def _check_graph_integrity(self):
-        """Check edge sources/targets reference valid node_ids (Week 4)."""
-        if "week4" not in self.contract_id:
+        """Check edge sources/targets reference valid node_ids — driven by schema field presence."""
+        schema = self.contract.get("schema", {})
+        has_nodes = any("nodes" in k for k in schema)
+        has_edges = any("edges" in k for k in schema)
+        if not (has_nodes and has_edges):
             return
         try:
             total_violations = 0
@@ -565,6 +657,8 @@ def main():
     parser.add_argument("--contract", required=True, help="Path to contract YAML")
     parser.add_argument("--data", required=True, help="Path to data JSONL")
     parser.add_argument("--output", help="Output path for validation report JSON")
+    parser.add_argument("--quarantine", action="store_true",
+                        help="Write records failing CRITICAL checks to outputs/quarantine/")
     args = parser.parse_args()
 
     contract_path = os.path.join(BASE_DIR, args.contract) if not os.path.isabs(args.contract) else args.contract
@@ -575,6 +669,29 @@ def main():
 
     runner = ValidationRunner(contract, records, data_path)
     report = runner.run_all()
+
+    # Quarantine records that fail CRITICAL checks
+    if args.quarantine:
+        critical_cols = {
+            r["column_name"]
+            for r in report["results"]
+            if r["status"] == "FAIL" and r["severity"] == "CRITICAL"
+        }
+        if critical_cols:
+            quarantine_dir = os.path.join(BASE_DIR, "outputs", "quarantine")
+            os.makedirs(quarantine_dir, exist_ok=True)
+            ts = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+            q_path = os.path.join(quarantine_dir, f"{contract['id']}_{ts}.jsonl")
+            quarantined = 0
+            with open(q_path, "w") as qf:
+                for rec in records:
+                    for col in critical_cols:
+                        top_col = col.split("[")[0].split(".")[0]
+                        if top_col in rec:
+                            qf.write(json.dumps(rec) + "\n")
+                            quarantined += 1
+                            break
+            print(f"  Quarantined {quarantined} records to: {q_path}")
 
     # Determine output path
     if args.output:
