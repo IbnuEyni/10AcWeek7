@@ -8,11 +8,11 @@ models:
     tests:
     - not_null
   - name: created_at
-    description: ''
+    description: ISO 8601 timestamp of when the intent was recorded.
     tests:
     - not_null
   - name: description
-    description: ''
+    description: Plain-English statement of the developer intent.
     tests:
     - not_null
   - name: governance_tags
@@ -20,7 +20,7 @@ models:
     tests:
     - not_null
   - name: intent_id
-    description: ''
+    description: Primary key. UUIDv4. One per intent-code mapping.
     tests:
     - not_null
     - unique

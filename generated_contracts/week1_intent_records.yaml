@@ -46,9 +46,11 @@ schema:
     type: string
     required: true
     format: iso8601
+    description: ISO 8601 timestamp of when the intent was recorded.
   description:
     type: string
     required: true
+    description: Plain-English statement of the developer intent.
   governance_tags:
     type: array
     required: true
@@ -56,6 +58,7 @@ schema:
     type: string
     required: true
     format: uuid
+    description: Primary key. UUIDv4. One per intent-code mapping.
     unique: true
 quality:
   type: SodaChecks
@@ -80,3 +83,49 @@ lineage:
     breaking_if_changed:
     - code_refs[*].file
     - intent_id
+llm_annotations:
+- column: code_refs
+  source: week1_intent_records
+  description: 'Auto-profiled column. Type: array, cardinality: 19.'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: code_refs[*].confidence
+  source: week1_intent_records
+  description: Confidence score for the parent operation. Float 0.0-1.0 where 1.0
+    is highest confidence.
+  business_rule: 0.0 <= value <= 1.0
+  annotation_method: heuristic (no LLM API key configured)
+- column: code_refs[*].file
+  source: week1_intent_records
+  description: 'Auto-profiled column. Type: string, cardinality: 17. Sample values:
+    [''src/execute_command.ts'', ''src/apply_diff.ts'', ''.orchestration/intent_map.md'']'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: code_refs[*].line_end
+  source: week1_intent_records
+  description: 'Auto-profiled column. Type: integer, cardinality: 1.'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: code_refs[*].line_start
+  source: week1_intent_records
+  description: 'Auto-profiled column. Type: integer, cardinality: 1.'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: code_refs[*].symbol
+  source: week1_intent_records
+  description: 'Auto-profiled column. Type: string, cardinality: 10. Sample values:
+    [''execute_command'', ''search_files'', ''apply_diff'']'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: description
+  source: week1_intent_records
+  description: 'Auto-profiled column. Type: string, cardinality: 20. Sample values:
+    [''Implement basic math operations via attempt_completion'', ''Agent action: read_file
+    via read_file'', ''Agent action: list_files via list_files'']'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: governance_tags
+  source: week1_intent_records
+  description: 'Auto-profiled column. Type: array, cardinality: 16.'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)

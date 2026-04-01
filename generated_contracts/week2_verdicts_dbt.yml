@@ -9,15 +9,15 @@ models:
     tests:
     - not_null
   - name: evaluated_at
-    description: ''
+    description: ISO 8601 timestamp of when evaluation completed.
     tests:
     - not_null
   - name: overall_score
-    description: ''
+    description: Weighted average of all criterion scores. Float.
     tests:
     - not_null
   - name: overall_verdict
-    description: ''
+    description: 'Final verdict. Must be exactly one of: PASS, FAIL, WARN.'
     tests:
     - not_null
     - accepted_values:
@@ -26,11 +26,11 @@ models:
         - FAIL
         - WARN
   - name: rubric_id
-    description: ''
+    description: SHA-256 hash of the rubric YAML used for evaluation.
     tests:
     - not_null
   - name: rubric_version
-    description: ''
+    description: Semantic version of the rubric (e.g. 3.0.0).
     tests:
     - not_null
   - name: scores.chief_justice_synthesis.evidence
@@ -154,11 +154,11 @@ models:
     tests:
     - not_null
   - name: target_ref
-    description: ''
+    description: Relative path or document ID of the evaluation target.
     tests:
     - not_null
   - name: verdict_id
-    description: ''
+    description: Primary key. UUIDv4. One per evaluation verdict.
     tests:
     - not_null
     - unique

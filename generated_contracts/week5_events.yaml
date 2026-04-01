@@ -19,19 +19,23 @@ schema:
   aggregate_id:
     type: string
     required: true
+    description: Identifier of the aggregate this event belongs to.
     format: uuid
     unique: true
   aggregate_type:
     type: string
     required: true
+    description: PascalCase aggregate type (e.g. LoanApplication, AgentSession).
   event_id:
     type: string
     required: true
     format: uuid
+    description: Primary key. UUIDv4. Globally unique event identifier.
     unique: true
   event_type:
     type: string
     required: true
+    description: PascalCase event type. Must be registered in schema registry.
   metadata.causation_id:
     type: string
     format: uuid
@@ -49,6 +53,7 @@ schema:
     type: string
     required: true
     format: iso8601
+    description: ISO 8601 timestamp of when the event occurred in the domain.
   payload.agent_id:
     type: string
   payload.analysis_duration_ms:
@@ -161,14 +166,17 @@ schema:
     type: string
     required: true
     format: iso8601
+    description: ISO 8601 timestamp of when the event was persisted. Must be >= occurred_at.
   schema_version:
     type: string
     required: true
+    description: Schema version of the event payload.
   sequence_number:
     type: integer
     required: true
     minimum: 1.0
     maximum: 5.0
+    description: Monotonically increasing per aggregate_id. No gaps, no duplicates.
 quality:
   type: SodaChecks
   specification:
@@ -199,3 +207,314 @@ lineage:
     breaking_if_changed:
     - payload
     - event_type
+llm_annotations:
+- column: aggregate_id
+  source: week5_events
+  description: 'Auto-profiled column. Type: string, cardinality: 20. Sample values:
+    [''agent-session-demo-19e40f38'', ''agent-session-demo-09766ab6'', ''loan-demo-19e40f38'']'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: aggregate_type
+  source: week5_events
+  description: 'Categorical type field. Observed values: [''ComplianceRecord'', ''AgentSession'',
+    ''LoanApplication'', ''AuditLedger'']'
+  business_rule: value in ['ComplianceRecord', 'AgentSession', 'LoanApplication',
+    'AuditLedger']
+  annotation_method: heuristic (no LLM API key configured)
+- column: event_type
+  source: week5_events
+  description: 'Categorical type field. Observed values: [''HumanReviewCompleted'',
+    ''ApplicationApproved'', ''DecisionGenerated'', ''ComplianceCheckRequested'',
+    ''AuditEntryRecorded'']'
+  business_rule: value in ['HumanReviewCompleted', 'ApplicationApproved', 'DecisionGenerated',
+    'ComplianceCheckRequested', 'AuditEntryRecorded']
+  annotation_method: heuristic (no LLM API key configured)
+- column: metadata.source_service
+  source: week5_events
+  description: 'Auto-profiled column. Type: string, cardinality: 1. Sample values:
+    [''week5-ledger'']'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: metadata.user_id
+  source: week5_events
+  description: 'Auto-profiled column. Type: string, cardinality: 10. Sample values:
+    [''user-1'', ''user-9'', ''user-5'']'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: payload.agent_id
+  source: week5_events
+  description: Event-type-specific data payload. Schema varies by event_type.
+  business_rule: must validate against event_type JSON Schema
+  cross_column: Schema determined by event_type and schema_version fields
+  annotation_method: heuristic (no LLM API key configured)
+- column: payload.analysis_duration_ms
+  source: week5_events
+  description: Event-type-specific data payload. Schema varies by event_type.
+  business_rule: must validate against event_type JSON Schema
+  cross_column: Schema determined by event_type and schema_version fields
+  annotation_method: heuristic (no LLM API key configured)
+- column: payload.anomaly_flags
+  source: week5_events
+  description: Event-type-specific data payload. Schema varies by event_type.
+  business_rule: must validate against event_type JSON Schema
+  cross_column: Schema determined by event_type and schema_version fields
+  annotation_method: heuristic (no LLM API key configured)
+- column: payload.applicant_id
+  source: week5_events
+  description: Event-type-specific data payload. Schema varies by event_type.
+  business_rule: must validate against event_type JSON Schema
+  cross_column: Schema determined by event_type and schema_version fields
+  annotation_method: heuristic (no LLM API key configured)
+- column: payload.application_id
+  source: week5_events
+  description: Event-type-specific data payload. Schema varies by event_type.
+  business_rule: must validate against event_type JSON Schema
+  cross_column: Schema determined by event_type and schema_version fields
+  annotation_method: heuristic (no LLM API key configured)
+- column: payload.approved_amount_usd
+  source: week5_events
+  description: Event-type-specific data payload. Schema varies by event_type.
+  business_rule: must validate against event_type JSON Schema
+  cross_column: Schema determined by event_type and schema_version fields
+  annotation_method: heuristic (no LLM API key configured)
+- column: payload.approved_by
+  source: week5_events
+  description: Event-type-specific data payload. Schema varies by event_type.
+  business_rule: must validate against event_type JSON Schema
+  cross_column: Schema determined by event_type and schema_version fields
+  annotation_method: heuristic (no LLM API key configured)
+- column: payload.assigned_agent_id
+  source: week5_events
+  description: Event-type-specific data payload. Schema varies by event_type.
+  business_rule: must validate against event_type JSON Schema
+  cross_column: Schema determined by event_type and schema_version fields
+  annotation_method: heuristic (no LLM API key configured)
+- column: payload.checks_required
+  source: week5_events
+  description: Event-type-specific data payload. Schema varies by event_type.
+  business_rule: must validate against event_type JSON Schema
+  cross_column: Schema determined by event_type and schema_version fields
+  annotation_method: heuristic (no LLM API key configured)
+- column: payload.conditions
+  source: week5_events
+  description: Event-type-specific data payload. Schema varies by event_type.
+  business_rule: must validate against event_type JSON Schema
+  cross_column: Schema determined by event_type and schema_version fields
+  annotation_method: heuristic (no LLM API key configured)
+- column: payload.confidence_score
+  source: week5_events
+  description: Confidence score for the parent operation. Float 0.0-1.0 where 1.0
+    is highest confidence.
+  business_rule: 0.0 <= value <= 1.0
+  annotation_method: heuristic (no LLM API key configured)
+- column: payload.context_source
+  source: week5_events
+  description: Event-type-specific data payload. Schema varies by event_type.
+  business_rule: must validate against event_type JSON Schema
+  cross_column: Schema determined by event_type and schema_version fields
+  annotation_method: heuristic (no LLM API key configured)
+- column: payload.context_token_count
+  source: week5_events
+  description: Token count metric for LLM operations. Must be non-negative integer.
+  business_rule: value >= 0
+  annotation_method: heuristic (no LLM API key configured)
+- column: payload.contributing_agent_sessions
+  source: week5_events
+  description: Event-type-specific data payload. Schema varies by event_type.
+  business_rule: must validate against event_type JSON Schema
+  cross_column: Schema determined by event_type and schema_version fields
+  annotation_method: heuristic (no LLM API key configured)
+- column: payload.decision_basis_summary
+  source: week5_events
+  description: Event-type-specific data payload. Schema varies by event_type.
+  business_rule: must validate against event_type JSON Schema
+  cross_column: Schema determined by event_type and schema_version fields
+  annotation_method: heuristic (no LLM API key configured)
+- column: payload.effective_date
+  source: week5_events
+  description: Event-type-specific data payload. Schema varies by event_type.
+  business_rule: must validate against event_type JSON Schema
+  cross_column: Schema determined by event_type and schema_version fields
+  annotation_method: heuristic (no LLM API key configured)
+- column: payload.entity_id
+  source: week5_events
+  description: Event-type-specific data payload. Schema varies by event_type.
+  business_rule: must validate against event_type JSON Schema
+  cross_column: Schema determined by event_type and schema_version fields
+  annotation_method: heuristic (no LLM API key configured)
+- column: payload.entity_type
+  source: week5_events
+  description: 'Categorical type field. Observed values: [''LoanApplication'']'
+  business_rule: value in ['LoanApplication']
+  annotation_method: heuristic (no LLM API key configured)
+- column: payload.event_replay_from_position
+  source: week5_events
+  description: Event-type-specific data payload. Schema varies by event_type.
+  business_rule: must validate against event_type JSON Schema
+  cross_column: Schema determined by event_type and schema_version fields
+  annotation_method: heuristic (no LLM API key configured)
+- column: payload.event_type
+  source: week5_events
+  description: 'Categorical type field. Observed values: [''ApplicationSubmitted'']'
+  business_rule: value in ['ApplicationSubmitted']
+  annotation_method: heuristic (no LLM API key configured)
+- column: payload.evidence_hash
+  source: week5_events
+  description: Event-type-specific data payload. Schema varies by event_type.
+  business_rule: must validate against event_type JSON Schema
+  cross_column: Schema determined by event_type and schema_version fields
+  annotation_method: heuristic (no LLM API key configured)
+- column: payload.final_decision
+  source: week5_events
+  description: Event-type-specific data payload. Schema varies by event_type.
+  business_rule: must validate against event_type JSON Schema
+  cross_column: Schema determined by event_type and schema_version fields
+  annotation_method: heuristic (no LLM API key configured)
+- column: payload.forced_refer
+  source: week5_events
+  description: Event-type-specific data payload. Schema varies by event_type.
+  business_rule: must validate against event_type JSON Schema
+  cross_column: Schema determined by event_type and schema_version fields
+  annotation_method: heuristic (no LLM API key configured)
+- column: payload.fraud_score
+  source: week5_events
+  description: Evaluation score from rubric-based assessment.
+  business_rule: 1 <= value <= 5 (integer)
+  annotation_method: heuristic (no LLM API key configured)
+- column: payload.input_data_hash
+  source: week5_events
+  description: Event-type-specific data payload. Schema varies by event_type.
+  business_rule: must validate against event_type JSON Schema
+  cross_column: Schema determined by event_type and schema_version fields
+  annotation_method: heuristic (no LLM API key configured)
+- column: payload.interest_rate
+  source: week5_events
+  description: Event-type-specific data payload. Schema varies by event_type.
+  business_rule: must validate against event_type JSON Schema
+  cross_column: Schema determined by event_type and schema_version fields
+  annotation_method: heuristic (no LLM API key configured)
+- column: payload.loan_purpose
+  source: week5_events
+  description: Event-type-specific data payload. Schema varies by event_type.
+  business_rule: must validate against event_type JSON Schema
+  cross_column: Schema determined by event_type and schema_version fields
+  annotation_method: heuristic (no LLM API key configured)
+- column: payload.model_version
+  source: week5_events
+  description: Model identifier. Must match known model naming pattern.
+  business_rule: matches pattern ^(claude|gpt)-
+  cross_column: Determines extraction strategy and cost profile
+  annotation_method: heuristic (no LLM API key configured)
+- column: payload.orchestrator_agent_id
+  source: week5_events
+  description: Event-type-specific data payload. Schema varies by event_type.
+  business_rule: must validate against event_type JSON Schema
+  cross_column: Schema determined by event_type and schema_version fields
+  annotation_method: heuristic (no LLM API key configured)
+- column: payload.override
+  source: week5_events
+  description: Event-type-specific data payload. Schema varies by event_type.
+  business_rule: must validate against event_type JSON Schema
+  cross_column: Schema determined by event_type and schema_version fields
+  annotation_method: heuristic (no LLM API key configured)
+- column: payload.override_reason
+  source: week5_events
+  description: Event-type-specific data payload. Schema varies by event_type.
+  business_rule: must validate against event_type JSON Schema
+  cross_column: Schema determined by event_type and schema_version fields
+  annotation_method: heuristic (no LLM API key configured)
+- column: payload.priority
+  source: week5_events
+  description: Event-type-specific data payload. Schema varies by event_type.
+  business_rule: must validate against event_type JSON Schema
+  cross_column: Schema determined by event_type and schema_version fields
+  annotation_method: heuristic (no LLM API key configured)
+- column: payload.recommendation
+  source: week5_events
+  description: Event-type-specific data payload. Schema varies by event_type.
+  business_rule: must validate against event_type JSON Schema
+  cross_column: Schema determined by event_type and schema_version fields
+  annotation_method: heuristic (no LLM API key configured)
+- column: payload.recommended_limit_usd
+  source: week5_events
+  description: Event-type-specific data payload. Schema varies by event_type.
+  business_rule: must validate against event_type JSON Schema
+  cross_column: Schema determined by event_type and schema_version fields
+  annotation_method: heuristic (no LLM API key configured)
+- column: payload.regulation_set_version
+  source: week5_events
+  description: Event-type-specific data payload. Schema varies by event_type.
+  business_rule: must validate against event_type JSON Schema
+  cross_column: Schema determined by event_type and schema_version fields
+  annotation_method: heuristic (no LLM API key configured)
+- column: payload.requested_amount_usd
+  source: week5_events
+  description: Event-type-specific data payload. Schema varies by event_type.
+  business_rule: must validate against event_type JSON Schema
+  cross_column: Schema determined by event_type and schema_version fields
+  annotation_method: heuristic (no LLM API key configured)
+- column: payload.reviewer_id
+  source: week5_events
+  description: Event-type-specific data payload. Schema varies by event_type.
+  business_rule: must validate against event_type JSON Schema
+  cross_column: Schema determined by event_type and schema_version fields
+  annotation_method: heuristic (no LLM API key configured)
+- column: payload.risk_tier
+  source: week5_events
+  description: Event-type-specific data payload. Schema varies by event_type.
+  business_rule: must validate against event_type JSON Schema
+  cross_column: Schema determined by event_type and schema_version fields
+  annotation_method: heuristic (no LLM API key configured)
+- column: payload.rule_id
+  source: week5_events
+  description: Event-type-specific data payload. Schema varies by event_type.
+  business_rule: must validate against event_type JSON Schema
+  cross_column: Schema determined by event_type and schema_version fields
+  annotation_method: heuristic (no LLM API key configured)
+- column: payload.rule_version
+  source: week5_events
+  description: Event-type-specific data payload. Schema varies by event_type.
+  business_rule: must validate against event_type JSON Schema
+  cross_column: Schema determined by event_type and schema_version fields
+  annotation_method: heuristic (no LLM API key configured)
+- column: payload.screening_model_version
+  source: week5_events
+  description: Model identifier. Must match known model naming pattern.
+  business_rule: matches pattern ^(claude|gpt)-
+  cross_column: Determines extraction strategy and cost profile
+  annotation_method: heuristic (no LLM API key configured)
+- column: payload.session_id
+  source: week5_events
+  description: Event-type-specific data payload. Schema varies by event_type.
+  business_rule: must validate against event_type JSON Schema
+  cross_column: Schema determined by event_type and schema_version fields
+  annotation_method: heuristic (no LLM API key configured)
+- column: payload.source_stream_id
+  source: week5_events
+  description: Event-type-specific data payload. Schema varies by event_type.
+  business_rule: must validate against event_type JSON Schema
+  cross_column: Schema determined by event_type and schema_version fields
+  annotation_method: heuristic (no LLM API key configured)
+- column: payload.submission_channel
+  source: week5_events
+  description: Event-type-specific data payload. Schema varies by event_type.
+  business_rule: must validate against event_type JSON Schema
+  cross_column: Schema determined by event_type and schema_version fields
+  annotation_method: heuristic (no LLM API key configured)
+- column: payload.summary
+  source: week5_events
+  description: Event-type-specific data payload. Schema varies by event_type.
+  business_rule: must validate against event_type JSON Schema
+  cross_column: Schema determined by event_type and schema_version fields
+  annotation_method: heuristic (no LLM API key configured)
+- column: schema_version
+  source: week5_events
+  description: 'Auto-profiled column. Type: string, cardinality: 1. Sample values:
+    [''1.0'']'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: sequence_number
+  source: week5_events
+  description: 'Auto-profiled column. Type: integer, cardinality: 5.'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)

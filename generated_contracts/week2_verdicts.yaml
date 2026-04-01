@@ -27,14 +27,17 @@ schema:
     type: string
     required: true
     format: iso8601
+    description: ISO 8601 timestamp of when evaluation completed.
   overall_score:
     type: integer
     required: true
     minimum: 1
     maximum: 5
+    description: Weighted average of all criterion scores. Float.
   overall_verdict:
     type: string
     required: true
+    description: 'Final verdict. Must be exactly one of: PASS, FAIL, WARN.'
     enum:
     - PASS
     - FAIL
@@ -43,9 +46,11 @@ schema:
     type: string
     required: true
     format: sha256
+    description: SHA-256 hash of the rubric YAML used for evaluation.
   rubric_version:
     type: string
     required: true
+    description: Semantic version of the rubric (e.g. 3.0.0).
   scores.chief_justice_synthesis.evidence:
     type: array
     required: true
@@ -159,10 +164,13 @@ schema:
   target_ref:
     type: string
     required: true
+    format: url
+    description: Relative path or document ID of the evaluation target.
   verdict_id:
     type: string
     required: true
     format: uuid
+    description: Primary key. UUIDv4. One per evaluation verdict.
     unique: true
 quality:
   type: SodaChecks
@@ -213,3 +221,184 @@ quality:
 lineage:
   upstream: []
   downstream: []
+llm_annotations:
+- column: confidence
+  source: week2_verdicts
+  description: Confidence score for the parent operation. Float 0.0-1.0 where 1.0
+    is highest confidence.
+  business_rule: 0.0 <= value <= 1.0
+  annotation_method: heuristic (no LLM API key configured)
+- column: overall_score
+  source: week2_verdicts
+  description: Evaluation score from rubric-based assessment.
+  business_rule: 1 <= value <= 5 (integer)
+  annotation_method: heuristic (no LLM API key configured)
+- column: overall_verdict
+  source: week2_verdicts
+  description: 'Auto-profiled column. Type: string, cardinality: 3. Sample values:
+    [''FAIL'', ''PASS'', ''WARN'']'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: rubric_version
+  source: week2_verdicts
+  description: 'Auto-profiled column. Type: string, cardinality: 1. Sample values:
+    [''3.0.0'']'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.chief_justice_synthesis.evidence
+  source: week2_verdicts
+  description: Evaluation score from rubric-based assessment.
+  business_rule: 1 <= value <= 5 (integer)
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.chief_justice_synthesis.notes
+  source: week2_verdicts
+  description: Evaluation score from rubric-based assessment.
+  business_rule: 1 <= value <= 5 (integer)
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.chief_justice_synthesis.score
+  source: week2_verdicts
+  description: Evaluation score from rubric-based assessment.
+  business_rule: 1 <= value <= 5 (integer)
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.git_forensic_analysis.evidence
+  source: week2_verdicts
+  description: Evaluation score from rubric-based assessment.
+  business_rule: 1 <= value <= 5 (integer)
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.git_forensic_analysis.notes
+  source: week2_verdicts
+  description: Evaluation score from rubric-based assessment.
+  business_rule: 1 <= value <= 5 (integer)
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.git_forensic_analysis.score
+  source: week2_verdicts
+  description: Evaluation score from rubric-based assessment.
+  business_rule: 1 <= value <= 5 (integer)
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.graph_orchestration.evidence
+  source: week2_verdicts
+  description: Evaluation score from rubric-based assessment.
+  business_rule: 1 <= value <= 5 (integer)
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.graph_orchestration.notes
+  source: week2_verdicts
+  description: Evaluation score from rubric-based assessment.
+  business_rule: 1 <= value <= 5 (integer)
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.graph_orchestration.score
+  source: week2_verdicts
+  description: Evaluation score from rubric-based assessment.
+  business_rule: 1 <= value <= 5 (integer)
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.judicial_nuance.evidence
+  source: week2_verdicts
+  description: Evaluation score from rubric-based assessment.
+  business_rule: 1 <= value <= 5 (integer)
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.judicial_nuance.notes
+  source: week2_verdicts
+  description: Evaluation score from rubric-based assessment.
+  business_rule: 1 <= value <= 5 (integer)
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.judicial_nuance.score
+  source: week2_verdicts
+  description: Evaluation score from rubric-based assessment.
+  business_rule: 1 <= value <= 5 (integer)
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.report_accuracy.evidence
+  source: week2_verdicts
+  description: Evaluation score from rubric-based assessment.
+  business_rule: 1 <= value <= 5 (integer)
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.report_accuracy.notes
+  source: week2_verdicts
+  description: Evaluation score from rubric-based assessment.
+  business_rule: 1 <= value <= 5 (integer)
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.report_accuracy.score
+  source: week2_verdicts
+  description: Evaluation score from rubric-based assessment.
+  business_rule: 1 <= value <= 5 (integer)
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.safe_tool_engineering.evidence
+  source: week2_verdicts
+  description: Evaluation score from rubric-based assessment.
+  business_rule: 1 <= value <= 5 (integer)
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.safe_tool_engineering.notes
+  source: week2_verdicts
+  description: Evaluation score from rubric-based assessment.
+  business_rule: 1 <= value <= 5 (integer)
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.safe_tool_engineering.score
+  source: week2_verdicts
+  description: Evaluation score from rubric-based assessment.
+  business_rule: 1 <= value <= 5 (integer)
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.state_management_rigor.evidence
+  source: week2_verdicts
+  description: Evaluation score from rubric-based assessment.
+  business_rule: 1 <= value <= 5 (integer)
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.state_management_rigor.notes
+  source: week2_verdicts
+  description: Evaluation score from rubric-based assessment.
+  business_rule: 1 <= value <= 5 (integer)
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.state_management_rigor.score
+  source: week2_verdicts
+  description: Evaluation score from rubric-based assessment.
+  business_rule: 1 <= value <= 5 (integer)
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.structured_output_enforcement.evidence
+  source: week2_verdicts
+  description: Evaluation score from rubric-based assessment.
+  business_rule: 1 <= value <= 5 (integer)
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.structured_output_enforcement.notes
+  source: week2_verdicts
+  description: Evaluation score from rubric-based assessment.
+  business_rule: 1 <= value <= 5 (integer)
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.structured_output_enforcement.score
+  source: week2_verdicts
+  description: Evaluation score from rubric-based assessment.
+  business_rule: 1 <= value <= 5 (integer)
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.swarm_visual.evidence
+  source: week2_verdicts
+  description: Evaluation score from rubric-based assessment.
+  business_rule: 1 <= value <= 5 (integer)
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.swarm_visual.notes
+  source: week2_verdicts
+  description: Evaluation score from rubric-based assessment.
+  business_rule: 1 <= value <= 5 (integer)
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.swarm_visual.score
+  source: week2_verdicts
+  description: Evaluation score from rubric-based assessment.
+  business_rule: 1 <= value <= 5 (integer)
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.theoretical_depth.evidence
+  source: week2_verdicts
+  description: Evaluation score from rubric-based assessment.
+  business_rule: 1 <= value <= 5 (integer)
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.theoretical_depth.notes
+  source: week2_verdicts
+  description: Evaluation score from rubric-based assessment.
+  business_rule: 1 <= value <= 5 (integer)
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.theoretical_depth.score
+  source: week2_verdicts
+  description: Evaluation score from rubric-based assessment.
+  business_rule: 1 <= value <= 5 (integer)
+  annotation_method: heuristic (no LLM API key configured)
+- column: target_ref
+  source: week2_verdicts
+  description: 'Auto-profiled column. Type: string, cardinality: 4. Sample values:
+    [''https://github.com/IbnuEyni/10Acweek2.git'', ''https://github.com/ermiyas111/automaton-auditor'',
+    ''https://github.com/abdurezakarage/Automaton-Auditor'']'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)

@@ -20,9 +20,12 @@ schema:
     type: string
     required: true
     format: iso8601
+    description: ISO 8601 timestamp of when the snapshot was taken.
   codebase_root:
     type: string
     required: true
+    format: path
+    description: Absolute path to the root of the analysed codebase.
   edges:
     type: array
     required: true
@@ -46,6 +49,8 @@ schema:
   git_commit:
     type: string
     required: true
+    format: sha40
+    description: 40-character hex SHA of the git commit analysed.
     pattern: ^[a-f0-9]{40}$
   nodes:
     type: array
@@ -83,6 +88,7 @@ schema:
     type: string
     required: true
     format: uuid
+    description: Primary key. UUIDv4. One per lineage snapshot.
     unique: true
 quality:
   type: SodaChecks
@@ -109,3 +115,86 @@ lineage:
     - nodes[*].node_id
     - edges[*].source
     - edges[*].target
+llm_annotations:
+- column: codebase_root
+  source: week4_lineage
+  description: 'Auto-profiled column. Type: string, cardinality: 4. Sample values:
+    [''/home/shuaib/Desktop/python/10Acd/10AcWeek4'', ''/home/shuaib/Desktop/python/10Acd/10AcWeek4/ol-data-platform'',
+    ''/home/shuaib/Desktop/python/10Acd/10AcWeek4/test_repo'']'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: edges
+  source: week4_lineage
+  description: 'Auto-profiled column. Type: array, cardinality: 4.'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: edges[*].confidence
+  source: week4_lineage
+  description: Confidence score for the parent operation. Float 0.0-1.0 where 1.0
+    is highest confidence.
+  business_rule: 0.0 <= value <= 1.0
+  annotation_method: heuristic (no LLM API key configured)
+- column: edges[*].relationship
+  source: week4_lineage
+  description: 'Auto-profiled column. Type: string, cardinality: 1. Sample values:
+    [''IMPORTS'']'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: edges[*].source
+  source: week4_lineage
+  description: 'Auto-profiled column. Type: string, cardinality: 3. Sample values:
+    [''file::test_select_exclude_snapshot.py'', ''file::.github/workflows/scripts/dbt_cloud_run_job.py'',
+    ''file::bin/dbt-local-dev.py'']'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: edges[*].target
+  source: week4_lineage
+  description: 'Auto-profiled column. Type: string, cardinality: 1. Sample values:
+    [''file::os.py'']'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: nodes
+  source: week4_lineage
+  description: 'Auto-profiled column. Type: array, cardinality: 4.'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: nodes[*].label
+  source: week4_lineage
+  description: 'Auto-profiled column. Type: string, cardinality: 4. Sample values:
+    [''dbt-local-dev.py'', ''main.py'', ''test_select_exclude_snapshot.py'']'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: nodes[*].metadata.language
+  source: week4_lineage
+  description: 'Auto-profiled column. Type: string, cardinality: 1. Sample values:
+    [''python'']'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: nodes[*].metadata.path
+  source: week4_lineage
+  description: File system or URL path reference.
+  business_rule: non-empty string
+  annotation_method: heuristic (no LLM API key configured)
+- column: nodes[*].metadata.purpose
+  source: week4_lineage
+  description: 'Auto-profiled column. Type: string, cardinality: 3. Sample values:
+    ['''', "This module tests dbt''s snapshot selection and exclusion functionality,
+    ensuring that users can selectively run specific snapshots using --select and
+    --exclude flags. It validates that snapshot filter", ''This module provides a
+    unified command-line interface for local dbt development using DuckDB and AWS
+    Glue Iceberg tables, facilitating the registration of Iceberg tables as DuckDB
+    views, testing conne'']'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: nodes[*].node_id
+  source: week4_lineage
+  description: 'Auto-profiled column. Type: string, cardinality: 4. Sample values:
+    [''file::test_select_exclude_snapshot.py'', ''file::.github/workflows/scripts/dbt_cloud_run_job.py'',
+    ''file::main.py'']'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: nodes[*].type
+  source: week4_lineage
+  description: 'Categorical type field. Observed values: [''FILE'']'
+  business_rule: value in ['FILE']
+  annotation_method: heuristic (no LLM API key configured)

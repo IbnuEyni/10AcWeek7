@@ -42,6 +42,7 @@ schema:
     type: string
   inputs.repo_url:
     type: string
+    format: url
   inputs.strategy:
     type: string
   inputs.target:
@@ -121,3 +122,100 @@ quality:
 lineage:
   upstream: []
   downstream: []
+llm_annotations:
+- column: completion_tokens
+  source: langsmith_traces
+  description: Token count metric for LLM operations. Must be non-negative integer.
+  business_rule: value >= 0
+  annotation_method: heuristic (no LLM API key configured)
+- column: error
+  source: langsmith_traces
+  description: 'Auto-profiled column. Type: null, cardinality: 0.'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: inputs.criterion
+  source: langsmith_traces
+  description: 'Auto-profiled column. Type: string, cardinality: 5. Sample values:
+    [''chief_justice'', ''evidence_aggregator'', ''prosecutor'']'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: inputs.evidence
+  source: langsmith_traces
+  description: 'Auto-profiled column. Type: string, cardinality: 10. Sample values:
+    [''Generated FDE Day-One onboarding brief'', ''Total time: 3.61s, Nodes: 179,
+    Edges: 65'', ''Generated documentation for 179 nodes'']'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: inputs.repo_url
+  source: langsmith_traces
+  description: 'Auto-profiled column. Type: string, cardinality: 1. Sample values:
+    [''https://github.com/IbnuEyni/10Acweek2'']'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: inputs.strategy
+  source: langsmith_traces
+  description: 'Auto-profiled column. Type: string, cardinality: 2. Sample values:
+    [''layout_aware'', ''vision_augmented'']'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: inputs.target
+  source: langsmith_traces
+  description: 'Auto-profiled column. Type: string, cardinality: 5. Sample values:
+    [''/home/shuaib/Desktop/python/10Acd/10AcWeek4/dbt-core/tests/functional/snapshots/.cartography/CODEBASE.md'',
+    ''/home/shuaib/Desktop/python/10Acd/10AcWeek4/dbt-core/tests/functional/snapshots'',
+    ''/home/shuaib/Desktop/python/10Acd/10AcWeek4/dbt-core/tests/functional/snapshots/.cartography/semantic_index'']'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: name
+  source: langsmith_traces
+  description: 'Auto-profiled column. Type: string, cardinality: 15. Sample values:
+    [''extraction_vision_augmented'', ''Orchestrator.initialize_graph'', ''Orchestrator.start_analysis'']'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: outputs.argument
+  source: langsmith_traces
+  description: 'Auto-profiled column. Type: string, cardinality: 5. Sample values:
+    [''tech_lead opinion'', ''defense opinion'', ''prosecutor opinion'']'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: outputs.confidence
+  source: langsmith_traces
+  description: Confidence score for the parent operation. Float 0.0-1.0 where 1.0
+    is highest confidence.
+  business_rule: 0.0 <= value <= 1.0
+  annotation_method: heuristic (no LLM API key configured)
+- column: outputs.overall_score
+  source: langsmith_traces
+  description: Evaluation score from rubric-based assessment.
+  business_rule: 1 <= value <= 5 (integer)
+  annotation_method: heuristic (no LLM API key configured)
+- column: outputs.score
+  source: langsmith_traces
+  description: Evaluation score from rubric-based assessment.
+  business_rule: 1 <= value <= 5 (integer)
+  annotation_method: heuristic (no LLM API key configured)
+- column: prompt_tokens
+  source: langsmith_traces
+  description: Token count metric for LLM operations. Must be non-negative integer.
+  business_rule: value >= 0
+  annotation_method: heuristic (no LLM API key configured)
+- column: run_type
+  source: langsmith_traces
+  description: 'Categorical type field. Observed values: [''llm'', ''chain'']'
+  business_rule: value in ['llm', 'chain']
+  annotation_method: heuristic (no LLM API key configured)
+- column: tags
+  source: langsmith_traces
+  description: 'Auto-profiled column. Type: array, cardinality: 11.'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: total_cost
+  source: langsmith_traces
+  description: Monetary cost in USD for the operation.
+  business_rule: value >= 0.0
+  annotation_method: heuristic (no LLM API key configured)
+- column: total_tokens
+  source: langsmith_traces
+  description: Token count metric for LLM operations. Must be non-negative integer.
+  business_rule: value >= 0
+  annotation_method: heuristic (no LLM API key configured)

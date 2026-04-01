@@ -4,7 +4,7 @@ models:
   description: dbt schema for week3-document-refinery-extractions
   columns:
   - name: doc_id
-    description: ''
+    description: Primary key. UUIDv4. Stable across re-extractions of the same source.
     tests:
     - not_null
     - unique
@@ -13,7 +13,7 @@ models:
     tests:
     - not_null
   - name: extracted_at
-    description: ''
+    description: ISO 8601 timestamp of when extraction completed.
     tests:
     - not_null
   - name: extracted_facts
@@ -21,19 +21,19 @@ models:
     tests:
     - not_null
   - name: extraction_model
-    description: ''
+    description: Model identifier. Must match pattern claude-* or gpt-*.
     tests:
     - not_null
   - name: processing_time_ms
-    description: ''
+    description: Wall-clock extraction time in milliseconds. Positive integer.
     tests:
     - not_null
   - name: source_hash
-    description: ''
+    description: SHA-256 of the source file. Changes iff the source content changes.
     tests:
     - not_null
   - name: source_path
-    description: ''
+    description: Absolute path or URL to the source document.
     tests:
     - not_null
   - name: token_count.input
@@ -44,3 +44,9 @@ models:
     description: ''
     tests:
     - not_null
+  - name: extracted_facts_entity_refs
+    description: 'Foreign key: extracted_facts[*].entity_refs references entities[*].entity_id'
+    tests:
+    - relationships:
+        to: ref('week3_extractions')
+        field: entities_entity_id

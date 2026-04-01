@@ -4,21 +4,21 @@ models:
   description: dbt schema for week5-event-sourcing-platform-events
   columns:
   - name: aggregate_id
-    description: ''
+    description: Identifier of the aggregate this event belongs to.
     tests:
     - not_null
     - unique
   - name: aggregate_type
-    description: ''
+    description: PascalCase aggregate type (e.g. LoanApplication, AgentSession).
     tests:
     - not_null
   - name: event_id
-    description: ''
+    description: Primary key. UUIDv4. Globally unique event identifier.
     tests:
     - not_null
     - unique
   - name: event_type
-    description: ''
+    description: PascalCase event type. Must be registered in schema registry.
     tests:
     - not_null
   - name: metadata.causation_id
@@ -37,7 +37,7 @@ models:
     tests:
     - not_null
   - name: occurred_at
-    description: ''
+    description: ISO 8601 timestamp of when the event occurred in the domain.
     tests:
     - not_null
   - name: payload.agent_id
@@ -176,14 +176,14 @@ models:
     description: ''
     tests: []
   - name: recorded_at
-    description: ''
+    description: ISO 8601 timestamp of when the event was persisted. Must be >= occurred_at.
     tests:
     - not_null
   - name: schema_version
-    description: ''
+    description: Schema version of the event payload.
     tests:
     - not_null
   - name: sequence_number
-    description: ''
+    description: Monotonically increasing per aggregate_id. No gaps, no duplicates.
     tests:
     - not_null

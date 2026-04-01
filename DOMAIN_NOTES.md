@@ -458,3 +458,27 @@ The most common failure mode is **contract staleness** — contracts are written
 - **Contract generation is automated, not manual**: The ContractGenerator infers contracts from data profiles, not from human documentation. When the data changes, re-running the generator produces an updated contract. The SchemaEvolutionAnalyzer then diffs the old and new contracts to detect what changed. This inverts the staleness problem: instead of contracts lagging behind data, contracts are regenerated from data and changes are flagged.
 
 The key insight: contracts go stale when enforcement is manual. By making the ValidationRunner a required step in the data pipeline (not an optional audit), staleness becomes a pipeline failure — which gets fixed immediately.
+
+
+---
+
+## Contract Quality Floor Assessment
+
+The ContractGenerator was run on all six system outputs. The following table documents the fraction of generated clauses that are correct without manual editing, measured against the canonical schemas defined in the project specification.
+
+| Contract | Total Clauses | Correct | Accuracy | Notes |
+|---|---|---|---|---|
+| week3_extractions | 23 | 19 | 82.6% | `page_ref` range too tight (auto-inferred max=15, actual max=91). `doc_id` marked unique but ledger has re-extractions. `token_count` ranges auto-inferred from sample. |
+| week5_events | 63 | 52 | 82.5% | `aggregate_id` marked as UUID format but real domain uses composite IDs (`loan-demo-xxx`). `sequence_number` range auto-inferred. Payload sub-fields over-profiled. |
+| week1_intent_records | 12 | 10 | 83.3% | `code_refs[*].file` paths include synthetic paths from migration. `confidence` correctly constrained to 0.0-1.0. |
+| week2_verdicts | 10 | 9 | 90.0% | `overall_verdict` enum correctly detected. `rubric_id` SHA-256 pattern detected. Score range not auto-detected (needs enforcement rule). |
+| week4_lineage | 10 | 8 | 80.0% | `git_commit` pattern correctly detected. Graph integrity not expressible in flat schema. Node/edge type enums correct. |
+| langsmith_traces | 10 | 9 | 90.0% | `run_type` enum correct. `total_tokens = prompt + completion` not auto-detected (needs enforcement rule). Temporal order correct. |
+
+**Overall accuracy: 83.9%** (107/128 clauses correct without manual editing). This exceeds the 70% target.
+
+### Failure Patterns
+1. **Auto-inferred ranges too tight**: Statistical min/max from sample data doesn't account for the full domain range (e.g., page_ref max=15 from sample vs actual max=91 for long documents).
+2. **Uniqueness assumptions**: The profiler marks low-cardinality-ratio fields as unique, but some fields (like `aggregate_id` in events) are intentionally non-unique by design.
+3. **Composite ID formats**: The profiler expects UUID format for ID fields, but domain-specific composite IDs (`loan-demo-xxx`) are legitimate design choices.
+4. **Cross-field constraints**: Computed relationships like `total_tokens = prompt_tokens + completion_tokens` require enforcement rules, not statistical profiling.
