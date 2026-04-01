@@ -29,10 +29,10 @@ schema:
     format: iso8601
     description: ISO 8601 timestamp of when evaluation completed.
   overall_score:
-    type: integer
+    type: number
     required: true
-    minimum: 1
-    maximum: 5
+    minimum: 1.0
+    maximum: 5.0
     description: Weighted average of all criterion scores. Float.
   overall_verdict:
     type: string
@@ -236,7 +236,7 @@ llm_annotations:
 - column: overall_verdict
   source: week2_verdicts
   description: 'Auto-profiled column. Type: string, cardinality: 3. Sample values:
-    [''FAIL'', ''PASS'', ''WARN'']'
+    [''PASS'', ''WARN'', ''FAIL'']'
   business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: rubric_version
@@ -247,158 +247,168 @@ llm_annotations:
   annotation_method: heuristic (no LLM API key configured)
 - column: scores.chief_justice_synthesis.evidence
   source: week2_verdicts
-  description: Evaluation score from rubric-based assessment.
-  business_rule: 1 <= value <= 5 (integer)
+  description: 'Auto-profiled column. Type: array, cardinality: 14.'
+  business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: scores.chief_justice_synthesis.notes
   source: week2_verdicts
-  description: Evaluation score from rubric-based assessment.
-  business_rule: 1 <= value <= 5 (integer)
+  description: 'Auto-profiled column. Type: string, cardinality: 1. Sample values:
+    [''Evaluated by multi-agent courtroom system'']'
+  business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: scores.chief_justice_synthesis.score
   source: week2_verdicts
-  description: Evaluation score from rubric-based assessment.
+  description: Rubric criterion score. Integer 1-5 where 5 is highest.
   business_rule: 1 <= value <= 5 (integer)
   annotation_method: heuristic (no LLM API key configured)
 - column: scores.git_forensic_analysis.evidence
   source: week2_verdicts
-  description: Evaluation score from rubric-based assessment.
-  business_rule: 1 <= value <= 5 (integer)
+  description: 'Auto-profiled column. Type: array, cardinality: 14.'
+  business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: scores.git_forensic_analysis.notes
   source: week2_verdicts
-  description: Evaluation score from rubric-based assessment.
-  business_rule: 1 <= value <= 5 (integer)
+  description: 'Auto-profiled column. Type: string, cardinality: 1. Sample values:
+    [''Evaluated by multi-agent courtroom system'']'
+  business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: scores.git_forensic_analysis.score
   source: week2_verdicts
-  description: Evaluation score from rubric-based assessment.
+  description: Rubric criterion score. Integer 1-5 where 5 is highest.
   business_rule: 1 <= value <= 5 (integer)
   annotation_method: heuristic (no LLM API key configured)
 - column: scores.graph_orchestration.evidence
   source: week2_verdicts
-  description: Evaluation score from rubric-based assessment.
-  business_rule: 1 <= value <= 5 (integer)
+  description: 'Auto-profiled column. Type: array, cardinality: 14.'
+  business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: scores.graph_orchestration.notes
   source: week2_verdicts
-  description: Evaluation score from rubric-based assessment.
-  business_rule: 1 <= value <= 5 (integer)
+  description: 'Auto-profiled column. Type: string, cardinality: 1. Sample values:
+    [''Evaluated by multi-agent courtroom system'']'
+  business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: scores.graph_orchestration.score
   source: week2_verdicts
-  description: Evaluation score from rubric-based assessment.
+  description: Rubric criterion score. Integer 1-5 where 5 is highest.
   business_rule: 1 <= value <= 5 (integer)
   annotation_method: heuristic (no LLM API key configured)
 - column: scores.judicial_nuance.evidence
   source: week2_verdicts
-  description: Evaluation score from rubric-based assessment.
-  business_rule: 1 <= value <= 5 (integer)
+  description: 'Auto-profiled column. Type: array, cardinality: 14.'
+  business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: scores.judicial_nuance.notes
   source: week2_verdicts
-  description: Evaluation score from rubric-based assessment.
-  business_rule: 1 <= value <= 5 (integer)
+  description: 'Auto-profiled column. Type: string, cardinality: 1. Sample values:
+    [''Evaluated by multi-agent courtroom system'']'
+  business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: scores.judicial_nuance.score
   source: week2_verdicts
-  description: Evaluation score from rubric-based assessment.
+  description: Rubric criterion score. Integer 1-5 where 5 is highest.
   business_rule: 1 <= value <= 5 (integer)
   annotation_method: heuristic (no LLM API key configured)
 - column: scores.report_accuracy.evidence
   source: week2_verdicts
-  description: Evaluation score from rubric-based assessment.
-  business_rule: 1 <= value <= 5 (integer)
+  description: 'Auto-profiled column. Type: array, cardinality: 14.'
+  business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: scores.report_accuracy.notes
   source: week2_verdicts
-  description: Evaluation score from rubric-based assessment.
-  business_rule: 1 <= value <= 5 (integer)
+  description: 'Auto-profiled column. Type: string, cardinality: 1. Sample values:
+    [''Evaluated by multi-agent courtroom system'']'
+  business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: scores.report_accuracy.score
   source: week2_verdicts
-  description: Evaluation score from rubric-based assessment.
+  description: Rubric criterion score. Integer 1-5 where 5 is highest.
   business_rule: 1 <= value <= 5 (integer)
   annotation_method: heuristic (no LLM API key configured)
 - column: scores.safe_tool_engineering.evidence
   source: week2_verdicts
-  description: Evaluation score from rubric-based assessment.
-  business_rule: 1 <= value <= 5 (integer)
+  description: 'Auto-profiled column. Type: array, cardinality: 14.'
+  business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: scores.safe_tool_engineering.notes
   source: week2_verdicts
-  description: Evaluation score from rubric-based assessment.
-  business_rule: 1 <= value <= 5 (integer)
+  description: 'Auto-profiled column. Type: string, cardinality: 1. Sample values:
+    [''Evaluated by multi-agent courtroom system'']'
+  business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: scores.safe_tool_engineering.score
   source: week2_verdicts
-  description: Evaluation score from rubric-based assessment.
+  description: Rubric criterion score. Integer 1-5 where 5 is highest.
   business_rule: 1 <= value <= 5 (integer)
   annotation_method: heuristic (no LLM API key configured)
 - column: scores.state_management_rigor.evidence
   source: week2_verdicts
-  description: Evaluation score from rubric-based assessment.
-  business_rule: 1 <= value <= 5 (integer)
+  description: 'Auto-profiled column. Type: array, cardinality: 14.'
+  business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: scores.state_management_rigor.notes
   source: week2_verdicts
-  description: Evaluation score from rubric-based assessment.
-  business_rule: 1 <= value <= 5 (integer)
+  description: 'Auto-profiled column. Type: string, cardinality: 1. Sample values:
+    [''Evaluated by multi-agent courtroom system'']'
+  business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: scores.state_management_rigor.score
   source: week2_verdicts
-  description: Evaluation score from rubric-based assessment.
+  description: Rubric criterion score. Integer 1-5 where 5 is highest.
   business_rule: 1 <= value <= 5 (integer)
   annotation_method: heuristic (no LLM API key configured)
 - column: scores.structured_output_enforcement.evidence
   source: week2_verdicts
-  description: Evaluation score from rubric-based assessment.
-  business_rule: 1 <= value <= 5 (integer)
+  description: 'Auto-profiled column. Type: array, cardinality: 14.'
+  business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: scores.structured_output_enforcement.notes
   source: week2_verdicts
-  description: Evaluation score from rubric-based assessment.
-  business_rule: 1 <= value <= 5 (integer)
+  description: 'Auto-profiled column. Type: string, cardinality: 1. Sample values:
+    [''Evaluated by multi-agent courtroom system'']'
+  business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: scores.structured_output_enforcement.score
   source: week2_verdicts
-  description: Evaluation score from rubric-based assessment.
+  description: Rubric criterion score. Integer 1-5 where 5 is highest.
   business_rule: 1 <= value <= 5 (integer)
   annotation_method: heuristic (no LLM API key configured)
 - column: scores.swarm_visual.evidence
   source: week2_verdicts
-  description: Evaluation score from rubric-based assessment.
-  business_rule: 1 <= value <= 5 (integer)
+  description: 'Auto-profiled column. Type: array, cardinality: 14.'
+  business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: scores.swarm_visual.notes
   source: week2_verdicts
-  description: Evaluation score from rubric-based assessment.
-  business_rule: 1 <= value <= 5 (integer)
+  description: 'Auto-profiled column. Type: string, cardinality: 1. Sample values:
+    [''Evaluated by multi-agent courtroom system'']'
+  business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: scores.swarm_visual.score
   source: week2_verdicts
-  description: Evaluation score from rubric-based assessment.
+  description: Rubric criterion score. Integer 1-5 where 5 is highest.
   business_rule: 1 <= value <= 5 (integer)
   annotation_method: heuristic (no LLM API key configured)
 - column: scores.theoretical_depth.evidence
   source: week2_verdicts
-  description: Evaluation score from rubric-based assessment.
-  business_rule: 1 <= value <= 5 (integer)
+  description: 'Auto-profiled column. Type: array, cardinality: 14.'
+  business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: scores.theoretical_depth.notes
   source: week2_verdicts
-  description: Evaluation score from rubric-based assessment.
-  business_rule: 1 <= value <= 5 (integer)
+  description: 'Auto-profiled column. Type: string, cardinality: 1. Sample values:
+    [''Evaluated by multi-agent courtroom system'']'
+  business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: scores.theoretical_depth.score
   source: week2_verdicts
-  description: Evaluation score from rubric-based assessment.
+  description: Rubric criterion score. Integer 1-5 where 5 is highest.
   business_rule: 1 <= value <= 5 (integer)
   annotation_method: heuristic (no LLM API key configured)
 - column: target_ref
   source: week2_verdicts
   description: 'Auto-profiled column. Type: string, cardinality: 4. Sample values:
-    [''https://github.com/IbnuEyni/10Acweek2.git'', ''https://github.com/ermiyas111/automaton-auditor'',
+    [''https://github.com/IbnuEyni/10Acweek2'', ''https://github.com/IbnuEyni/10Acweek2.git'',
     ''https://github.com/abdurezakarage/Automaton-Auditor'']'
   business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)

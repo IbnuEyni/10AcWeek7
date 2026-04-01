@@ -33,123 +33,123 @@ models:
     description: Semantic version of the rubric (e.g. 3.0.0).
     tests:
     - not_null
-  - name: scores.chief_justice_synthesis.evidence
+  - name: scores_chief_justice_synthesis_evidence
     description: ''
     tests:
     - not_null
-  - name: scores.chief_justice_synthesis.notes
+  - name: scores_chief_justice_synthesis_notes
     description: ''
     tests:
     - not_null
-  - name: scores.chief_justice_synthesis.score
+  - name: scores_chief_justice_synthesis_score
     description: ''
     tests:
     - not_null
-  - name: scores.git_forensic_analysis.evidence
+  - name: scores_git_forensic_analysis_evidence
     description: ''
     tests:
     - not_null
-  - name: scores.git_forensic_analysis.notes
+  - name: scores_git_forensic_analysis_notes
     description: ''
     tests:
     - not_null
-  - name: scores.git_forensic_analysis.score
+  - name: scores_git_forensic_analysis_score
     description: ''
     tests:
     - not_null
-  - name: scores.graph_orchestration.evidence
+  - name: scores_graph_orchestration_evidence
     description: ''
     tests:
     - not_null
-  - name: scores.graph_orchestration.notes
+  - name: scores_graph_orchestration_notes
     description: ''
     tests:
     - not_null
-  - name: scores.graph_orchestration.score
+  - name: scores_graph_orchestration_score
     description: ''
     tests:
     - not_null
-  - name: scores.judicial_nuance.evidence
+  - name: scores_judicial_nuance_evidence
     description: ''
     tests:
     - not_null
-  - name: scores.judicial_nuance.notes
+  - name: scores_judicial_nuance_notes
     description: ''
     tests:
     - not_null
-  - name: scores.judicial_nuance.score
+  - name: scores_judicial_nuance_score
     description: ''
     tests:
     - not_null
-  - name: scores.report_accuracy.evidence
+  - name: scores_report_accuracy_evidence
     description: ''
     tests:
     - not_null
-  - name: scores.report_accuracy.notes
+  - name: scores_report_accuracy_notes
     description: ''
     tests:
     - not_null
-  - name: scores.report_accuracy.score
+  - name: scores_report_accuracy_score
     description: ''
     tests:
     - not_null
-  - name: scores.safe_tool_engineering.evidence
+  - name: scores_safe_tool_engineering_evidence
     description: ''
     tests:
     - not_null
-  - name: scores.safe_tool_engineering.notes
+  - name: scores_safe_tool_engineering_notes
     description: ''
     tests:
     - not_null
-  - name: scores.safe_tool_engineering.score
+  - name: scores_safe_tool_engineering_score
     description: ''
     tests:
     - not_null
-  - name: scores.state_management_rigor.evidence
+  - name: scores_state_management_rigor_evidence
     description: ''
     tests:
     - not_null
-  - name: scores.state_management_rigor.notes
+  - name: scores_state_management_rigor_notes
     description: ''
     tests:
     - not_null
-  - name: scores.state_management_rigor.score
+  - name: scores_state_management_rigor_score
     description: ''
     tests:
     - not_null
-  - name: scores.structured_output_enforcement.evidence
+  - name: scores_structured_output_enforcement_evidence
     description: ''
     tests:
     - not_null
-  - name: scores.structured_output_enforcement.notes
+  - name: scores_structured_output_enforcement_notes
     description: ''
     tests:
     - not_null
-  - name: scores.structured_output_enforcement.score
+  - name: scores_structured_output_enforcement_score
     description: ''
     tests:
     - not_null
-  - name: scores.swarm_visual.evidence
+  - name: scores_swarm_visual_evidence
     description: ''
     tests:
     - not_null
-  - name: scores.swarm_visual.notes
+  - name: scores_swarm_visual_notes
     description: ''
     tests:
     - not_null
-  - name: scores.swarm_visual.score
+  - name: scores_swarm_visual_score
     description: ''
     tests:
     - not_null
-  - name: scores.theoretical_depth.evidence
+  - name: scores_theoretical_depth_evidence
     description: ''
     tests:
     - not_null
-  - name: scores.theoretical_depth.notes
+  - name: scores_theoretical_depth_notes
     description: ''
     tests:
     - not_null
-  - name: scores.theoretical_depth.score
+  - name: scores_theoretical_depth_score
     description: ''
     tests:
     - not_null
@@ -162,3 +162,6 @@ models:
     tests:
     - not_null
     - unique
+  tests:
+  - dbt_utils.expression_is_true:
+      expression: overall_score >= 1.0 and overall_score <= 5.0

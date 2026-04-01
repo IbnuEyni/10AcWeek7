@@ -4,7 +4,7 @@ models:
   description: dbt schema for langsmith-trace-records
   columns:
   - name: completion_tokens
-    description: ''
+    description: Completion token count. Must be non-negative integer.
     tests:
     - not_null
   - name: end_time
@@ -19,47 +19,46 @@ models:
     tests:
     - not_null
     - unique
-  - name: inputs.criterion
+  - name: inputs_criterion
     description: ''
     tests: []
-  - name: inputs.doc_id
-    description: ''
-    tests:
-    - unique
-  - name: inputs.evidence
+  - name: inputs_doc_id
     description: ''
     tests: []
-  - name: inputs.repo_url
+  - name: inputs_evidence
     description: ''
     tests: []
-  - name: inputs.strategy
+  - name: inputs_repo_url
     description: ''
     tests: []
-  - name: inputs.target
+  - name: inputs_strategy
+    description: ''
+    tests: []
+  - name: inputs_target
     description: ''
     tests: []
   - name: name
     description: ''
     tests:
     - not_null
-  - name: outputs.argument
+  - name: outputs_argument
     description: ''
     tests: []
-  - name: outputs.confidence
+  - name: outputs_confidence
+    description: Confidence score. MUST be float 0.0-1.0. BREAKING CHANGE if changed
+      to 0-100.
+    tests: []
+  - name: outputs_overall_score
     description: ''
     tests: []
-  - name: outputs.overall_score
-    description: ''
-    tests: []
-  - name: outputs.score
+  - name: outputs_score
     description: ''
     tests: []
   - name: parent_run_id
     description: ''
-    tests:
-    - unique
+    tests: []
   - name: prompt_tokens
-    description: ''
+    description: Prompt token count. Must be non-negative integer.
     tests:
     - not_null
   - name: run_type
@@ -77,7 +76,6 @@ models:
     description: ''
     tests:
     - not_null
-    - unique
   - name: start_time
     description: ''
     tests:
@@ -87,10 +85,15 @@ models:
     tests:
     - not_null
   - name: total_cost
-    description: ''
+    description: Monetary cost in USD. Must be non-negative.
     tests:
     - not_null
   - name: total_tokens
-    description: ''
+    description: Total token count. Must equal prompt_tokens + completion_tokens.
     tests:
     - not_null
+  tests:
+  - dbt_utils.expression_is_true:
+      expression: end_time >= start_time
+  - dbt_utils.expression_is_true:
+      expression: total_tokens = prompt_tokens + completion_tokens

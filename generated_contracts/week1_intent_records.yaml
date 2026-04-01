@@ -98,7 +98,7 @@ llm_annotations:
 - column: code_refs[*].file
   source: week1_intent_records
   description: 'Auto-profiled column. Type: string, cardinality: 17. Sample values:
-    [''src/execute_command.ts'', ''src/apply_diff.ts'', ''.orchestration/intent_map.md'']'
+    [''src/utils/helper.ts'', ''src'', ''.'']'
   business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: code_refs[*].line_end
@@ -114,14 +114,14 @@ llm_annotations:
 - column: code_refs[*].symbol
   source: week1_intent_records
   description: 'Auto-profiled column. Type: string, cardinality: 10. Sample values:
-    [''execute_command'', ''search_files'', ''apply_diff'']'
+    [''execute_command'', ''ask_followup_question'', ''list_files'']'
   business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: description
   source: week1_intent_records
   description: 'Auto-profiled column. Type: string, cardinality: 20. Sample values:
-    [''Implement basic math operations via attempt_completion'', ''Agent action: read_file
-    via read_file'', ''Agent action: list_files via list_files'']'
+    [''Implement basic math operations via update_todo_list'', ''Implement text manipulation
+    utilities via write_to_file'', ''Agent action: select_active_intent via select_active_intent'']'
   business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: governance_tags

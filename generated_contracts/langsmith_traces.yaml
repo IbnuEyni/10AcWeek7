@@ -19,8 +19,8 @@ schema:
   completion_tokens:
     type: integer
     required: true
-    minimum: 113.0
-    maximum: 2709.0
+    minimum: 0
+    description: Completion token count. Must be non-negative integer.
   end_time:
     type: string
     required: true
@@ -36,8 +36,6 @@ schema:
     type: string
   inputs.doc_id:
     type: string
-    format: uuid
-    unique: true
   inputs.evidence:
     type: string
   inputs.repo_url:
@@ -53,7 +51,11 @@ schema:
   outputs.argument:
     type: string
   outputs.confidence:
-    type: string
+    type: number
+    minimum: 0.0
+    maximum: 1.0
+    description: Confidence score. MUST be float 0.0-1.0. BREAKING CHANGE if changed
+      to 0-100.
   outputs.overall_score:
     type: number
     minimum: 3.5
@@ -64,13 +66,11 @@ schema:
     maximum: 5.0
   parent_run_id:
     type: string
-    format: uuid
-    unique: true
   prompt_tokens:
     type: integer
     required: true
-    minimum: 608.0
-    maximum: 7904.0
+    minimum: 0
+    description: Prompt token count. Must be non-negative integer.
   run_type:
     type: string
     required: true
@@ -83,8 +83,6 @@ schema:
   session_id:
     type: string
     required: true
-    format: uuid
-    unique: true
   start_time:
     type: string
     required: true
@@ -95,13 +93,13 @@ schema:
   total_cost:
     type: number
     required: true
-    minimum: 0.0051
-    maximum: 0.0571
+    minimum: 0.0
+    description: Monetary cost in USD. Must be non-negative.
   total_tokens:
     type: integer
     required: true
-    minimum: 913.0
-    maximum: 9950.0
+    minimum: 0
+    description: Total token count. Must equal prompt_tokens + completion_tokens.
 quality:
   type: SodaChecks
   specification:
@@ -118,6 +116,8 @@ quality:
     - missing_count(total_cost) = 0
     - missing_count(total_tokens) = 0
     - duplicate_count(id) = 0
+    - min(outputs.confidence_min) >= 0.0
+    - max(outputs.confidence_max) <= 1.0
     - row_count >= 1
 lineage:
   upstream: []
@@ -136,14 +136,14 @@ llm_annotations:
 - column: inputs.criterion
   source: langsmith_traces
   description: 'Auto-profiled column. Type: string, cardinality: 5. Sample values:
-    [''chief_justice'', ''evidence_aggregator'', ''prosecutor'']'
+    [''evidence_aggregator'', ''defense'', ''chief_justice'']'
   business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: inputs.evidence
   source: langsmith_traces
   description: 'Auto-profiled column. Type: string, cardinality: 10. Sample values:
-    [''Generated FDE Day-One onboarding brief'', ''Total time: 3.61s, Nodes: 179,
-    Edges: 65'', ''Generated documentation for 179 nodes'']'
+    [''Mode: Full, LLM: True'', ''Generated FDE Day-One onboarding brief'', ''Total
+    time: 149.80s, Nodes: 179, Edges: 65'']'
   business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: inputs.repo_url
@@ -161,21 +161,20 @@ llm_annotations:
 - column: inputs.target
   source: langsmith_traces
   description: 'Auto-profiled column. Type: string, cardinality: 5. Sample values:
-    [''/home/shuaib/Desktop/python/10Acd/10AcWeek4/dbt-core/tests/functional/snapshots/.cartography/CODEBASE.md'',
-    ''/home/shuaib/Desktop/python/10Acd/10AcWeek4/dbt-core/tests/functional/snapshots'',
-    ''/home/shuaib/Desktop/python/10Acd/10AcWeek4/dbt-core/tests/functional/snapshots/.cartography/semantic_index'']'
+    [''KnowledgeGraph'', ''/home/shuaib/Desktop/python/10Acd/10AcWeek4/dbt-core/tests/functional/snapshots'',
+    ''/home/shuaib/Desktop/python/10Acd/10AcWeek4/dbt-core/tests/functional/snapshots/.cartography/CODEBASE.md'']'
   business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: name
   source: langsmith_traces
   description: 'Auto-profiled column. Type: string, cardinality: 15. Sample values:
-    [''extraction_vision_augmented'', ''Orchestrator.initialize_graph'', ''Orchestrator.start_analysis'']'
+    [''Orchestrator.initialize_graph'', ''Orchestrator.complete_analysis'', ''Archivist.build_semantic_index'']'
   business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: outputs.argument
   source: langsmith_traces
   description: 'Auto-profiled column. Type: string, cardinality: 5. Sample values:
-    [''tech_lead opinion'', ''defense opinion'', ''prosecutor opinion'']'
+    [''evidence_aggregator opinion'', ''defense opinion'', ''tech_lead opinion'']'
   business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: outputs.confidence
@@ -191,7 +190,7 @@ llm_annotations:
   annotation_method: heuristic (no LLM API key configured)
 - column: outputs.score
   source: langsmith_traces
-  description: Evaluation score from rubric-based assessment.
+  description: Rubric criterion score. Integer 1-5 where 5 is highest.
   business_rule: 1 <= value <= 5 (integer)
   annotation_method: heuristic (no LLM API key configured)
 - column: prompt_tokens

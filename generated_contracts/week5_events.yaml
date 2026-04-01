@@ -20,8 +20,7 @@ schema:
     type: string
     required: true
     description: Identifier of the aggregate this event belongs to.
-    format: uuid
-    unique: true
+    pattern: ^(loan|agent-session|compliance|audit)-
   aggregate_type:
     type: string
     required: true
@@ -174,9 +173,8 @@ schema:
   sequence_number:
     type: integer
     required: true
-    minimum: 1.0
-    maximum: 5.0
-    description: Monotonically increasing per aggregate_id. No gaps, no duplicates.
+    minimum: 1
+    description: Monotonically increasing per aggregate_id. Starts at 1.
 quality:
   type: SodaChecks
   specification:
@@ -193,7 +191,6 @@ quality:
     - missing_count(schema_version) = 0
     - missing_count(sequence_number) = 0
     - duplicate_count(event_id) = 0
-    - duplicate_count(aggregate_id) = 0
     - row_count >= 1
 lineage:
   upstream: []
@@ -211,23 +208,22 @@ llm_annotations:
 - column: aggregate_id
   source: week5_events
   description: 'Auto-profiled column. Type: string, cardinality: 20. Sample values:
-    [''agent-session-demo-19e40f38'', ''agent-session-demo-09766ab6'', ''loan-demo-19e40f38'']'
+    [''loan-demo-2a7df24b'', ''compliance-demo-19e40f38'', ''compliance-demo-6cd38b46'']'
   business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: aggregate_type
   source: week5_events
-  description: 'Categorical type field. Observed values: [''ComplianceRecord'', ''AgentSession'',
-    ''LoanApplication'', ''AuditLedger'']'
-  business_rule: value in ['ComplianceRecord', 'AgentSession', 'LoanApplication',
-    'AuditLedger']
+  description: 'Categorical type field. Observed values: [''AuditLedger'', ''AgentSession'',
+    ''ComplianceRecord'', ''LoanApplication'']'
+  business_rule: value in ['AuditLedger', 'AgentSession', 'ComplianceRecord', 'LoanApplication']
   annotation_method: heuristic (no LLM API key configured)
 - column: event_type
   source: week5_events
-  description: 'Categorical type field. Observed values: [''HumanReviewCompleted'',
-    ''ApplicationApproved'', ''DecisionGenerated'', ''ComplianceCheckRequested'',
-    ''AuditEntryRecorded'']'
-  business_rule: value in ['HumanReviewCompleted', 'ApplicationApproved', 'DecisionGenerated',
-    'ComplianceCheckRequested', 'AuditEntryRecorded']
+  description: 'Categorical type field. Observed values: [''ApplicationSubmitted'',
+    ''CreditAnalysisCompleted'', ''FraudScreeningCompleted'', ''DecisionGenerated'',
+    ''AgentContextLoaded'']'
+  business_rule: value in ['ApplicationSubmitted', 'CreditAnalysisCompleted', 'FraudScreeningCompleted',
+    'DecisionGenerated', 'AgentContextLoaded']
   annotation_method: heuristic (no LLM API key configured)
 - column: metadata.source_service
   source: week5_events
@@ -238,7 +234,7 @@ llm_annotations:
 - column: metadata.user_id
   source: week5_events
   description: 'Auto-profiled column. Type: string, cardinality: 10. Sample values:
-    [''user-1'', ''user-9'', ''user-5'']'
+    [''user-5'', ''user-4'', ''user-9'']'
   business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: payload.agent_id
@@ -378,8 +374,8 @@ llm_annotations:
   annotation_method: heuristic (no LLM API key configured)
 - column: payload.fraud_score
   source: week5_events
-  description: Evaluation score from rubric-based assessment.
-  business_rule: 1 <= value <= 5 (integer)
+  description: Fraud probability score. Float 0.0-1.0 where higher means more suspicious.
+  business_rule: 0.0 <= value <= 1.0
   annotation_method: heuristic (no LLM API key configured)
 - column: payload.input_data_hash
   source: week5_events

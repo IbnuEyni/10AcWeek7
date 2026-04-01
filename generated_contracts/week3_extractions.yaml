@@ -18,9 +18,7 @@ schema:
   doc_id:
     type: string
     required: true
-    format: uuid
     description: Primary key. UUIDv4. Stable across re-extractions of the same source.
-    unique: true
   entities:
     type: array
     required: true
@@ -69,8 +67,10 @@ schema:
     unique: true
   extracted_facts[*].page_ref:
     type: integer
-    minimum: 0.0
-    maximum: 15.0
+    minimum: 0
+    maximum: 10000
+    description: 'Zero-indexed page number. Nullable. Domain max: PDFs can have thousands
+      of pages.'
   extracted_facts[*].source_excerpt:
     type: string
     required: true
@@ -85,9 +85,9 @@ schema:
   processing_time_ms:
     type: integer
     required: true
-    minimum: 200.0
-    maximum: 1082881.0
-    description: Wall-clock extraction time in milliseconds. Positive integer.
+    minimum: 1
+    description: Wall-clock extraction time in milliseconds. Positive integer, no
+      upper bound.
   source_hash:
     type: string
     required: true
@@ -123,7 +123,6 @@ quality:
     - missing_count(source_path) = 0
     - missing_count(token_count.input) = 0
     - missing_count(token_count.output) = 0
-    - duplicate_count(doc_id) = 0
     - min(extracted_facts_confidence_min) >= 0.0
     - max(extracted_facts_confidence_max) <= 1.0
     - row_count >= 1
@@ -147,21 +146,22 @@ llm_annotations:
   annotation_method: heuristic (no LLM API key configured)
 - column: entities[*].canonical_value
   source: week3_extractions
-  description: 'Auto-profiled column. Type: string, cardinality: 15. Sample values:
-    [''test'', ''figure'', ''quarter'']'
+  description: 'Auto-profiled column. Type: string, cardinality: 211. Sample values:
+    [''revenue'', ''vehicles'', ''government_bond'']'
   business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: entities[*].name
   source: week3_extractions
-  description: 'Auto-profiled column. Type: string, cardinality: 15. Sample values:
-    [''2021 Audited Financial Statement Report'', ''Issue No'', ''CBE Annual Report
-    2012-13'']'
+  description: 'Auto-profiled column. Type: string, cardinality: 211. Sample values:
+    [''Percentage             \n         Shareholder Category          Composition                                \n                                                           Shareholding'',
+    ''Issue No'', ''There'']'
   business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: entities[*].type
   source: week3_extractions
-  description: 'Categorical type field. Observed values: [''OTHER'', ''PERSON'']'
-  business_rule: value in ['OTHER', 'PERSON']
+  description: 'Categorical type field. Observed values: [''OTHER'', ''ORG'', ''AMOUNT'',
+    ''PERSON'', ''DATE'']'
+  business_rule: value in ['OTHER', 'ORG', 'AMOUNT', 'PERSON', 'DATE']
   annotation_method: heuristic (no LLM API key configured)
 - column: extracted_facts
   source: week3_extractions
@@ -176,34 +176,34 @@ llm_annotations:
   annotation_method: heuristic (no LLM API key configured)
 - column: extracted_facts[*].entity_refs
   source: week3_extractions
-  description: 'Auto-profiled column. Type: array, cardinality: 64.'
+  description: 'Auto-profiled column. Type: array, cardinality: 584.'
   business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: extracted_facts[*].page_ref
   source: week3_extractions
-  description: 'Auto-profiled column. Type: integer, cardinality: 2.'
+  description: 'Auto-profiled column. Type: integer, cardinality: 85.'
   business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: extracted_facts[*].source_excerpt
   source: week3_extractions
-  description: 'Auto-profiled column. Type: string, cardinality: 7. Sample values:
-    [''Issue No. 21/2017 March EFY2017\n--------------------------------------------------\n1.
-    Summary\nThe Consumer Price Index (CPI), a key economic statistics, is surveyed,
-    analyzed, and\nmade available to data users on a monthly basis.\nThe year-on-year,
-    general inflation rate (annual percentage change) in'', ''Issue No. 25/2017 July
-    EFY2017 Page 1\n--------------------------------------------------\n1. Summary\nThe
-    Consumer Price Index (CPI), a key economic statistics, is surveyed, analyzed,
-    and\nmade available to data users on a monthly basis.\nThe year-on-year, general
-    inflation rate (annual percentage chang'', ''|  |  |  | \n--------------------------------------------------\n
-    |  |  |  | \n |  |  |  | \n |  |  |  | \n |  |  |  | \n |  |  |  | \n |  |  |  |
-    \n |  |  |  | \n |  |  |  | \n |  |  |  |'']'
+  description: 'Auto-profiled column. Type: string, cardinality: 180. Sample values:
+    ['''', ''Month | General month-to-month inflation\n--------------------------------------------------\nJuly-EFY
+    2016 | 1.5\nAugust | 1.2\nSeptember | 2.4\nOctober | 0.9\nNovember | -0.8\nDecember
+    | 0.8\nJanuary | 0.6\nFebruary | 0.5\nMarch | 2.7\nApril | 0.1\nMay | 0.2\nJune
+    | 0.5\nJuly-EFY 2017 | 1.3'', ''Table 5: 12-month moving average Food and Non-Food
+    Inflation rate (March EFY2016 - March EFY2017)\nBaseline: Dec, EFY2009= 100 |  |
+    \n--------------------------------------------------\nMonth | 12-month moving
+    average Food\nInflation | 12-month moving average Non-Food\nInflation\nMarch-EFY2016
+    | 29.3 | 28'']'
   business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: extracted_facts[*].text
   source: week3_extractions
-  description: 'Auto-profiled column. Type: string, cardinality: 16. Sample values:
-    [''Document processed: CBE Annual Report 2012-13.pdf'', ''Document processed:
-    2013-E.C-Procurement-information.pdf'', ''Document processed: test.pdf'']'
+  description: 'Auto-profiled column. Type: string, cardinality: 202. Sample values:
+    ['''', ''Month | General month-to-month inflation\n--------------------------------------------------\nJuly-EFY
+    2016 | 1.5\nAugust | 1.2\nSeptember | 2.4\nOctober | 0.9\nNovember | -0.8\nDecember
+    | 0.8\nJanuary | 0.6\nFebruary | 0.5\nMarch | 2.7\nApril | 0.1\nMay | 0.2\nJune
+    | 0.5\nJuly-EFY 2017 | 1.3'', ''ETHIOPIAN REINSURANCE ANNUAL REPORT                                 V'']'
   business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: extraction_model

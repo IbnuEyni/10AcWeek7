@@ -31,10 +31,12 @@ schema:
     required: true
   edges[*].confidence:
     type: number
+    required: true
     minimum: 0.85
     maximum: 0.85
   edges[*].relationship:
     type: string
+    required: true
     enum:
     - IMPORTS
     - CALLS
@@ -44,8 +46,10 @@ schema:
     - CONSUMES
   edges[*].source:
     type: string
+    required: true
   edges[*].target:
     type: string
+    required: true
   git_commit:
     type: string
     required: true
@@ -119,8 +123,8 @@ llm_annotations:
 - column: codebase_root
   source: week4_lineage
   description: 'Auto-profiled column. Type: string, cardinality: 4. Sample values:
-    [''/home/shuaib/Desktop/python/10Acd/10AcWeek4'', ''/home/shuaib/Desktop/python/10Acd/10AcWeek4/ol-data-platform'',
-    ''/home/shuaib/Desktop/python/10Acd/10AcWeek4/test_repo'']'
+    [''/home/shuaib/Desktop/python/10Acd/10AcWeek4/ol-data-platform'', ''/home/shuaib/Desktop/python/10Acd/10AcWeek4'',
+    ''/home/shuaib/Desktop/python/10Acd/10AcWeek4/jaffle-shop'']'
   business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: edges
@@ -136,21 +140,23 @@ llm_annotations:
   annotation_method: heuristic (no LLM API key configured)
 - column: edges[*].relationship
   source: week4_lineage
-  description: 'Auto-profiled column. Type: string, cardinality: 1. Sample values:
-    [''IMPORTS'']'
+  description: 'Auto-profiled column. Type: string, cardinality: 3. Sample values:
+    [''CONSUMES'', ''PRODUCES'', ''IMPORTS'']'
   business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: edges[*].source
   source: week4_lineage
-  description: 'Auto-profiled column. Type: string, cardinality: 3. Sample values:
-    [''file::test_select_exclude_snapshot.py'', ''file::.github/workflows/scripts/dbt_cloud_run_job.py'',
-    ''file::bin/dbt-local-dev.py'']'
+  description: 'Auto-profiled column. Type: string, cardinality: 761. Sample values:
+    [''file::src/ol_dbt/models/staging/mitlearn/stg__mitlearn__app__postgres__learning_resources_search_percolatequery_users.sql:sql_transform'',
+    ''file::src/ol_dbt/models/intermediate/edxorg/int__edxorg__mitx_product.sql:sql_transform'',
+    ''file::test_select_exclude_snapshot.py'']'
   business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: edges[*].target
   source: week4_lineage
-  description: 'Auto-profiled column. Type: string, cardinality: 1. Sample values:
-    [''file::os.py'']'
+  description: 'Auto-profiled column. Type: string, cardinality: 1760. Sample values:
+    [''file::stg__mitxpro__app__postgres__ecommerce_couponpayment'', ''file::stg__bootcamps__app__postgres__applications_courserun_applicationstep'',
+    ''file::ol_warehouse_raw_data.raw__xpro__app__postgres__users_legaladdress'']'
   business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: nodes
@@ -160,8 +166,9 @@ llm_annotations:
   annotation_method: heuristic (no LLM API key configured)
 - column: nodes[*].label
   source: week4_lineage
-  description: 'Auto-profiled column. Type: string, cardinality: 4. Sample values:
-    [''dbt-local-dev.py'', ''main.py'', ''test_select_exclude_snapshot.py'']'
+  description: 'Auto-profiled column. Type: string, cardinality: 2998. Sample values:
+    [''irx__mitx__openedx__mysql__assessment_aiclassifier.sql:sql_transform'', ''airbyte.py::AirbyteOSSClient'',
+    ''athena_db.py::run_query'']'
   business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: nodes[*].metadata.language
@@ -177,20 +184,19 @@ llm_annotations:
   annotation_method: heuristic (no LLM API key configured)
 - column: nodes[*].metadata.purpose
   source: week4_lineage
-  description: 'Auto-profiled column. Type: string, cardinality: 3. Sample values:
-    ['''', "This module tests dbt''s snapshot selection and exclusion functionality,
-    ensuring that users can selectively run specific snapshots using --select and
-    --exclude flags. It validates that snapshot filter", ''This module provides a
-    unified command-line interface for local dbt development using DuckDB and AWS
-    Glue Iceberg tables, facilitating the registration of Iceberg tables as DuckDB
-    views, testing conne'']'
+  description: 'Auto-profiled column. Type: string, cardinality: 133. Sample values:
+    ['''', ''This module provides sensors for monitoring Google Cloud Storage (GCS)
+    and Amazon S3 buckets for new files. These sensors trigger Dagster runs when new
+    files meet certain criteria, allowing for automa'', ''This module defines a Dagster
+    pipeline to extract data and course structure from Open edX for use by institutional
+    research, ultimately inserting the data into BigQuery and combining it with informati'']'
   business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: nodes[*].node_id
   source: week4_lineage
-  description: 'Auto-profiled column. Type: string, cardinality: 4. Sample values:
-    [''file::test_select_exclude_snapshot.py'', ''file::.github/workflows/scripts/dbt_cloud_run_job.py'',
-    ''file::main.py'']'
+  description: 'Auto-profiled column. Type: string, cardinality: 3217. Sample values:
+    [''file::stg__mitxpro__app__postgres__ecommerce_couponpayment'', ''file::src/ol_dbt/models/intermediate/edxorg/int__edxorg__mitx_product.sql:sql_transform'',
+    ''file::stg__bootcamps__app__postgres__applications_courserun_applicationstep'']'
   business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: nodes[*].type

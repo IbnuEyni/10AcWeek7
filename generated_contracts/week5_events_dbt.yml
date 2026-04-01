@@ -7,7 +7,6 @@ models:
     description: Identifier of the aggregate this event belongs to.
     tests:
     - not_null
-    - unique
   - name: aggregate_type
     description: PascalCase aggregate type (e.g. LoanApplication, AgentSession).
     tests:
@@ -21,18 +20,18 @@ models:
     description: PascalCase event type. Must be registered in schema registry.
     tests:
     - not_null
-  - name: metadata.causation_id
+  - name: metadata_causation_id
     description: ''
     tests: []
-  - name: metadata.correlation_id
+  - name: metadata_correlation_id
     description: ''
     tests:
     - not_null
-  - name: metadata.source_service
+  - name: metadata_source_service
     description: ''
     tests:
     - not_null
-  - name: metadata.user_id
+  - name: metadata_user_id
     description: ''
     tests:
     - not_null
@@ -40,141 +39,6 @@ models:
     description: ISO 8601 timestamp of when the event occurred in the domain.
     tests:
     - not_null
-  - name: payload.agent_id
-    description: ''
-    tests: []
-  - name: payload.analysis_duration_ms
-    description: ''
-    tests: []
-  - name: payload.anomaly_flags
-    description: ''
-    tests: []
-  - name: payload.applicant_id
-    description: ''
-    tests: []
-  - name: payload.application_id
-    description: ''
-    tests: []
-  - name: payload.approved_amount_usd
-    description: ''
-    tests: []
-  - name: payload.approved_by
-    description: ''
-    tests: []
-  - name: payload.assigned_agent_id
-    description: ''
-    tests: []
-  - name: payload.checks_required
-    description: ''
-    tests: []
-  - name: payload.conditions
-    description: ''
-    tests: []
-  - name: payload.confidence_score
-    description: ''
-    tests: []
-  - name: payload.context_source
-    description: ''
-    tests: []
-  - name: payload.context_token_count
-    description: ''
-    tests: []
-  - name: payload.contributing_agent_sessions
-    description: ''
-    tests: []
-  - name: payload.decision_basis_summary
-    description: ''
-    tests: []
-  - name: payload.effective_date
-    description: ''
-    tests: []
-  - name: payload.entity_id
-    description: ''
-    tests: []
-  - name: payload.entity_type
-    description: ''
-    tests: []
-  - name: payload.event_replay_from_position
-    description: ''
-    tests: []
-  - name: payload.event_type
-    description: ''
-    tests: []
-  - name: payload.evidence_hash
-    description: ''
-    tests: []
-  - name: payload.final_decision
-    description: ''
-    tests: []
-  - name: payload.forced_refer
-    description: ''
-    tests: []
-  - name: payload.fraud_score
-    description: ''
-    tests: []
-  - name: payload.input_data_hash
-    description: ''
-    tests: []
-  - name: payload.interest_rate
-    description: ''
-    tests: []
-  - name: payload.loan_purpose
-    description: ''
-    tests: []
-  - name: payload.model_version
-    description: ''
-    tests: []
-  - name: payload.orchestrator_agent_id
-    description: ''
-    tests: []
-  - name: payload.override
-    description: ''
-    tests: []
-  - name: payload.override_reason
-    description: ''
-    tests: []
-  - name: payload.priority
-    description: ''
-    tests: []
-  - name: payload.recommendation
-    description: ''
-    tests: []
-  - name: payload.recommended_limit_usd
-    description: ''
-    tests: []
-  - name: payload.regulation_set_version
-    description: ''
-    tests: []
-  - name: payload.requested_amount_usd
-    description: ''
-    tests: []
-  - name: payload.reviewer_id
-    description: ''
-    tests: []
-  - name: payload.risk_tier
-    description: ''
-    tests: []
-  - name: payload.rule_id
-    description: ''
-    tests: []
-  - name: payload.rule_version
-    description: ''
-    tests: []
-  - name: payload.screening_model_version
-    description: ''
-    tests: []
-  - name: payload.session_id
-    description: ''
-    tests: []
-  - name: payload.source_stream_id
-    description: ''
-    tests: []
-  - name: payload.submission_channel
-    description: ''
-    tests: []
-  - name: payload.summary
-    description: ''
-    tests: []
   - name: recorded_at
     description: ISO 8601 timestamp of when the event was persisted. Must be >= occurred_at.
     tests:
@@ -184,6 +48,9 @@ models:
     tests:
     - not_null
   - name: sequence_number
-    description: Monotonically increasing per aggregate_id. No gaps, no duplicates.
+    description: Monotonically increasing per aggregate_id. Starts at 1.
     tests:
     - not_null
+  tests:
+  - dbt_utils.expression_is_true:
+      expression: recorded_at >= occurred_at

@@ -7,7 +7,6 @@ models:
     description: Primary key. UUIDv4. Stable across re-extractions of the same source.
     tests:
     - not_null
-    - unique
   - name: entities
     description: ''
     tests:
@@ -25,7 +24,8 @@ models:
     tests:
     - not_null
   - name: processing_time_ms
-    description: Wall-clock extraction time in milliseconds. Positive integer.
+    description: Wall-clock extraction time in milliseconds. Positive integer, no
+      upper bound.
     tests:
     - not_null
   - name: source_hash
@@ -36,11 +36,11 @@ models:
     description: Absolute path or URL to the source document.
     tests:
     - not_null
-  - name: token_count.input
+  - name: token_count_input
     description: ''
     tests:
     - not_null
-  - name: token_count.output
+  - name: token_count_output
     description: ''
     tests:
     - not_null
