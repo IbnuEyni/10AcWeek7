@@ -9,142 +9,200 @@
 
 ## 1. Data Flow Diagram
 
-The five systems built over Weeks 1–5 communicate through structured JSONL outputs. Each arrow below is a data contract enforced by the Data Contract Enforcer. The schema name on each arrow is the canonical record type validated by the ValidationRunner.
+The five systems built over Weeks 1–5 communicate through structured JSONL outputs. Each arrow is annotated with the **schema name** and the **specific fields** consumed by the downstream system. Solid arrows (──▶) represent data flow contracts enforced by the ValidationRunner. Dashed arrows (- -▶) represent contract enforcement flow (Week 7 components consuming data for validation, not production logic).
 
-```
-┌─────────────────────────┐
-│  Week 1: Intent-Code    │
-│  Correlator             │
-│  (211 intent_records)   │
-└──────────┬──────────────┘
-           │ intent_record
-           │ code_refs[].file ──────────────────────┐
-           ▼                                        ▼
-┌─────────────────────────┐              ┌─────────────────────────┐
-│  Week 2: Digital        │              │  Week 7: AI Contract    │
-│  Courtroom              │──────────────│  Extensions             │
-│  (16 verdict_records)   │ verdict_record│ (embedding drift,      │
-└──────────┬──────────────┘  scores,     │  output schema,         │
-           │                 verdict     │  prompt validation)     │
-           │                             └─────────────────────────┘
-           │                                        ▲
-           │                                        │ trace_record
-┌─────────────────────────┐              ┌─────────────────────────┐
-│  Week 3: Document       │              │  LangSmith Traces       │
-│  Refinery               │              │  (160 trace_records)    │
-│  (64 extraction_records)│              │  from Weeks 2, 3, 4    │
-└──────────┬──────────────┘              └─────────────────────────┘
-           │ extraction_record
-           │ doc_id, extracted_facts,
-           │ confidence (0.0–1.0)
-           ▼
-┌─────────────────────────┐
-│  Week 4: Brownfield     │
-│  Cartographer           │
-│  (8 lineage_snapshots)  │
-│  179 nodes, 65 edges    │
-└──────────┬──────────────┘
-           │ lineage_snapshot
-           │ nodes[], edges[], git_commit
-           ▼
-┌─────────────────────────┐
-│  Week 7: Violation      │
-│  Attributor             │
-│  (blame chain +         │
-│   blast radius)         │
-└─────────────────────────┘
-           ▲
-           │ event_record
-           │ event_type, payload,
-           │ recorded_at >= occurred_at
-┌─────────────────────────┐
-│  Week 5: Event Sourcing │
-│  Platform               │
-│  (65 event_records)     │
-│  LoanApplication domain │
-└─────────────────────────┘
-```
+[![Diagram](Flow Diagram.png)]
 
-**Data sources:** All outputs are migrated from real Week 1–5 implementations using migration scripts (`migrate_week1.py` through `migrate_week5.py` + `migrate_traces.py`). Week 3 data comes from the actual extraction ledger (64 documents including Ethiopian financial reports, CBE annual reports, and CPI indices). Week 4 data comes from real lineage graphs of dbt-core, jaffle-shop, and ol-data-platform codebases. Week 5 events are generated from the real `LoanApplication` domain model defined in `10Acweek5/ledger/src/models/events.py`.
+**Diagram key:**
+
+- **Green nodes** = Weeks 1, 2, 5 (data producers)
+- **Blue nodes** = Weeks 3, 4 (data producers with critical downstream dependencies)
+- **Yellow node** = LangSmith traces (derived from LLM usage across weeks)
+- **Red nodes** = Week 7 enforcement components (consumers)
+- **Solid arrows** = Production data flow contracts (enforced by ValidationRunner)
+- **Dashed arrows** = Enforcement-only flow (Week 7 reads data for validation, not production logic)
+
+**Data provenance:** All outputs are migrated from real Week 1–5 implementations using migration scripts (`migrate_week1.py` through `migrate_week5.py` + `migrate_traces.py`). Week 3 data comes from the actual extraction ledger (64 documents including Ethiopian financial reports, CBE annual reports, and CPI indices processed via `vision_augmented` and `fast_text` strategies). Week 4 data comes from real lineage graphs of dbt-core, jaffle-shop, and ol-data-platform codebases (179 nodes, 65 edges in the primary graph). Week 5 events are generated from the real `LoanApplication` domain model defined in `10Acweek5/ledger/src/models/events.py`, using the actual `EVENT_CATALOGUE` with 16 event types.
 
 ---
 
 ## 2. Contract Coverage Table
 
-| # | Inter-System Interface | Contract? | Clauses | Key Enforcement Rules |
-|---|---|---|---|---|
-| 1 | Week 1 → Week 2: `intent_record.code_refs[].file` used as `verdict.target_ref` | **Yes** | 47 | confidence 0.0–1.0, UUID format on intent_id, code_refs non-empty, ISO 8601 timestamps |
-| 2 | Week 2 → Week 7: `verdict_record` consumed by AI Contract Extensions | **Yes** | 47 | overall_verdict ∈ {PASS, FAIL, WARN}, score integer 1–5, rubric_id SHA-256 pattern, confidence 0.0–1.0 |
-| 3 | Week 3 → Week 4: `extraction_record.doc_id` and `extracted_facts` become Cartographer nodes | **Yes** | 47 | confidence 0.0–1.0 (BREAKING if 0–100), entity_refs ⊆ entities[].entity_id, source_hash SHA-256, extraction_model matches `^(claude\|gpt)-` |
-| 4 | Week 4 → Week 7: `lineage_snapshot` used by ViolationAttributor for blame chains | **Yes** | 47 | edge.source/target ∈ nodes[].node_id, git_commit 40-char hex, node.type ∈ {FILE, TABLE, SERVICE, MODEL, PIPELINE, EXTERNAL}, edge.relationship ∈ {IMPORTS, CALLS, READS, WRITES, PRODUCES, CONSUMES} |
-| 5 | Week 5 → Week 7: `event_record.payload` validated against event_type schema | **Yes** | 47 | recorded_at ≥ occurred_at, event_type PascalCase, sequence_number monotonic per aggregate_id |
-| 6 | Traces → Week 7: `trace_record` consumed by AI Contract Extensions | **Yes** | 47 | end_time > start_time, total_tokens = prompt_tokens + completion_tokens, run_type ∈ {llm, chain, tool, retriever, embedding}, total_cost ≥ 0 |
+| #   | Inter-System Interface                                                         | Contract?   | Structural                                                                                                                              | Statistical                                                                        | Cross-field                                                                 | Rationale / Gap                                                                                                                                                                                                                                        |
+| --- | ------------------------------------------------------------------------------ | ----------- | --------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 1   | Week 1 → Week 2: `intent_record.code_refs[].file` used as `verdict.target_ref` | **Partial** | 15 clauses: UUID on intent_id, ISO 8601 on created_at, confidence 0.0–1.0                                                               | 4 clauses: confidence mean/stddev baseline, cardinality checks                     | 0                                                                           | **Gap:** Cross-system join validation not implemented. The contract validates each side independently but does not verify that `verdict.target_ref` actually exists in `intent_records.code_refs[].file`. Requires a cross-contract relationship test. |
+| 2   | Week 2 → Week 7: `verdict_record` consumed by AI Contract Extensions           | **Yes**     | 12 clauses: overall_verdict ∈ {PASS, FAIL, WARN}, score integer 1–5, rubric_id SHA-256 pattern, confidence 0.0–1.0                      | 3 clauses: score distribution, confidence baseline                                 | 1 clause: overall_score = weighted mean of scores{}                         | Full coverage. AI Extensions consume verdict records for LLM output schema violation rate tracking.                                                                                                                                                    |
+| 3   | Week 3 → Week 4: `extraction_record` fields become Cartographer nodes          | **Yes**     | 16 clauses: confidence 0.0–1.0 (BREAKING if 0–100), source_hash SHA-256, extraction_model `^(claude\|gpt)-`, UUID on doc_id and fact_id | 5 clauses: confidence drift baseline, processing_time_ms range, token_count ranges | 2 clauses: entity_refs ⊆ entities[].entity_id, fact_id unique within record | Full coverage. This is the highest-risk interface — the confidence field change propagates silently to Cartographer edge weights.                                                                                                                      |
+| 4   | Week 4 → Week 7: `lineage_snapshot` used by ViolationAttributor                | **Yes**     | 14 clauses: git_commit 40-char hex, node.type ∈ 6 values, edge.relationship ∈ 6 values, UUID on snapshot_id                             | 2 clauses: node/edge count baselines                                               | 2 clauses: edge.source ∈ nodes[].node_id, edge.target ∈ nodes[].node_id     | Full coverage. Graph integrity checks ensure blame chain traversal won't hit dangling references.                                                                                                                                                      |
+| 5   | Week 5 → Week 7: `event_record.payload` validated against event_type schema    | **Partial** | 12 clauses: recorded_at ≥ occurred_at, event_type PascalCase, UUID on event_id                                                          | 3 clauses: sequence_number monotonicity, payload size baseline                     | 0                                                                           | **Gap:** Payload-level validation against per-event-type JSON Schema not yet implemented. The contract validates the envelope but not the payload contents. Requires a schema registry mapping event_type → JSON Schema.                               |
+| 6   | Traces → Week 7: `trace_record` consumed by AI Contract Extensions             | **Yes**     | 12 clauses: end_time > start_time, run_type ∈ 5 values, UUID on id, total_cost ≥ 0                                                      | 3 clauses: total_tokens baseline, cost baseline                                    | 1 clause: total_tokens = prompt_tokens + completion_tokens                  | Full coverage.                                                                                                                                                                                                                                         |
 
-**Coverage: 6/6 interfaces have contracts (100%).** Every inter-system arrow in the data flow diagram has a corresponding Bitol-compatible YAML contract in `generated_contracts/` with a parallel dbt `schema.yml` counterpart.
+**Coverage: 4/6 full, 2/6 partial.** The two partial contracts (Week 1→2 and Week 5→7) have identified gaps with specific remediation plans. Cross-system join validation and per-event-type payload schemas are the two remaining implementation targets for the Sunday submission.
 
 ---
 
 ## 3. First Validation Run Results
 
-### Week 3 — Document Refinery Extractions
+**Severity framework used:**
 
-| Metric | Value |
-|---|---|
-| Total Checks | 57 |
-| Passed | 55 |
-| Failed | 2 |
-| Warned | 0 |
-| Errored | 0 |
+- **CRITICAL** = Structural or type violation (column missing, wrong type)
+- **HIGH** = Statistical drift > 3σ from baseline, or uniqueness/format violation
+- **MEDIUM** = Statistical drift 2–3σ
+- **LOW** = Informational (check passed)
+- **WARNING** = Near-threshold value
+
+### 3.1 Week 3 — Document Refinery Extractions
+
+| Metric        | Value     |
+| ------------- | --------- |
+| Total Checks  | 57        |
+| Passed        | 55        |
+| Failed        | 2         |
+| Warned        | 0         |
+| Errored       | 0         |
 | **Pass Rate** | **96.5%** |
 
-**Violations found (both real, from actual data):**
+**Violation 1 — `doc_id.unique` (HIGH):**
 
-1. **`doc_id.unique` — FAIL (HIGH):** Found 48 duplicate `doc_id` values. The extraction ledger is an append-only log — the same document (e.g., `2018_Audited_Financial_Statement_Report.pdf`) was processed multiple times with different strategies (`vision_augmented`, `fast_text`, `layout_aware`). Each re-extraction produces a new ledger entry with the same `doc_id`. This is a real design issue: downstream consumers treating `doc_id` as a primary key would silently merge records from different extraction strategies.
+Found 48 duplicate `doc_id` values out of 64 records. Root cause: the extraction ledger (`10AcWeek3/.refinery/extraction_ledger.jsonl`) is an append-only log of extraction _attempts_. The same document (e.g., `2018_Audited_Financial_Statement_Report.pdf`) was processed multiple times with different strategies (`vision_augmented`, `fast_text`, `layout_aware`). Each re-extraction appends a new entry with the same `doc_id`.
 
-2. **`extracted_facts[*].page_ref.range` — FAIL (CRITICAL):** 331 fact records have `page_ref` values outside the auto-inferred range [0, 15]. The actual range is [0, 91] because the `Annual_Report_JUNE-2018.pdf` has 92 pages. The auto-profiler inferred the maximum from a sample that happened to miss long documents. This demonstrates that statistical profiling alone is insufficient for range constraints — domain knowledge must override sample statistics.
+_Impact:_ Any downstream consumer treating `doc_id` as a primary key would silently merge records from different extraction strategies, potentially mixing a high-confidence vision extraction with a low-confidence fast-text fallback.
 
-### Week 5 — Event Sourcing Platform Events
+**Contract correction:**
 
-| Metric | Value |
-|---|---|
-| Total Checks | 88 |
-| Passed | 86 |
-| Failed | 2 |
-| Warned | 0 |
-| Errored | 0 |
+```yaml
+# BEFORE (incorrect)
+doc_id:
+  type: string
+  format: uuid
+  required: true
+  unique: true  # ← WRONG: ledger is append-only
+
+# AFTER (corrected)
+doc_id:
+  type: string
+  format: uuid
+  required: true
+  unique: false
+  description: >
+    Document identifier. NOT unique in the extraction ledger —
+    multiple extraction attempts per document are expected.
+    Use (doc_id, extraction_model) as composite key.
+```
+
+**Violation 2 — `extracted_facts[*].page_ref.range` (CRITICAL):**
+
+331 fact records have `page_ref` values outside the auto-inferred range [0, 15]. Actual range is [0, 91] because `Annual_Report_JUNE-2018.pdf` has 92 pages. The auto-profiler inferred the maximum from a sample that missed long documents.
+
+_Impact:_ Any consumer filtering facts by page range would silently drop facts from long documents.
+
+**Contract correction:**
+
+```yaml
+# BEFORE (auto-inferred, too tight)
+extracted_facts[*].page_ref:
+  type: integer
+  minimum: 0.0
+  maximum: 15.0
+
+# AFTER (domain-aware)
+extracted_facts[*].page_ref:
+  type: integer
+  minimum: 0
+  maximum: 10000  # PDFs can have thousands of pages
+  description: >
+    Zero-indexed page number. Nullable for facts not tied to a specific page.
+    Domain constraint: must not exceed source document page count.
+```
+
+### 3.2 Week 5 — Event Sourcing Platform Events
+
+| Metric        | Value     |
+| ------------- | --------- |
+| Total Checks  | 88        |
+| Passed        | 86        |
+| Failed        | 2         |
+| Warned        | 0         |
+| Errored       | 0         |
 | **Pass Rate** | **97.7%** |
 
-**Violations found (both real, from actual domain model):**
+**Violation 1 — `aggregate_id.unique` (HIGH):**
 
-1. **`aggregate_id.unique` — FAIL (HIGH):** Found 45 duplicate `aggregate_id` values. This is **by design** — the event sourcing pattern stores multiple events per aggregate (e.g., `ApplicationSubmitted`, `CreditAnalysisRequested`, `DecisionGenerated` all share `aggregate_id: loan-demo-2a7df24b`). The contract incorrectly assumed uniqueness. The fix is to remove the `unique: true` constraint on `aggregate_id` and instead enforce monotonic `sequence_number` per aggregate.
+Found 45 duplicate `aggregate_id` values. This is **by design** — the event sourcing pattern stores multiple events per aggregate (e.g., `ApplicationSubmitted`, `CreditAnalysisRequested`, `DecisionGenerated` all share `aggregate_id: loan-demo-2a7df24b`). The contract incorrectly assumed uniqueness.
 
-2. **`aggregate_id.format` — FAIL (HIGH):** All 65 records fail UUID format validation because the real domain model uses composite IDs like `loan-demo-2a7df24b` and `agent-session-demo-xxx`. These are human-readable, debuggable identifiers — a deliberate design choice from the Week 5 `LoanApplicationAggregate`. The contract should use a pattern match (`^(loan|agent-session|compliance|audit)-`) instead of UUID format.
+**Contract correction:**
 
-### Injected Violation (from `extractions_violated.jsonl`)
+```yaml
+# BEFORE (incorrect)
+aggregate_id:
+  type: string
+  format: uuid
+  unique: true  # ← WRONG: multiple events per aggregate
 
-The ValidationRunner was also run against an intentionally violated dataset where `confidence` was changed from float 0.0–1.0 to integer 0–100:
+# AFTER (corrected)
+aggregate_id:
+  type: string
+  pattern: "^(loan|agent-session|compliance|audit)-"
+  required: true
+  unique: false
+  description: >
+    Aggregate identifier. NOT unique — multiple events per aggregate.
+    Enforce monotonic sequence_number per aggregate_id instead.
+```
 
-| Metric | Value |
-|---|---|
-| Total Checks | 56 |
-| Failed | 3 |
-| Key Failure | `extracted_facts[*].confidence.range`: max=98.8, mean=73.9 (expected max≤1.0) |
-| Statistical Drift | 2,324σ deviation from baseline — unmissable |
+**Violation 2 — `aggregate_id.format` (HIGH):**
 
-The ViolationAttributor traced this to commit `cd5737c` ("feat: change confidence to percentage scale") in `src/week3/extractor.py`, with a blast radius of 178 affected records.
+All 65 records fail UUID format validation. The real domain model uses composite IDs like `loan-demo-2a7df24b` and `agent-session-demo-xxx` — human-readable prefixes for debuggability, a deliberate design choice from `LoanApplicationAggregate`.
+
+_Contract correction:_ Same as above — replace `format: uuid` with `pattern: "^(loan|agent-session|compliance|audit)-"`.
+
+### 3.3 Injected Violation — Confidence Scale Change
+
+The ValidationRunner was run against `extractions_violated.jsonl` where `confidence` was intentionally changed from float 0.0–1.0 to integer 0–100:
+
+| Metric       | Value |
+| ------------ | ----- |
+| Total Checks | 56    |
+| Failed       | 3     |
+
+**Key failures:**
+
+| Check                                 | Status   | Actual                         | Expected         |
+| ------------------------------------- | -------- | ------------------------------ | ---------------- |
+| `extracted_facts[*].confidence.range` | **FAIL** | max=98.8, mean=73.9            | max≤1.0, min≥0.0 |
+| `extracted_facts[*].confidence.drift` | **FAIL** | 2,324σ deviation from baseline | within 3σ        |
+| `extracted_facts[*].page_ref.range`   | **FAIL** | max=20.0 (different sample)    | max≤15.0         |
+
+**Validation report JSON excerpt** (from `validation_reports/week3_violated.json`):
+
+```json
+{
+  "check_id": "week3-document-refinery-extractions.extracted_facts[*].confidence.range",
+  "column_name": "extracted_facts[*].confidence",
+  "check_type": "range",
+  "status": "FAIL",
+  "actual_value": "min=50.0, max=98.8, mean=73.9253",
+  "expected": "min>=0.0, max<=1.0",
+  "severity": "CRITICAL",
+  "records_failing": 178,
+  "message": "confidence is in 0–100 range, not 0.0–1.0. Breaking change detected."
+}
+```
+
+The ViolationAttributor traced this to commit `cd5737c` ("feat: change confidence to percentage scale") in `src/week3/extractor.py`, with a blast radius of 178 affected records across 7 downstream nodes.
 
 ---
 
 ## 4. Reflection
 
-Writing data contracts for my own five systems revealed four assumptions I never documented and one architectural gap I didn't know existed.
+Writing data contracts for my own five systems revealed four wrong assumptions and one architectural gap. More importantly, it changed how I will build systems going forward.
 
-**Assumption 1: doc_id is unique.** It isn't. My Week 3 extraction ledger is an append-only log of extraction *attempts*, not a deduplicated output table. The same document gets processed multiple times with different strategies — `vision_augmented` for scanned images, `fast_text` for native digital PDFs. Each attempt produces a new ledger entry with the same `doc_id`. Any downstream consumer treating `doc_id` as a primary key would silently merge records from different strategies, potentially mixing a high-confidence vision extraction with a low-confidence fast-text fallback. The contract caught this immediately: 48 duplicates out of 64 records.
+**Assumption 1: doc_id is unique.** It isn't. My Week 3 extraction ledger is an append-only log of extraction _attempts_, not a deduplicated output table. The same document gets processed multiple times with different strategies. The contract caught 48 duplicates out of 64 records. The fix isn't just updating the contract — it's deciding whether the ledger should be deduplicated before feeding Week 4, or whether Week 4 should handle duplicates. For Week 8's Sentinel, this means the violation signal must distinguish "duplicate by design" from "duplicate by error."
 
-**Assumption 2: page_ref has a small range.** The auto-profiler inferred `max=15` from the sample, but the `Annual_Report_JUNE-2018.pdf` has 92 pages. I had never tested the extraction pipeline on documents longer than ~20 pages during development. The contract violation (331 facts outside range) revealed that my test corpus was not representative of production data. Domain knowledge — "a PDF can have hundreds of pages" — must override sample statistics.
+**Assumption 2: page_ref has a small range.** The auto-profiler inferred `max=15`, but `Annual_Report_JUNE-2018.pdf` has 92 pages. I never tested on documents longer than ~20 pages during development. The lesson: statistical profiling from a non-representative sample produces contracts that reject valid production data. Domain knowledge must override sample statistics.
 
-**Assumption 3: aggregate_id is a UUID.** My Week 5 event store uses composite IDs like `loan-demo-2a7df24b` for debuggability. The canonical schema expects UUID format, but the real domain model chose human-readable prefixes so developers can identify aggregate types without joining metadata. The contract should use a pattern match, not UUID format.
+**Assumption 3: aggregate_id is a UUID.** My Week 5 event store uses composite IDs like `loan-demo-2a7df24b` for debuggability. The contract should use a pattern match, not UUID format. This taught me that "standard format" assumptions break when applied to domain-specific design choices.
 
-**Assumption 4: all confidence scores are 0.0–1.0.** They are — today. But the extraction ledger stores `confidence_score: 0.8` as a float, and nothing in the Week 3 codebase prevents a future change to percentage scale (0–100). The contract's range check and statistical drift detection (which caught a 2,324σ deviation in the injected test) are the only guardrails. Without them, the Week 4 Cartographer would silently produce corrupted edge weights.
+**Assumption 4: confidence will always be 0.0–1.0.** It is today, but nothing prevents a future change. The injected test proved the contract catches this at 2,324σ — but only because I wrote the contract. Without it, the Week 4 Cartographer would silently produce corrupted edge weights, and the error would surface weeks later in a downstream report.
 
-**The architectural gap:** There was no formal interface between any of my five systems. Week 3 outputs fed Week 4 inputs, but the schema was implicit — encoded in Python function signatures, not in a machine-checkable contract. The most valuable output is the blast radius report: knowing that a confidence field change affects 7 downstream nodes and 178 records transforms "it might break something" into "it breaks these specific things, and here is the commit that caused it."
+**The architectural gap:** There was no formal interface between any of my five systems. The schema was implicit — encoded in Python function signatures, not in a machine-checkable contract. Going forward, I will write the contract _before_ the producer code, not after. The most valuable output is the blast radius: "this affects 7 nodes and 178 records" is actionable; "something might break" is not.
