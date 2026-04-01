@@ -74,11 +74,13 @@ ENFORCEMENT_RULES = {
         "uuid_fields": ["verdict_id"],
         "enum_fields": {"overall_verdict": ["PASS", "FAIL", "WARN"]},
         "int_range_fields": {"scores[*].score": (1, 5)},
+        "float_range_fields": {"overall_score": (1.0, 5.0)},
     },
     "week3-document-refinery-extractions": {
         "confidence_fields": ["extracted_facts[*].confidence"],
         "timestamp_fields": ["extracted_at"],
-        "uuid_fields": ["doc_id", "extracted_facts[*].fact_id"],
+        "uuid_fields": ["extracted_facts[*].fact_id"],
+        "non_unique_id_fields": ["doc_id"],
         "enum_fields": {"entities[*].type": ["PERSON", "ORG", "LOCATION", "DATE", "AMOUNT", "OTHER"]},
         "positive_int_fields": ["processing_time_ms"],
         "cross_ref_fields": {"extracted_facts[*].entity_refs": "entities[*].entity_id"},
@@ -96,9 +98,11 @@ ENFORCEMENT_RULES = {
     },
     "week5-event-sourcing-platform-events": {
         "timestamp_fields": ["occurred_at", "recorded_at"],
-        "uuid_fields": ["event_id", "aggregate_id"],
-        "temporal_order": {"recorded_at": "occurred_at"},  # recorded >= occurred
+        "uuid_fields": ["event_id"],
+        "temporal_order": {"recorded_at": "occurred_at"},
         "pascal_case_fields": ["event_type", "aggregate_type"],
+        "non_unique_id_fields": ["aggregate_id"],
+        "pattern_fields": {"aggregate_id": r"^(loan|agent-session|compliance|audit)-"},
     },
     "langsmith-trace-records": {
         "timestamp_fields": ["start_time", "end_time"],
@@ -107,6 +111,8 @@ ENFORCEMENT_RULES = {
         "enum_fields": {"run_type": ["llm", "chain", "tool", "retriever", "embedding"]},
         "token_sum": {"total_tokens": ["prompt_tokens", "completion_tokens"]},
         "non_negative_fields": ["total_cost"],
+        "non_unique_id_fields": ["parent_run_id", "session_id", "inputs.doc_id"],
+        "confidence_fields": ["outputs.confidence"],
     },
 }
 
@@ -141,7 +147,7 @@ def load_jsonl(path):
 
 
 def flatten_record(record, prefix=""):
-    """Flatten nested dict/list for profiling."""
+    """Flatten nested dict/list for profiling — all array items, not just the first."""
     flat = {}
     if isinstance(record, dict):
         for k, v in record.items():
@@ -150,10 +156,18 @@ def flatten_record(record, prefix=""):
                 flat.update(flatten_record(v, key))
             elif isinstance(v, list):
                 flat[key] = v
-                for i, item in enumerate(v):
+                # Collect scalar values from all items under the [*] key
+                array_key = f"{key}[*]"
+                for item in v:
                     if isinstance(item, dict):
-                        flat.update(flatten_record(item, f"{key}[*]"))
-                        break  # profile first item as representative
+                        sub = flatten_record(item, array_key)
+                        for sk, sv in sub.items():
+                            if sk not in flat:
+                                flat[sk] = []
+                            if isinstance(flat[sk], list):
+                                flat[sk].append(sv)
+                            else:
+                                flat[sk] = [flat[sk], sv]
             else:
                 flat[key] = v
     return flat
@@ -243,16 +257,23 @@ def profile_column(values):
 
 def profile_records(records):
     """Profile all columns from JSONL records."""
-    all_flat = []
-    for r in records:
-        all_flat.append(flatten_record(r))
-    # Collect all keys
+    all_flat = [flatten_record(r) for r in records]
     all_keys = set()
     for f in all_flat:
         all_keys.update(f.keys())
     profiles = {}
     for key in sorted(all_keys):
-        values = [f.get(key) for f in all_flat]
+        raw_values = [f.get(key) for f in all_flat]
+        # For [*] keys each record contributes a list; flatten one level
+        if "[*]" in key:
+            values = []
+            for v in raw_values:
+                if isinstance(v, list):
+                    values.extend(v)
+                elif v is not None:
+                    values.append(v)
+        else:
+            values = raw_values
         profiles[key] = profile_column(values)
     return profiles
 
@@ -333,9 +354,60 @@ def query_lineage_downstream(contract_id, lineage_graph):
     return result
 
 
-def generate_llm_annotations(col_name, profile, source_name):
+def _call_llm_for_annotation(col_name, table_name, sample_values, adjacent_cols, col_type):
+    """Call Claude or OpenAI to annotate an ambiguous column. Returns dict or None."""
+    api_key = os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("OPENAI_API_KEY")
+    if not api_key:
+        return None
+
+    prompt = (
+        f"You are a data contract expert. Given this column from a data pipeline, "
+        f"provide a JSON object with exactly three keys: "
+        f"\"description\" (one sentence plain-English), "
+        f"\"business_rule\" (a validation expression), "
+        f"\"cross_column\" (any relationship to adjacent columns, or null).\n\n"
+        f"Table: {table_name}\n"
+        f"Column: {col_name}\n"
+        f"Type: {col_type}\n"
+        f"Sample values: {sample_values[:5]}\n"
+        f"Adjacent columns: {adjacent_cols[:8]}\n\n"
+        f"Respond with only the JSON object, no markdown."
+    )
+
+    try:
+        if os.environ.get("ANTHROPIC_API_KEY"):
+            import anthropic
+            client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
+            msg = client.messages.create(
+                model="claude-3-haiku-20240307",
+                max_tokens=256,
+                messages=[{"role": "user", "content": prompt}],
+            )
+            raw = msg.content[0].text.strip()
+        else:
+            import openai
+            client = openai.OpenAI(api_key=os.environ["OPENAI_API_KEY"])
+            resp = client.chat.completions.create(
+                model="gpt-4o-mini",
+                max_tokens=256,
+                messages=[{"role": "user", "content": prompt}],
+            )
+            raw = resp.choices[0].message.content.strip()
+
+        # Strip markdown fences if present
+        raw = re.sub(r'^```(?:json)?\s*', '', raw)
+        raw = re.sub(r'\s*```$', '', raw)
+        result = json.loads(raw)
+        result["annotation_method"] = "llm"
+        return result
+    except Exception as e:
+        print(f"    LLM annotation failed for {col_name}: {e}")
+        return None
+
+
+def generate_llm_annotations(col_name, profile, source_name, all_col_names=None):
     """Step 4: LLM annotation for ambiguous columns.
-    Uses heuristic fallback when no LLM API key is available.
+    Tries real LLM call first (if API key set), falls back to heuristic.
     """
     # Columns with clear meaning from name/format don't need annotation
     clear_names = {"id", "doc_id", "intent_id", "verdict_id", "event_id", "snapshot_id",
@@ -347,20 +419,38 @@ def generate_llm_annotations(col_name, profile, source_name):
     if profile.get("format") in ("uuid", "iso8601", "sha256"):
         return None
 
-    # Heuristic annotation for ambiguous columns
     annotation = {"column": col_name, "source": source_name}
+
+    # Try real LLM call first
+    adjacent = [c for c in (all_col_names or []) if c != col_name][:8]
+    llm_result = _call_llm_for_annotation(
+        col_name, source_name,
+        profile.get("sample_values", []),
+        adjacent,
+        profile.get("type", "unknown")
+    )
+    if llm_result:
+        annotation.update(llm_result)
+        return annotation
 
     # Infer description from name patterns
     if "confidence" in col_name:
         annotation["description"] = "Confidence score for the parent operation. Float 0.0-1.0 where 1.0 is highest confidence."
         annotation["business_rule"] = "0.0 <= value <= 1.0"
     elif "token" in col_name:
-        annotation["description"] = f"Token count metric for LLM operations. Must be non-negative integer."
+        annotation["description"] = "Token count metric for LLM operations. Must be non-negative integer."
         annotation["business_rule"] = "value >= 0"
     elif "cost" in col_name:
         annotation["description"] = "Monetary cost in USD for the operation."
         annotation["business_rule"] = "value >= 0.0"
-    elif "score" in col_name:
+    elif "fraud" in col_name:
+        annotation["description"] = "Fraud probability score. Float 0.0-1.0 where higher means more suspicious."
+        annotation["business_rule"] = "0.0 <= value <= 1.0"
+    elif col_name.endswith(".score") and profile.get("type") in ("integer", "number"):
+        # Only apply score rule to leaf .score fields, not .evidence or .notes siblings
+        annotation["description"] = "Rubric criterion score. Integer 1-5 where 5 is highest."
+        annotation["business_rule"] = "1 <= value <= 5 (integer)"
+    elif "score" in col_name and not col_name.endswith((".evidence", ".notes")) and profile.get("type") in ("integer", "number"):
         annotation["description"] = "Evaluation score from rubric-based assessment."
         annotation["business_rule"] = "1 <= value <= 5 (integer)"
     elif "type" in col_name and profile.get("type") == "string":
@@ -428,6 +518,39 @@ FIELD_PATTERNS = {
     "git_commit": r"^[a-f0-9]{40}$",
 }
 
+# Domain-aware range overrides: (contract_id, col_name) -> {minimum, maximum, description}
+# These override auto-inferred stats ranges when the sample-based range is too tight.
+DOMAIN_RANGE_OVERRIDES = {
+    ("week3-document-refinery-extractions", "extracted_facts[*].page_ref"): {
+        "minimum": 0, "maximum": 10000,
+        "description": "Zero-indexed page number. Nullable. Domain max: PDFs can have thousands of pages.",
+    },
+    ("week3-document-refinery-extractions", "processing_time_ms"): {
+        "minimum": 1,
+        "description": "Wall-clock extraction time in milliseconds. Positive integer, no upper bound.",
+    },
+    ("week5-event-sourcing-platform-events", "sequence_number"): {
+        "minimum": 1,
+        "description": "Monotonically increasing per aggregate_id. Starts at 1.",
+    },
+    ("langsmith-trace-records", "total_cost"): {
+        "minimum": 0.0,
+        "description": "Monetary cost in USD. Must be non-negative.",
+    },
+    ("langsmith-trace-records", "prompt_tokens"): {
+        "minimum": 0,
+        "description": "Prompt token count. Must be non-negative integer.",
+    },
+    ("langsmith-trace-records", "completion_tokens"): {
+        "minimum": 0,
+        "description": "Completion token count. Must be non-negative integer.",
+    },
+    ("langsmith-trace-records", "total_tokens"): {
+        "minimum": 0,
+        "description": "Total token count. Must equal prompt_tokens + completion_tokens.",
+    },
+}
+
 
 def build_schema_section(profiles, contract_id):
     """Build the schema section of the contract YAML."""
@@ -456,6 +579,7 @@ def build_schema_section(profiles, contract_id):
         for cf in conf_fields:
             if col_name == cf or col_name.endswith(cf.split("[*].")[-1] if "[*]" in cf else cf):
                 if "confidence" in col_name:
+                    entry["type"] = "number"
                     entry["minimum"] = 0.0
                     entry["maximum"] = 1.0
                     entry["description"] = "Confidence score. MUST be float 0.0-1.0. BREAKING CHANGE if changed to 0-100."
@@ -465,6 +589,11 @@ def build_schema_section(profiles, contract_id):
             if col_name == uf or col_name.endswith(uf.split("[*].")[-1] if "[*]" in uf else uf):
                 entry["format"] = "uuid"
                 entry["unique"] = True
+        # Non-unique ID fields (e.g. aggregate_id in event sourcing)
+        for nuf in rules.get("non_unique_id_fields", []):
+            if col_name == nuf:
+                entry.pop("unique", None)
+                entry.pop("format", None)
         # Enum fields
         enum_fields = rules.get("enum_fields", {})
         for ef, vals in enum_fields.items():
@@ -482,6 +611,24 @@ def build_schema_section(profiles, contract_id):
                 entry["minimum"] = lo
                 entry["maximum"] = hi
                 entry["type"] = "integer"
+        # Float range fields (e.g. overall_score is a float, not integer)
+        float_range = rules.get("float_range_fields", {})
+        for frf, (lo, hi) in float_range.items():
+            if col_name == frf or col_name.endswith(frf.split("[*].")[-1] if "[*]" in frf else frf):
+                entry["minimum"] = lo
+                entry["maximum"] = hi
+                entry["type"] = "number"
+        # Domain-aware range overrides — applied last, always win over auto-inferred stats
+        override = DOMAIN_RANGE_OVERRIDES.get((contract_id, col_name))
+        if override:
+            if "minimum" in override:
+                entry["minimum"] = override["minimum"]
+            if "maximum" in override:
+                entry["maximum"] = override["maximum"]
+            else:
+                entry.pop("maximum", None)  # remove auto-inferred max when domain has no upper bound
+            if "description" in override:
+                entry["description"] = override["description"]
         schema[col_name] = entry
     return schema
 
@@ -489,17 +636,14 @@ def build_schema_section(profiles, contract_id):
 def build_quality_section(profiles, contract_id):
     """Build quality checks section."""
     rules = ENFORCEMENT_RULES.get(contract_id, {})
+    non_unique = set(rules.get("non_unique_id_fields", []))
     checks = []
-    # Required fields (null_fraction == 0)
     for col, prof in profiles.items():
         if prof["null_fraction"] == 0 and "[*]" not in col:
             checks.append(f"missing_count({col}) = 0")
-    # Unique fields
-    uuid_fields = rules.get("uuid_fields", [])
-    for uf in uuid_fields:
-        if "[*]" not in uf:
+    for uf in rules.get("uuid_fields", []):
+        if "[*]" not in uf and uf not in non_unique:
             checks.append(f"duplicate_count({uf}) = 0")
-    # Confidence range
     for cf in rules.get("confidence_fields", []):
         base = cf.replace("[*].", "_")
         checks.append(f"min({base}_min) >= 0.0")
@@ -533,8 +677,9 @@ def generate_contract(source_name, source_path, output_dir):
 
     # Step 4: LLM annotations for ambiguous columns
     llm_annotations = []
+    all_col_names = list(profiles.keys())
     for col_name, prof in profiles.items():
-        ann = generate_llm_annotations(col_name, prof, source_name)
+        ann = generate_llm_annotations(col_name, prof, source_name, all_col_names)
         if ann:
             llm_annotations.append(ann)
 
@@ -602,7 +747,12 @@ def generate_dbt_schema(source_name, schema, profiles, contract_id, output_dir):
     for col_name, col_schema in schema.items():
         if "[*]" in col_name:
             continue
-        col_def = {"name": col_name, "description": col_schema.get("description", ""), "tests": []}
+        # Skip payload sub-fields with no tests (noise reduction)
+        if col_name.startswith("payload.") and not col_schema.get("required") and "enum" not in col_schema:
+            continue
+        # Convert dot notation to underscore for dbt compatibility
+        dbt_name = col_name.replace(".", "_")
+        col_def = {"name": dbt_name, "description": col_schema.get("description", ""), "tests": []}
         if col_schema.get("required"):
             col_def["tests"].append("not_null")
         if col_schema.get("unique"):
@@ -622,16 +772,26 @@ def generate_dbt_schema(source_name, schema, profiles, contract_id, output_dir):
             "tests": [{"relationships": {"to": f"ref('{source_name}')", "field": tgt_base}}],
         })
 
-    dbt = {
-        "version": 2,
-        "models": [
-            {
-                "name": source_name,
-                "description": f"dbt schema for {contract_id}",
-                "columns": columns,
-            }
-        ],
+    # Model-level expression_is_true tests for cross-field constraints
+    model_tests = []
+    if "recorded_at" in schema and "occurred_at" in schema:
+        model_tests.append({"dbt_utils.expression_is_true": {"expression": "recorded_at >= occurred_at"}})
+    if "end_time" in schema and "start_time" in schema:
+        model_tests.append({"dbt_utils.expression_is_true": {"expression": "end_time >= start_time"}})
+    if "total_tokens" in schema and "prompt_tokens" in schema and "completion_tokens" in schema:
+        model_tests.append({"dbt_utils.expression_is_true": {"expression": "total_tokens = prompt_tokens + completion_tokens"}})
+    if "overall_score" in schema:
+        model_tests.append({"dbt_utils.expression_is_true": {"expression": "overall_score >= 1.0 and overall_score <= 5.0"}})
+
+    model_def = {
+        "name": source_name,
+        "description": f"dbt schema for {contract_id}",
+        "columns": columns,
     }
+    if model_tests:
+        model_def["tests"] = model_tests
+
+    dbt = {"version": 2, "models": [model_def]}
     dbt_path = os.path.join(output_dir, f"{source_name}_dbt.yml")
     with open(dbt_path, "w") as f:
         yaml.dump(dbt, f, default_flow_style=False, sort_keys=False)
