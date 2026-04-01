@@ -148,14 +148,14 @@ llm_annotations:
 - column: entities[*].canonical_value
   source: week3_extractions
   description: 'Auto-profiled column. Type: string, cardinality: 15. Sample values:
-    [''2013-e.c-audit-finding-information'', ''2022_audited_financial_statement_report'',
-    ''2018_audited_financial_statement_report'']'
+    [''test'', ''figure'', ''quarter'']'
   business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: entities[*].name
   source: week3_extractions
   description: 'Auto-profiled column. Type: string, cardinality: 15. Sample values:
-    [''2019 Audited Financial Statement Report'', ''Quarter'', ''2013-E.C-Audit-finding-information'']'
+    [''2021 Audited Financial Statement Report'', ''Issue No'', ''CBE Annual Report
+    2012-13'']'
   business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: entities[*].type
@@ -187,22 +187,23 @@ llm_annotations:
 - column: extracted_facts[*].source_excerpt
   source: week3_extractions
   description: 'Auto-profiled column. Type: string, cardinality: 7. Sample values:
-    [''|  |  |  | \n--------------------------------------------------\n |  |  |  |
-    \n |  |  |  | \n |  |  |  | \n |  |  |  | \n |  |  |  | \n |  |  |  | \n |  |  |  |
-    \n |  |  |  | \n |  |  |  |'', ''Issue No. 25/2017 July EFY2017 Page 1\n--------------------------------------------------\n1.
+    [''Issue No. 21/2017 March EFY2017\n--------------------------------------------------\n1.
     Summary\nThe Consumer Price Index (CPI), a key economic statistics, is surveyed,
     analyzed, and\nmade available to data users on a monthly basis.\nThe year-on-year,
-    general inflation rate (annual percentage chang'', ''Processed via vision_augmented
-    strategy'']'
+    general inflation rate (annual percentage change) in'', ''Issue No. 25/2017 July
+    EFY2017 Page 1\n--------------------------------------------------\n1. Summary\nThe
+    Consumer Price Index (CPI), a key economic statistics, is surveyed, analyzed,
+    and\nmade available to data users on a monthly basis.\nThe year-on-year, general
+    inflation rate (annual percentage chang'', ''|  |  |  | \n--------------------------------------------------\n
+    |  |  |  | \n |  |  |  | \n |  |  |  | \n |  |  |  | \n |  |  |  | \n |  |  |  |
+    \n |  |  |  | \n |  |  |  | \n |  |  |  |'']'
   business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: extracted_facts[*].text
   source: week3_extractions
   description: 'Auto-profiled column. Type: string, cardinality: 16. Sample values:
-    [''|  |  |  | \n--------------------------------------------------\n |  |  |  |
-    \n |  |  |  | \n |  |  |  | \n |  |  |  | \n |  |  |  | \n |  |  |  | \n |  |  |  |
-    \n |  |  |  | \n |  |  |  |'', ''Document processed: 2019_Audited_Financial_Statement_Report.pdf'',
-    ''Document processed: 2013-E.C-Procurement-information.pdf'']'
+    [''Document processed: CBE Annual Report 2012-13.pdf'', ''Document processed:
+    2013-E.C-Procurement-information.pdf'', ''Document processed: test.pdf'']'
   business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: extraction_model
