@@ -85,11 +85,15 @@ def check_embedding_drift(data_path, baseline_path=None, threshold=0.15, sample_
 # --- Extension 2: Prompt Input Schema Validation ---
 
 PROMPT_INPUT_SCHEMA = {
-    "required": ["doc_id", "source_path"],
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "required": ["doc_id", "source_path", "content_preview"],
     "properties": {
-        "doc_id": {"type": "string", "pattern": r"^[0-9a-f]{8}-"},
-        "source_path": {"type": "string", "min_length": 1},
-    }
+        "doc_id":          {"type": "string", "minLength": 36, "maxLength": 36},
+        "source_path":     {"type": "string", "minLength": 1},
+        "content_preview": {"type": "string", "maxLength": 8000},
+    },
+    "additionalProperties": False,
 }
 
 
@@ -99,30 +103,37 @@ def check_prompt_input_schema(data_path):
     valid, invalid = [], []
     for r in records:
         errors = []
+        # Required fields
         for field in PROMPT_INPUT_SCHEMA["required"]:
             if field not in r or r[field] is None:
                 errors.append(f"missing required field: {field}")
+        # Property constraints
         for field, rules in PROMPT_INPUT_SCHEMA["properties"].items():
             val = r.get(field)
             if val is None:
                 continue
             if rules.get("type") == "string" and not isinstance(val, str):
                 errors.append(f"{field}: expected string, got {type(val).__name__}")
-            if "pattern" in rules and isinstance(val, str) and not re.match(rules["pattern"], val):
-                errors.append(f"{field}: does not match pattern {rules['pattern']}")
-            if "min_length" in rules and isinstance(val, str) and len(val) < rules["min_length"]:
-                errors.append(f"{field}: too short")
+            if "minLength" in rules and isinstance(val, str) and len(val) < rules["minLength"]:
+                errors.append(f"{field}: length {len(val)} < minLength {rules['minLength']}")
+            if "maxLength" in rules and isinstance(val, str) and len(val) > rules["maxLength"]:
+                errors.append(f"{field}: length {len(val)} > maxLength {rules['maxLength']}")
+        # additionalProperties: False only applies to the prompt input subset
+        # Week 3 records are extraction outputs; we validate only the fields
+        # that would be interpolated into the prompt (doc_id, source_path, content_preview)
+        # We do NOT flag extra fields — the full record has many more fields by design.
         if errors:
             invalid.append({"record": r.get("doc_id", "unknown"), "errors": errors})
         else:
             valid.append(r)
 
-    # Quarantine invalid records
+    # Quarantine invalid records — never silently drop
+    quarantine_path = None
     if invalid:
         os.makedirs(QUARANTINE_DIR, exist_ok=True)
         ts = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
-        qpath = os.path.join(QUARANTINE_DIR, f"{ts}.jsonl")
-        with open(qpath, "w") as f:
+        quarantine_path = os.path.join(QUARANTINE_DIR, f"prompt_input_{ts}.jsonl")
+        with open(quarantine_path, "w") as f:
             for inv in invalid:
                 f.write(json.dumps(inv) + "\n")
 
@@ -135,7 +146,7 @@ def check_prompt_input_schema(data_path):
         "valid": len(valid),
         "invalid": len(invalid),
         "violation_rate": round(violation_rate, 4),
-        "quarantine_path": os.path.join(QUARANTINE_DIR, f"{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}.jsonl") if invalid else None,
+        "quarantine_path": quarantine_path,
         "message": f"{len(invalid)}/{total} records failed prompt input validation"
     }
 
@@ -151,6 +162,25 @@ VERDICT_SCHEMA = {
         "confidence": {"type": "number", "minimum": 0.0, "maximum": 1.0},
     }
 }
+
+
+def check_output_schema_violation_rate(verdict_records, baseline_rate=None, warn_threshold=0.02):
+    """Extension 3: Track LLM output schema violation rate. Spec-compliant signature."""
+    total = len(verdict_records)
+    violations = sum(1 for v in verdict_records
+                     if v.get("overall_verdict") not in ("PASS", "FAIL", "WARN"))
+    rate = violations / max(total, 1)
+    trend = "unknown"
+    if baseline_rate is not None:
+        trend = "rising" if rate > baseline_rate * 1.5 else "stable"
+    return {
+        "total_outputs": total,
+        "schema_violations": violations,
+        "violation_rate": round(rate, 4),
+        "trend": trend,
+        "status": "WARN" if rate > warn_threshold else "PASS",
+        "baseline_rate": baseline_rate,
+    }
 
 
 def check_llm_output_schema(data_path, schema=None):
@@ -180,29 +210,17 @@ def check_llm_output_schema(data_path, schema=None):
         if errors:
             violations.append({"record_id": r.get("verdict_id", "unknown"), "errors": errors})
 
-    total = len(records)
-    violation_rate = len(violations) / max(total, 1)
-
-    # Load baseline for trend detection
-    baseline_rate = 0.0
+    # Load persisted baseline rate (written on first run, never overwritten)
+    baseline_rate = None
     if os.path.exists(METRICS_PATH):
         with open(METRICS_PATH) as f:
             prev = json.load(f)
-            baseline_rate = prev.get("baseline_violation_rate", 0.0)
+        baseline_rate = prev.get("baseline_violation_rate")
 
-    trend = "rising" if violation_rate > baseline_rate * 1.2 and baseline_rate > 0 else "stable"
-    status = "FAIL" if violation_rate > 0.15 else ("WARN" if trend == "rising" or violation_rate > 0.05 else "PASS")
-
-    return {
-        "check_type": "llm_output_schema",
-        "status": status,
-        "total_outputs": total,
-        "schema_violations": len(violations),
-        "violation_rate": round(violation_rate, 4),
-        "baseline_violation_rate": round(baseline_rate, 4),
-        "trend": trend,
-        "message": f"{len(violations)}/{total} LLM outputs failed schema validation (trend: {trend})"
-    }
+    result = check_output_schema_violation_rate(records, baseline_rate=baseline_rate)
+    result["check_type"] = "llm_output_schema"
+    result["message"] = f"{result['schema_violations']}/{result['total_outputs']} LLM outputs failed schema validation (trend: {result['trend']})"
+    return result
 
 
 def run_all():
@@ -229,18 +247,25 @@ def run_all():
         results["llm_output_schema"] = check_llm_output_schema(w2_path)
         print(f"  {results['llm_output_schema']['status']}: {results['llm_output_schema']['message']}")
 
-    # Write metrics
+    # Write metrics — baseline_violation_rate is written once and preserved
+    existing_baseline = None
+    if os.path.exists(METRICS_PATH):
+        with open(METRICS_PATH) as f:
+            existing_baseline = json.load(f).get("baseline_violation_rate")
+
     metrics = {
         "run_date": datetime.now(timezone.utc).isoformat(),
-        "prompt_hash": hashlib.sha256(json.dumps(PROMPT_INPUT_SCHEMA).encode()).hexdigest()[:16],
+        "prompt_hash": hashlib.sha256(json.dumps(PROMPT_INPUT_SCHEMA, sort_keys=True).encode()).hexdigest()[:16],
         **{k: v for k, v in results.items()},
     }
     if "llm_output_schema" in results:
-        metrics["total_outputs"] = results["llm_output_schema"]["total_outputs"]
-        metrics["schema_violations"] = results["llm_output_schema"]["schema_violations"]
-        metrics["violation_rate"] = results["llm_output_schema"]["violation_rate"]
-        metrics["trend"] = results["llm_output_schema"]["trend"]
-        metrics["baseline_violation_rate"] = results["llm_output_schema"]["violation_rate"]
+        r = results["llm_output_schema"]
+        metrics["total_outputs"] = r["total_outputs"]
+        metrics["schema_violations"] = r["schema_violations"]
+        metrics["violation_rate"] = r["violation_rate"]
+        metrics["trend"] = r["trend"]
+        # Preserve baseline: only set on first run
+        metrics["baseline_violation_rate"] = existing_baseline if existing_baseline is not None else r["violation_rate"]
 
     os.makedirs(os.path.dirname(METRICS_PATH), exist_ok=True)
     with open(METRICS_PATH, "w") as f:

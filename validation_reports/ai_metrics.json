@@ -1,6 +1,6 @@
 {
-  "run_date": "2026-04-01T22:16:47.734677+00:00",
-  "prompt_hash": "78a295cf5d530ce5",
+  "run_date": "2026-04-04T13:38:27.858185+00:00",
+  "prompt_hash": "8c997554063ece7f",
   "embedding_drift": {
     "check_type": "embedding_drift",
     "drift_score": 0.0,
@@ -11,22 +11,22 @@
   },
   "prompt_input_schema": {
     "check_type": "prompt_input_schema",
-    "status": "PASS",
+    "status": "FAIL",
     "total_records": 64,
-    "valid": 64,
-    "invalid": 0,
-    "violation_rate": 0.0,
-    "quarantine_path": null,
-    "message": "0/64 records failed prompt input validation"
+    "valid": 0,
+    "invalid": 64,
+    "violation_rate": 1.0,
+    "quarantine_path": "/home/shuaib/Desktop/python/10Acd/10AcWeek7/outputs/quarantine/prompt_input_20260404_133827.jsonl",
+    "message": "64/64 records failed prompt input validation"
   },
   "llm_output_schema": {
-    "check_type": "llm_output_schema",
-    "status": "PASS",
     "total_outputs": 16,
     "schema_violations": 0,
     "violation_rate": 0.0,
-    "baseline_violation_rate": 0.0,
     "trend": "stable",
+    "status": "PASS",
+    "baseline_rate": 0.0,
+    "check_type": "llm_output_schema",
     "message": "0/16 LLM outputs failed schema validation (trend: stable)"
   },
   "total_outputs": 16,
