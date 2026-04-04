@@ -520,6 +520,73 @@ FIELD_PATTERNS = {
 
 # Domain-aware range overrides: (contract_id, col_name) -> {minimum, maximum, description}
 # These override auto-inferred stats ranges when the sample-based range is too tight.
+BASELINES_PATH = os.path.join(BASE_DIR, "schema_snapshots", "baselines.json")
+
+# Thresholds for suspicious numeric distributions
+_DIST_WARN_MEAN_HIGH = 0.99   # mean suspiciously close to maximum (e.g. near-saturated score)
+_DIST_WARN_MEAN_LOW  = 0.01   # mean suspiciously close to zero (e.g. near-zero confidence)
+_DIST_WARN_STDDEV_ZERO = 0.001 # effectively constant column
+
+
+def save_distribution_baselines(contract_id, profiles):
+    """Persist mean/stddev per numeric column to schema_snapshots/baselines.json."""
+    os.makedirs(os.path.dirname(BASELINES_PATH), exist_ok=True)
+    baselines = {}
+    if os.path.exists(BASELINES_PATH):
+        with open(BASELINES_PATH) as f:
+            baselines = json.load(f)
+    for col_name, prof in profiles.items():
+        if prof.get("type") not in ("number", "integer"):
+            continue
+        stats = prof.get("stats")
+        if not stats:
+            continue
+        key = f"{contract_id}.{col_name}"
+        # Only write baseline if not already present (first-run semantics)
+        if key not in baselines:
+            baselines[key] = {
+                "mean": stats["mean"],
+                "stddev": stats["stddev"],
+                "count": prof["total_count"],
+            }
+    with open(BASELINES_PATH, "w") as f:
+        json.dump(baselines, f, indent=2)
+
+
+def detect_suspicious_distributions(profiles, contract_id):
+    """Return a dict of col_name -> warning message for suspicious numeric distributions."""
+    warnings = {}
+    for col_name, prof in profiles.items():
+        if prof.get("type") not in ("number", "integer"):
+            continue
+        stats = prof.get("stats")
+        if not stats:
+            continue
+        mean = stats["mean"]
+        stddev = stats["stddev"]
+        minimum = stats["min"]
+        maximum = stats["max"]
+        # Near-boundary mean on a [0,1] field
+        if minimum >= 0 and maximum <= 1:
+            if mean > _DIST_WARN_MEAN_HIGH:
+                warnings[col_name] = (
+                    f"WARN: mean={mean} is suspiciously close to maximum (1.0). "
+                    f"Possible data quality issue or near-saturated distribution."
+                )
+            elif mean < _DIST_WARN_MEAN_LOW:
+                warnings[col_name] = (
+                    f"WARN: mean={mean} is suspiciously close to zero. "
+                    f"Possible data quality issue or near-zero distribution."
+                )
+        # Effectively constant column
+        if stddev < _DIST_WARN_STDDEV_ZERO and prof["total_count"] > 5:
+            warnings[col_name] = (
+                f"WARN: stddev={stddev} — column appears constant (all values ≈ {mean}). "
+                f"May indicate a hardcoded default or upstream bug."
+            )
+    return warnings
+
+
 DOMAIN_RANGE_OVERRIDES = {
     ("week3-document-refinery-extractions", "extracted_facts[*].page_ref"): {
         "minimum": 0, "maximum": 10000,
@@ -633,6 +700,14 @@ def build_schema_section(profiles, contract_id):
     return schema
 
 
+def inject_distribution_warnings(schema, dist_warnings):
+    """Inject x-distribution-warning into schema clauses for flagged columns."""
+    for col_name, warning in dist_warnings.items():
+        if col_name in schema:
+            schema[col_name]["x-distribution-warning"] = warning
+    return schema
+
+
 def build_quality_section(profiles, contract_id):
     """Build quality checks section."""
     rules = ENFORCEMENT_RULES.get(contract_id, {})
@@ -670,6 +745,14 @@ def generate_contract(source_name, source_path, output_dir):
     profiles = profile_records(records)
     schema = build_schema_section(profiles, contract_id)
     quality = build_quality_section(profiles, contract_id)
+
+    # Distribution baseline persistence and suspicious distribution detection
+    save_distribution_baselines(contract_id, profiles)
+    dist_warnings = detect_suspicious_distributions(profiles, contract_id)
+    if dist_warnings:
+        schema = inject_distribution_warnings(schema, dist_warnings)
+        for col, msg in dist_warnings.items():
+            print(f"  [DIST WARN] {col}: {msg}")
 
     # Step 3: Dynamic lineage context injection
     lineage_graph = load_lineage_graph()
