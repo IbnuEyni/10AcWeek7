@@ -9,6 +9,57 @@ import argparse, json, os, glob, yaml, uuid
 from datetime import datetime, timezone, timedelta
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+REGISTRY_PATH = os.path.join(BASE_DIR, "contract_registry", "subscriptions.yaml")
+
+
+def load_registry():
+    if not os.path.exists(REGISTRY_PATH):
+        return []
+    with open(REGISTRY_PATH) as f:
+        data = yaml.safe_load(f)
+    return data.get("subscriptions", [])
+
+
+def registry_blast_radius_for_contract(contract_id, registry):
+    """Return all subscribers for a contract with their breaking fields."""
+    return [
+        {
+            "subscriber_id": s["subscriber_id"],
+            "contact": s.get("contact", ""),
+            "validation_mode": s.get("validation_mode", "AUDIT"),
+            "breaking_fields": [bf["field"] if isinstance(bf, dict) else bf
+                                 for bf in s.get("breaking_fields", [])],
+        }
+        for s in registry if s.get("contract_id") == contract_id
+    ]
+
+
+def per_consumer_failure_analysis(changes, subscribers):
+    """For each subscriber, identify which breaking changes affect their declared fields."""
+    analysis = []
+    breaking = [c for c in changes if not c["backward_compatible"]]
+    for sub in subscribers:
+        affected = []
+        for change in breaking:
+            col = change["column"]
+            # Normalise column name for comparison
+            norm_col = col.replace("[*]", "").replace("[*].", ".")
+            for bf in sub["breaking_fields"]:
+                if norm_col == bf or norm_col.startswith(bf) or bf.startswith(norm_col):
+                    affected.append({
+                        "column": col,
+                        "change_type": change["change_type"],
+                        "failure_mode": change["required_action"],
+                    })
+                    break
+        analysis.append({
+            "subscriber_id": sub["subscriber_id"],
+            "contact": sub["contact"],
+            "validation_mode": sub["validation_mode"],
+            "affected_changes": affected,
+            "impact": "BREAKING" if affected else "NONE",
+        })
+    return analysis
 
 # Change classification taxonomy
 CHANGE_TAXONOMY = {
@@ -31,12 +82,22 @@ def load_snapshot(path):
         return yaml.safe_load(f)
 
 
-def get_snapshots(contract_id, since_days=7):
-    """Get all snapshots for a contract, sorted by timestamp."""
+def get_snapshots(contract_id, since_str="7 days ago"):
+    """Get all snapshots for a contract, sorted by timestamp, optionally filtered by age."""
     snap_dir = os.path.join(BASE_DIR, "schema_snapshots", contract_id)
     if not os.path.exists(snap_dir):
         return []
     files = sorted(glob.glob(os.path.join(snap_dir, "*.yaml")))
+    # Parse since_str like "7 days ago" into a cutoff datetime
+    try:
+        days = int(since_str.split()[0])
+        cutoff = datetime.now(timezone.utc) - timedelta(days=days)
+        def snap_mtime(p):
+            import os as _os
+            return datetime.fromtimestamp(_os.path.getmtime(p), tz=timezone.utc)
+        files = [f for f in files if snap_mtime(f) >= cutoff] or files  # fallback to all if none in window
+    except Exception:
+        pass
     return files
 
 
@@ -145,10 +206,13 @@ def diff_snapshots(snap_a, snap_b):
     return changes
 
 
-def generate_migration_report(contract_id, snap_a_path, snap_b_path, changes):
+def generate_migration_report(contract_id, snap_a_path, snap_b_path, changes, registry=None):
     """Generate migration impact report for breaking changes."""
     breaking = [c for c in changes if not c["backward_compatible"]]
     has_breaking = len(breaking) > 0
+    registry = registry or []
+    subscribers = registry_blast_radius_for_contract(contract_id, registry)
+    consumer_analysis = per_consumer_failure_analysis(changes, subscribers)
 
     report = {
         "report_id": str(uuid.uuid4()),
@@ -161,6 +225,12 @@ def generate_migration_report(contract_id, snap_a_path, snap_b_path, changes):
         "breaking_changes": len(breaking),
         "compatible_changes": len(changes) - len(breaking),
         "changes": changes,
+        "blast_radius": {
+            "source": "registry",
+            "subscribers": subscribers,
+            "total_affected": len([s for s in consumer_analysis if s["impact"] == "BREAKING"]),
+        },
+        "per_consumer_analysis": consumer_analysis,
         "migration_checklist": [],
         "rollback_plan": {},
     }
@@ -215,9 +285,10 @@ def main():
         snap_b = load_snapshot(args.snapshot_b)
         contract_id = snap_a.get("contract_id", args.contract_id or "unknown")
         changes = diff_snapshots(snap_a, snap_b)
-        report = generate_migration_report(contract_id, args.snapshot_a, args.snapshot_b, changes)
+        registry = load_registry()
+        report = generate_migration_report(contract_id, args.snapshot_a, args.snapshot_b, changes, registry)
     elif args.contract_id:
-        snapshots = get_snapshots(args.contract_id)
+        snapshots = get_snapshots(args.contract_id, args.since)
         if len(snapshots) < 2:
             print(f"Need at least 2 snapshots for {args.contract_id}. Found {len(snapshots)}.")
             print("Generating a second snapshot with injected changes for demo...")
@@ -251,7 +322,8 @@ def main():
             snap_a = load_snapshot(snapshots[-2])
             snap_b = load_snapshot(snapshots[-1])
             changes = diff_snapshots(snap_a, snap_b)
-            report = generate_migration_report(args.contract_id, snapshots[-2], snapshots[-1], changes)
+            registry = load_registry()
+            report = generate_migration_report(args.contract_id, snapshots[-2], snapshots[-1], changes, registry)
         else:
             print("Still not enough snapshots.")
             return
@@ -266,7 +338,10 @@ def main():
         os.makedirs(os.path.join(BASE_DIR, "validation_reports"), exist_ok=True)
         cid = report.get("contract_id", "unknown")
         ts = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M")
-        out_path = os.path.join(BASE_DIR, "validation_reports", f"schema_evolution_{cid}_{ts}.json")
+        # Spec: migration_impact_{contract_id}_{timestamp}.json for breaking changes
+        # schema_evolution_{contract_id}_{timestamp}.json for compatible-only
+        prefix = "migration_impact" if report["compatibility_verdict"] == "BREAKING" else "schema_evolution"
+        out_path = os.path.join(BASE_DIR, "validation_reports", f"{prefix}_{cid}_{ts}.json")
 
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
     with open(out_path, "w") as f:

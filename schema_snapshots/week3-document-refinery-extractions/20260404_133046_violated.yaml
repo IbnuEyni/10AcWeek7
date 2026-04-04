@@ -1,0 +1,282 @@
+contract_id: week3-document-refinery-extractions
+captured_at: '2026-04-04T13:30:46.413920+00:00'
+columns:
+  doc_id:
+    type: string
+    null_fraction: 0.0
+    cardinality: 16
+    format: uuid
+    sample_values:
+    - b1c99847-e2ef-52c4-ab3b-ca9cbdd84c8b
+    - 73564ce0-5606-5532-8cdc-a9b5fa645ac0
+    - 43b78c8f-a466-57df-bab9-9d0d1b0a87be
+    - 4be0643f-1d98-573b-97cd-ca98a65347dd
+    - def94da4-95c8-5c8f-8373-bde85759760d
+  entities:
+    type: array
+    null_fraction: 0.0
+    cardinality: 64
+  entities[*].canonical_value:
+    type: string
+    null_fraction: 0.0
+    cardinality: 211
+    sample_values:
+    - revenue
+    - vehicles
+    - government_bond
+    - figures
+    - association
+  entities[*].entity_id:
+    type: string
+    null_fraction: 0.0
+    cardinality: 964
+    format: uuid
+    sample_values:
+    - c8a621e2-9fe7-4c0a-be1a-502ec067cb21
+    - 798654c7-d38d-4b57-97aa-01b399cf33b8
+    - 517a2e1a-5ac3-4e66-a10c-3d4e0169851e
+    - 061cdfff-b795-4f04-9eb0-8ff96b1893fb
+    - 0077753d-5f4d-45f3-9182-bda19689d8cf
+  entities[*].name:
+    type: string
+    null_fraction: 0.0
+    cardinality: 211
+    sample_values:
+    - "Percentage             \n         Shareholder Category          Composition\
+      \                                \n                                        \
+      \                   Shareholding"
+    - Issue No
+    - There
+    - Surtax
+    - Reinsurance
+  entities[*].type:
+    type: string
+    null_fraction: 0.0
+    cardinality: 6
+    sample_values:
+    - OTHER
+    - ORG
+    - AMOUNT
+    - PERSON
+    - DATE
+  extracted_at:
+    type: string
+    null_fraction: 0.0
+    cardinality: 64
+    format: iso8601
+    sample_values:
+    - '2026-03-02T14:26:23.347665Z'
+    - '2026-03-06T14:45:09.435891Z'
+    - '2026-03-07T23:57:59.426948Z'
+    - '2026-03-02T14:26:24.277032Z'
+    - '2026-03-07T13:02:29.390077Z'
+  extracted_facts:
+    type: array
+    null_fraction: 0.0
+    cardinality: 64
+  extracted_facts[*].confidence:
+    type: integer
+    null_fraction: 0.0
+    cardinality: 3
+    stats:
+      min: 50.0
+      max: 98.8
+      mean: 73.9253
+      stddev: 14.8852
+      p25: 59.25
+      p50: 75.35
+      p75: 87.8
+      p95: 96.49
+      p99: 98.446
+  extracted_facts[*].entity_refs:
+    type: array
+    null_fraction: 0.0
+    cardinality: 584
+  extracted_facts[*].fact_id:
+    type: string
+    null_fraction: 0.0
+    cardinality: 799
+    format: uuid
+    sample_values:
+    - 6371b4a8-5137-4d54-aa00-c17e16d4d444
+    - 37948502-2bd0-414c-899b-48bdbdcbfa5e
+    - 707e326f-39d3-42cb-ab7d-528990179761
+    - 8dae3a68-583a-481b-bb20-d39f0d7c0411
+    - 081a357c-cce4-4c20-93f6-9c1326c7d086
+  extracted_facts[*].page_ref:
+    type: integer
+    null_fraction: 0.0238
+    cardinality: 85
+    stats:
+      min: 0.0
+      max: 91.0
+      mean: 25.2859
+      stddev: 29.1803
+      p25: 3.0
+      p50: 10.0
+      p75: 49.0
+      p95: 84.05
+      p99: 90.0
+  extracted_facts[*].source_excerpt:
+    type: string
+    null_fraction: 0.0
+    cardinality: 180
+    sample_values:
+    - ''
+    - 'Month | General month-to-month inflation
+
+      --------------------------------------------------
+
+      July-EFY 2016 | 1.5
+
+      August | 1.2
+
+      September | 2.4
+
+      October | 0.9
+
+      November | -0.8
+
+      December | 0.8
+
+      January | 0.6
+
+      February | 0.5
+
+      March | 2.7
+
+      April | 0.1
+
+      May | 0.2
+
+      June | 0.5
+
+      July-EFY 2017 | 1.3'
+    - "Table 5: 12-month moving average Food and Non-Food Inflation rate (March EFY2016\
+      \ - March EFY2017)\nBaseline: Dec, EFY2009= 100 |  | \n--------------------------------------------------\n\
+      Month | 12-month moving average Food\nInflation | 12-month moving average Non-Food\n\
+      Inflation\nMarch-EFY2016 | 29.3 | 28"
+    - "Figure 2013-E.C-Assigned-regular-budget-and-expense_p1_fig0: \u1218\u1208\u12AA\
+      \u12EB/\u12A0\u1218\u120B\u12AB\n\u127D\n\u12A0\u1263\u122A 4."
+    - 'Issue No. 25/2017 Page 9
+
+      --------------------------------------------------
+
+      Recent Improvements in CPI Price survey
+
+      The monthly consumer price data collection first started in Addis Ababa in 1963
+      (1955 E.C). The consumer price survey
+
+      which started in the capital city helped to prepare Consumer Price'
+  extracted_facts[*].text:
+    type: string
+    null_fraction: 0.0
+    cardinality: 202
+    sample_values:
+    - ''
+    - 'Month | General month-to-month inflation
+
+      --------------------------------------------------
+
+      July-EFY 2016 | 1.5
+
+      August | 1.2
+
+      September | 2.4
+
+      October | 0.9
+
+      November | -0.8
+
+      December | 0.8
+
+      January | 0.6
+
+      February | 0.5
+
+      March | 2.7
+
+      April | 0.1
+
+      May | 0.2
+
+      June | 0.5
+
+      July-EFY 2017 | 1.3'
+    - ETHIOPIAN REINSURANCE ANNUAL REPORT                                 V
+    - "FINANCIAL INSTRUMENTS | EFFECT ON PROFIT/LOSS |  | EFFECT ON EQUITY | \n--------------------------------------------------\n\
+      \ | 0.5% increase | 0.5% decrease | 0.5% increase | 0.5% decrease\nTime deposits\
+      \ | (2,864,835) | 2,864,835 | (2,864,835) | 2,864,835\nTotal | (2,864,835) |\
+      \ 2,864,835 | (2,864,835) | 2,864,835"
+    - "31 Import tax expenditure report: FY 2018/19 \u2013 2020/21"
+  extraction_model:
+    type: string
+    null_fraction: 0.0
+    cardinality: 2
+    sample_values:
+    - claude-3-haiku-20240307
+    - claude-3-5-sonnet-20241022
+  processing_time_ms:
+    type: integer
+    null_fraction: 0.0
+    cardinality: 55
+    stats:
+      min: 200.0
+      max: 1082881.0
+      mean: 63848.5156
+      stddev: 153340.0064
+      p25: 3384.0
+      p50: 5525.0
+      p75: 47069.5
+      p95: 278533.1
+      p99: 596125.36
+  source_hash:
+    type: string
+    null_fraction: 0.0
+    cardinality: 16
+    format: sha256
+    sample_values:
+    - fcec82dc0d523268f9c001b2e029ec6a513a79de149f59f6c84e4bbaa95bacdc
+    - 4f830746a2e5ec9729d831448dae7c4d0de4c55498a62c71135aacc12bb2b29e
+    - 3e4dc750c0b3011d4f043e357824ba7df66cebe2119de878f6f9e356977e9a57
+    - 056c935e4dfa223cbf0827a8ff2b43fc768869d129c80d83ee56c07445bb1dd8
+    - cb6c5a72d8183f60e4f8844023c196cb6bb881a549a50ad8626e81d34bea5c25
+  source_path:
+    type: string
+    null_fraction: 0.0
+    cardinality: 16
+    format: path
+    sample_values:
+    - /data/documents/2021_Audited_Financial_Statement_Report.pdf
+    - /data/documents/2022_Audited_Financial_Statement_Report.pdf
+    - /data/documents/2018_Audited_Financial_Statement_Report.pdf
+    - /data/documents/test_native_digital.pdf
+    - /data/documents/tax_expenditure_ethiopia_2021_22.pdf
+  token_count.input:
+    type: integer
+    null_fraction: 0.0
+    cardinality: 8
+    stats:
+      min: 200.0
+      max: 18400.0
+      mean: 2203.125
+      stddev: 4203.6431
+      p25: 200.0
+      p50: 600.0
+      p75: 2400.0
+      p95: 12000.0
+      p99: 18400.0
+  token_count.output:
+    type: integer
+    null_fraction: 0.0
+    cardinality: 7
+    stats:
+      min: 50.0
+      max: 4200.0
+      mean: 624.2188
+      stddev: 1049.8509
+      p25: 50.0
+      p50: 150.0
+      p75: 1150.0
+      p95: 3750.0
+      p99: 4200.0
