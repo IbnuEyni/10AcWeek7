@@ -42,9 +42,12 @@ def registry_blast_radius(contract_id, failing_field, registry):
             continue
         breaking = [bf["field"] if isinstance(bf, dict) else bf
                     for bf in sub.get("breaking_fields", [])]
-        # Match if failing_field starts with any breaking field prefix
+        # Normalise failing_field: strip [*] notation for comparison
+        # e.g. "extracted_facts[*].confidence" -> "extracted_facts.confidence"
+        norm_failing = re.sub(r'\[\*\]', '', failing_field)
         is_breaking = any(
-            failing_field == bf or failing_field.startswith(bf.split("[")[0])
+            norm_failing == bf or norm_failing.startswith(bf.split("[")[0])
+            or failing_field == bf or failing_field.startswith(bf.split("[")[0])
             for bf in breaking
         )
         affected.append({
