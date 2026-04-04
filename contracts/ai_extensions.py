@@ -17,6 +17,9 @@ QUARANTINE_DIR = os.path.join(BASE_DIR, "outputs", "quarantine")
 METRICS_PATH = os.path.join(BASE_DIR, "validation_reports", "ai_metrics.json")
 
 
+VIOLATION_LOG_PATH = os.path.join(BASE_DIR, "violation_log", "violations.jsonl")
+
+
 def load_jsonl(path):
     records = []
     full = os.path.join(BASE_DIR, path) if not os.path.isabs(path) else path
@@ -28,7 +31,48 @@ def load_jsonl(path):
     return records
 
 
-# --- Extension 1: Embedding Drift Detection ---
+def write_ai_violation(check_result):
+    """Write WARN/FAIL AI extension results to violation_log/violations.jsonl."""
+    if check_result.get("status") not in ("WARN", "FAIL"):
+        return
+    entry = {
+        "violation_id": str(uuid.uuid4()),
+        "check_id": f"ai-extensions.{check_result.get('check_type', 'unknown')}",
+        "detected_at": datetime.now(timezone.utc).isoformat(),
+        "check_type": check_result.get("check_type"),
+        "status": check_result.get("status"),
+        "message": check_result.get("message", ""),
+        "blame_chain": [],
+        "blast_radius": {
+            "registry_subscribers": [],
+            "affected_nodes": [],
+            "estimated_records": check_result.get("invalid", check_result.get("schema_violations", 0)),
+        },
+        "source": "ai_extensions",
+    }
+    os.makedirs(os.path.dirname(VIOLATION_LOG_PATH), exist_ok=True)
+    with open(VIOLATION_LOG_PATH, "a") as f:
+        f.write(json.dumps(entry) + "\n")
+
+
+
+
+def _embed_sample(texts, n=200):
+    """Embed texts using OpenAI text-embedding-3-small. Falls back to character-hash if no API key."""
+    sample = texts[:n]
+    api_key = os.environ.get("OPENAI_API_KEY") or os.environ.get("ANTHROPIC_API_KEY")
+    if api_key and os.environ.get("OPENAI_API_KEY"):
+        try:
+            import openai
+            client = openai.OpenAI(api_key=os.environ["OPENAI_API_KEY"])
+            resp = client.embeddings.create(input=sample, model="text-embedding-3-small")
+            return np.array([e.embedding for e in resp.data]), "text-embedding-3-small"
+        except Exception as e:
+            print(f"  OpenAI embedding failed ({e}), falling back to character-hash")
+    # Fallback: deterministic character-frequency hash (no API needed)
+    vectors = np.array([_simple_text_vector(t) for t in sample])
+    return vectors, "character-hash-64d"
+
 
 def _simple_text_vector(text, dim=64):
     """Deterministic text-to-vector using character frequency hashing (no API needed)."""
@@ -57,8 +101,7 @@ def check_embedding_drift(data_path, baseline_path=None, threshold=0.15, sample_
     if not texts:
         return {"status": "SKIP", "message": "No text values found"}
 
-    sample = texts[:sample_size]
-    vectors = np.array([_simple_text_vector(t) for t in sample])
+    vectors, embed_method = _embed_sample(texts, n=sample_size)
     current_centroid = np.mean(vectors, axis=0)
 
     bp = baseline_path or os.path.join(BASELINE_DIR, "embedding_baselines.npz")
@@ -77,8 +120,9 @@ def check_embedding_drift(data_path, baseline_path=None, threshold=0.15, sample_
         "drift_score": round(float(drift), 4),
         "status": status,
         "threshold": threshold,
-        "sample_size": len(sample),
-        "message": f"Embedding drift={drift:.4f} ({'exceeds' if drift > threshold else 'within'} threshold {threshold})"
+        "sample_size": len(vectors),
+        "embedding_method": embed_method,
+        "message": f"Embedding drift={drift:.4f} ({'exceeds' if drift > threshold else 'within'} threshold {threshold}) [{embed_method}]"
     }
 
 
@@ -233,12 +277,14 @@ def run_all():
         print("Extension 1: Embedding drift on Week 3 extractions...")
         results["embedding_drift"] = check_embedding_drift(w3_path)
         print(f"  {results['embedding_drift']['status']}: drift={results['embedding_drift']['drift_score']}")
+        write_ai_violation(results["embedding_drift"])
 
     # Extension 2: Prompt input validation on Week 3
     if os.path.exists(w3_path):
         print("Extension 2: Prompt input schema validation on Week 3...")
         results["prompt_input_schema"] = check_prompt_input_schema(w3_path)
         print(f"  {results['prompt_input_schema']['status']}: {results['prompt_input_schema']['message']}")
+        write_ai_violation(results["prompt_input_schema"])
 
     # Extension 3: LLM output schema on Week 2 verdicts
     w2_path = os.path.join(BASE_DIR, "outputs/week2/verdicts.jsonl")
@@ -246,6 +292,7 @@ def run_all():
         print("Extension 3: LLM output schema enforcement on Week 2 verdicts...")
         results["llm_output_schema"] = check_llm_output_schema(w2_path)
         print(f"  {results['llm_output_schema']['status']}: {results['llm_output_schema']['message']}")
+        write_ai_violation(results["llm_output_schema"])
 
     # Write metrics — baseline_violation_rate is written once and preserved
     existing_baseline = None
