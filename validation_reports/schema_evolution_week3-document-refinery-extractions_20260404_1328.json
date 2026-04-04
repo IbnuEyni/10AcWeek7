@@ -1,0 +1,39 @@
+{
+  "report_id": "7ed0b778-4658-44d0-b4eb-bf18382a015b",
+  "contract_id": "week3-document-refinery-extractions",
+  "generated_at": "2026-04-04T13:28:08.684255+00:00",
+  "snapshot_before": "schema_snapshots/week3-document-refinery-extractions/20260401_200810.yaml",
+  "snapshot_after": "schema_snapshots/week3-document-refinery-extractions/20260401_204732.yaml",
+  "compatibility_verdict": "COMPATIBLE",
+  "total_changes": 0,
+  "breaking_changes": 0,
+  "compatible_changes": 0,
+  "changes": [],
+  "blast_radius": {
+    "source": "registry",
+    "subscribers": [
+      {
+        "subscriber_id": "week4-cartographer",
+        "contact": "week4-team@org.com",
+        "validation_mode": "ENFORCE",
+        "breaking_fields": [
+          "extracted_facts.confidence",
+          "doc_id",
+          "extraction_model"
+        ]
+      }
+    ],
+    "total_affected": 0
+  },
+  "per_consumer_analysis": [
+    {
+      "subscriber_id": "week4-cartographer",
+      "contact": "week4-team@org.com",
+      "validation_mode": "ENFORCE",
+      "affected_changes": [],
+      "impact": "NONE"
+    }
+  ],
+  "migration_checklist": [],
+  "rollback_plan": {}
+}

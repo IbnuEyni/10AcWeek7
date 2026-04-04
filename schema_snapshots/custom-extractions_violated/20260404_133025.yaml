@@ -1,0 +1,209 @@
+contract_id: custom-extractions_violated
+captured_at: '2026-04-04T13:30:25.286657+00:00'
+columns:
+  doc_id:
+    type: string
+    null_fraction: 0.0
+    cardinality: 55
+    format: uuid
+    sample_values:
+    - 228ddcac-a03b-41fb-ae83-96a5e40844de
+    - 322dedb7-4a19-4d83-81fd-4eacb06291a7
+    - 07174310-f6fc-4a10-bda9-b4959cae1589
+    - a315d88a-8c98-4e10-bb54-9169e8682a2d
+    - f1546ae6-f2e4-4dfe-9622-6cdaab890e11
+  entities:
+    type: array
+    null_fraction: 0.0
+    cardinality: 55
+  entities[*].canonical_value:
+    type: string
+    null_fraction: 0.0
+    cardinality: 6
+    sample_values:
+    - new_york
+    - '5000'
+    - acme_corp
+    - '2025-01-15'
+    - jane_doe
+  entities[*].entity_id:
+    type: string
+    null_fraction: 0.0
+    cardinality: 163
+    format: uuid
+    sample_values:
+    - 478747ce-4fd7-4842-b90e-6df2462f68d4
+    - 8c4d4591-26d1-4813-9950-bcee1a2992db
+    - 65c48abc-753a-456c-a5ab-49ea00236441
+    - f3075692-8809-462c-a436-d1061fd66889
+    - 2f956a67-0583-4487-b8b7-b461c1088376
+  entities[*].name:
+    type: string
+    null_fraction: 0.0
+    cardinality: 6
+    sample_values:
+    - $5000
+    - Jane Doe
+    - Acme Corp
+    - '2025-01-15'
+    - New York
+  entities[*].type:
+    type: string
+    null_fraction: 0.0
+    cardinality: 6
+    sample_values:
+    - ORG
+    - OTHER
+    - AMOUNT
+    - LOCATION
+    - DATE
+  extracted_at:
+    type: string
+    null_fraction: 0.0
+    cardinality: 15
+    format: iso8601
+    sample_values:
+    - '2026-03-25T16:41:46Z'
+    - '2026-03-24T16:41:46Z'
+    - '2026-03-18T16:41:46Z'
+    - '2026-03-22T16:41:46Z'
+    - '2026-03-23T16:41:46Z'
+  extracted_facts:
+    type: array
+    null_fraction: 0.0
+    cardinality: 55
+  extracted_facts[*].confidence:
+    type: number
+    null_fraction: 0.0
+    cardinality: 156
+    stats:
+      min: 50.0
+      max: 98.8
+      mean: 73.9253
+      stddev: 14.8852
+      p25: 59.25
+      p50: 75.35
+      p75: 87.8
+      p95: 96.49
+      p99: 98.446
+  extracted_facts[*].entity_refs:
+    type: array
+    null_fraction: 0.0
+    cardinality: 140
+  extracted_facts[*].fact_id:
+    type: string
+    null_fraction: 0.0
+    cardinality: 178
+    format: uuid
+    sample_values:
+    - 3911c6cd-cac8-49bf-9ebe-3b1905a3566a
+    - 9f9185ac-c754-4c00-8762-a3e2f29e3e89
+    - 8ee7fa38-ff2b-4266-aaf1-86d3fba51a11
+    - d4285d66-15a3-4e69-91e0-25a3d66fc6be
+    - 009fd513-068c-44f9-a38c-24db53a775d6
+  extracted_facts[*].page_ref:
+    type: integer
+    null_fraction: 0.5112
+    cardinality: 20
+    stats:
+      min: 1.0
+      max: 20.0
+      mean: 10.3218
+      stddev: 5.5491
+      p25: 6.0
+      p50: 9.0
+      p75: 15.0
+      p95: 19.0
+      p99: 20.0
+  extracted_facts[*].source_excerpt:
+    type: string
+    null_fraction: 0.0
+    cardinality: 5
+    sample_values:
+    - Verbatim excerpt 5 from source document
+    - Verbatim excerpt 2 from source document
+    - Verbatim excerpt 1 from source document
+    - Verbatim excerpt 3 from source document
+    - Verbatim excerpt 4 from source document
+  extracted_facts[*].text:
+    type: string
+    null_fraction: 0.0
+    cardinality: 25
+    sample_values:
+    - 'Extracted fact 2: Revenue increased by 15%'
+    - 'Extracted fact 2: Contract signed on Jan 15'
+    - 'Extracted fact 1: Approved by Jane Doe'
+    - 'Extracted fact 1: Revenue increased by 15%'
+    - 'Extracted fact 5: Revenue increased by 15%'
+  extraction_model:
+    type: string
+    null_fraction: 0.0
+    cardinality: 3
+    sample_values:
+    - claude-3-haiku-20240307
+    - claude-3-5-sonnet-20241022
+    - gpt-4o-2024-05-13
+  processing_time_ms:
+    type: integer
+    null_fraction: 0.0
+    cardinality: 54
+    stats:
+      min: 268.0
+      max: 4851.0
+      mean: 2484.3455
+      stddev: 1239.9883
+      p25: 1607.0
+      p50: 2426.0
+      p75: 3498.0
+      p95: 4493.8
+      p99: 4828.32
+  source_hash:
+    type: string
+    null_fraction: 0.0
+    cardinality: 55
+    format: sha256
+    sample_values:
+    - 6596acd7b314fbb83a8e303e2bfa67471b2d7ec06341ced40ee2dfb0d530bb8c
+    - cb3025ad8b40edf24142237a00c3d9c21b55b0b1c3b9da035c7cf2e9e4af88c6
+    - 6de64c46595200ee3e3a736cdef2234b6907a21b9debe906ac16f255b54533c0
+    - f4f9da4ac8816c2cd4358146323492837ca82a22d877d9bbdd0cdb638f341f3f
+    - 9b3ff8a1d2a848ac40abd65c5ddad382be537289d767c733c99a0f30d3cedf78
+  source_path:
+    type: string
+    null_fraction: 0.0
+    cardinality: 55
+    format: path
+    sample_values:
+    - /data/documents/doc_30.pdf
+    - /data/documents/doc_28.pdf
+    - /data/documents/doc_8.pdf
+    - /data/documents/doc_13.pdf
+    - /data/documents/doc_20.pdf
+  token_count.input:
+    type: integer
+    null_fraction: 0.0
+    cardinality: 55
+    stats:
+      min: 1096.0
+      max: 7846.0
+      mean: 4716.5091
+      stddev: 1890.1705
+      p25: 3206.0
+      p50: 4655.0
+      p75: 6503.0
+      p95: 7539.3
+      p99: 7829.8
+  token_count.output:
+    type: integer
+    null_fraction: 0.0
+    cardinality: 55
+    stats:
+      min: 202.0
+      max: 1952.0
+      mean: 1152.9091
+      stddev: 562.7963
+      p25: 610.0
+      p50: 1285.0
+      p75: 1644.0
+      p95: 1920.4
+      p99: 1946.06

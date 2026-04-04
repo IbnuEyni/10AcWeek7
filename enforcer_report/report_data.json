@@ -1,10 +1,10 @@
 {
-  "report_id": "20260404_134006",
-  "generated_at": "2026-04-04T13:40:06.581617+00:00",
+  "report_id": "20260404_140636",
+  "generated_at": "2026-04-04T14:06:36.044377+00:00",
   "data_health_score": 37,
   "health_narrative": "Data health score is 37/100. 200/206 checks passed across all contracts. 6 checks failed.",
   "violations_this_week": {
-    "total": 5,
+    "total": 8,
     "by_severity": {
       "CRITICAL": 3,
       "HIGH": 3
@@ -28,8 +28,26 @@
     ]
   },
   "schema_changes_detected": {
-    "summary": "2 schema change(s) detected in the past 7 days. 1 breaking.",
+    "summary": "4 schema change(s) detected in the past 7 days. 2 breaking.",
     "changes": [
+      {
+        "contract_id": "week3-document-refinery-extractions",
+        "column": "extracted_facts[*].confidence",
+        "change_type": "type_narrowing",
+        "compatibility": "BREAKING",
+        "required_action": "CRITICAL. Requires explicit migration plan with rollback.",
+        "old_value": "number",
+        "new_value": "integer"
+      },
+      {
+        "contract_id": "week3-document-refinery-extractions",
+        "column": "extracted_facts[*].confidence",
+        "change_type": "stats_shift",
+        "compatibility": "COMPATIBLE",
+        "required_action": "Investigate root cause. May indicate upstream data quality issue.",
+        "old_value": "mean=0.7661, std=0.0315",
+        "new_value": "mean=73.9253, std=14.8852"
+      },
       {
         "contract_id": "week3-document-refinery-extractions",
         "column": "extracted_facts[*].confidence",
@@ -66,7 +84,7 @@
       "valid": 0,
       "invalid": 64,
       "violation_rate": 1.0,
-      "quarantine_path": "/home/shuaib/Desktop/python/10Acd/10AcWeek7/outputs/quarantine/prompt_input_20260404_133827.jsonl",
+      "quarantine_path": "/home/shuaib/Desktop/python/10Acd/10AcWeek7/outputs/quarantine/prompt_input_20260404_140622.jsonl",
       "message": "64/64 records failed prompt input validation"
     },
     "llm_output_schema": {

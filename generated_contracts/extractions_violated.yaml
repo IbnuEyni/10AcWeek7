@@ -1,15 +1,15 @@
 kind: DataContract
 apiVersion: v3.0.0
-id: week3-document-refinery-extractions
+id: custom-extractions_violated
 info:
-  title: Week 3 Document Refinery — Extraction Records
+  title: Custom Contract — extractions_violated
   version: 1.0.0
-  owner: week3-team
-  description: One record per processed document. Contains extracted facts and entities.
+  owner: platform-team
+  description: Auto-generated contract for extractions_violated
 servers:
   local:
     type: local
-    path: outputs/week3/extractions.jsonl
+    path: outputs/week3/extractions_violated.jsonl
     format: jsonl
 terms:
   usage: Internal inter-system data contract. Do not publish.
@@ -18,6 +18,7 @@ schema:
   doc_id:
     type: string
     required: true
+    format: uuid
     description: Primary key. UUIDv4. Stable across re-extractions of the same source.
   entities:
     type: array
@@ -35,13 +36,6 @@ schema:
   entities[*].type:
     type: string
     required: true
-    enum:
-    - PERSON
-    - ORG
-    - LOCATION
-    - DATE
-    - AMOUNT
-    - OTHER
   extracted_at:
     type: string
     required: true
@@ -53,10 +47,8 @@ schema:
   extracted_facts[*].confidence:
     type: number
     required: true
-    minimum: 0.0
-    maximum: 1.0
-    description: Confidence score. MUST be float 0.0-1.0. BREAKING CHANGE if changed
-      to 0-100.
+    minimum: 50.0
+    maximum: 98.8
   extracted_facts[*].entity_refs:
     type: array
     required: true
@@ -64,13 +56,10 @@ schema:
     type: string
     required: true
     format: uuid
-    unique: true
   extracted_facts[*].page_ref:
     type: integer
-    minimum: 0
-    maximum: 10000
-    description: 'Zero-indexed page number. Nullable. Domain max: PDFs can have thousands
-      of pages.'
+    minimum: 1.0
+    maximum: 20.0
   extracted_facts[*].source_excerpt:
     type: string
     required: true
@@ -85,9 +74,9 @@ schema:
   processing_time_ms:
     type: integer
     required: true
-    minimum: 1
-    description: Wall-clock extraction time in milliseconds. Positive integer, no
-      upper bound.
+    minimum: 268.0
+    maximum: 4851.0
+    description: Wall-clock extraction time in milliseconds. Positive integer.
   source_hash:
     type: string
     required: true
@@ -102,13 +91,13 @@ schema:
   token_count.input:
     type: integer
     required: true
-    minimum: 200.0
-    maximum: 18400.0
+    minimum: 1096.0
+    maximum: 7846.0
   token_count.output:
     type: integer
     required: true
-    minimum: 50.0
-    maximum: 4200.0
+    minimum: 202.0
+    maximum: 1952.0
 quality:
   type: SodaChecks
   specification:
@@ -123,109 +112,92 @@ quality:
     - missing_count(source_path) = 0
     - missing_count(token_count.input) = 0
     - missing_count(token_count.output) = 0
-    - min(extracted_facts_confidence_min) >= 0.0
-    - max(extracted_facts_confidence_max) <= 1.0
     - row_count >= 1
 lineage:
   upstream: []
-  downstream:
-  - id: week4-brownfield-cartographer
-    description: week4-brownfield-cartographer consumes fields from this contract
-    fields_consumed:
-    - doc_id
-    - extracted_facts
-    - extraction_model
-    breaking_if_changed:
-    - extracted_facts[*].confidence
-    - doc_id
+  downstream: []
 llm_annotations:
 - column: entities
-  source: week3_extractions
-  description: 'Auto-profiled column. Type: array, cardinality: 64.'
+  source: extractions_violated
+  description: 'Auto-profiled column. Type: array, cardinality: 55.'
   business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: entities[*].canonical_value
-  source: week3_extractions
-  description: 'Auto-profiled column. Type: string, cardinality: 211. Sample values:
-    [''others'', ''financial_instruments'', ''2020_audited_financial_statement_report'']'
+  source: extractions_violated
+  description: 'Auto-profiled column. Type: string, cardinality: 6. Sample values:
+    [''new_york'', ''5000'', ''acme_corp'']'
   business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: entities[*].name
-  source: week3_extractions
-  description: 'Auto-profiled column. Type: string, cardinality: 211. Sample values:
-    [''One'', ''Statistical Bulletin                                \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n       Issue
-    No'', ''Assigned'']'
+  source: extractions_violated
+  description: 'Auto-profiled column. Type: string, cardinality: 6. Sample values:
+    [''$5000'', ''Jane Doe'', ''Acme Corp'']'
   business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: entities[*].type
-  source: week3_extractions
-  description: 'Categorical type field. Observed values: [''LOCATION'', ''PERSON'',
-    ''DATE'', ''AMOUNT'', ''OTHER'']'
-  business_rule: value in ['LOCATION', 'PERSON', 'DATE', 'AMOUNT', 'OTHER']
+  source: extractions_violated
+  description: 'Categorical type field. Observed values: [''ORG'', ''OTHER'', ''AMOUNT'',
+    ''LOCATION'', ''DATE'']'
+  business_rule: value in ['ORG', 'OTHER', 'AMOUNT', 'LOCATION', 'DATE']
   annotation_method: heuristic (no LLM API key configured)
 - column: extracted_facts
-  source: week3_extractions
-  description: 'Auto-profiled column. Type: array, cardinality: 64.'
+  source: extractions_violated
+  description: 'Auto-profiled column. Type: array, cardinality: 55.'
   business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: extracted_facts[*].confidence
-  source: week3_extractions
+  source: extractions_violated
   description: Confidence score for the parent operation. Float 0.0-1.0 where 1.0
     is highest confidence.
   business_rule: 0.0 <= value <= 1.0
   annotation_method: heuristic (no LLM API key configured)
 - column: extracted_facts[*].entity_refs
-  source: week3_extractions
-  description: 'Auto-profiled column. Type: array, cardinality: 584.'
+  source: extractions_violated
+  description: 'Auto-profiled column. Type: array, cardinality: 140.'
   business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: extracted_facts[*].page_ref
-  source: week3_extractions
-  description: 'Auto-profiled column. Type: integer, cardinality: 85.'
+  source: extractions_violated
+  description: 'Auto-profiled column. Type: integer, cardinality: 20.'
   business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: extracted_facts[*].source_excerpt
-  source: week3_extractions
-  description: 'Auto-profiled column. Type: string, cardinality: 180. Sample values:
-    ['''', ''|  |  |  | \n--------------------------------------------------\n |  |  |  |
-    \n |  |  |  | \n |  |  |  | \n |  |  |  | \n |  |  |  | \n |  |  |  | \n |  |  |  |
-    \n |  |  |  | \n |  |  |  |'', ''ETHIOPIAN     STATISTIC'']'
+  source: extractions_violated
+  description: 'Auto-profiled column. Type: string, cardinality: 5. Sample values:
+    [''Verbatim excerpt 5 from source document'', ''Verbatim excerpt 2 from source
+    document'', ''Verbatim excerpt 1 from source document'']'
   business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: extracted_facts[*].text
-  source: week3_extractions
-  description: 'Auto-profiled column. Type: string, cardinality: 202. Sample values:
-    ['''', ''|  |  |  | \n--------------------------------------------------\n |  |  |  |
-    \n |  |  |  | \n |  |  |  | \n |  |  |  | \n |  |  |  | \n |  |  |  | \n |  |  |  |
-    \n |  |  |  | \n |  |  |  |'', ''NEW STANDARD OR AMENDMENTS\n--------------------------------------------------\nIFRS
-    9 – Financial Instruments\nIFRS 16 – Leases\nIAS 7– Disclosure Initiative (Amendments
-    to IAS 7)\nIAS 12– Recognition of Deferred Tax Assets for unrealized losses (Amendments
-    to IAS 12)'']'
+  source: extractions_violated
+  description: 'Auto-profiled column. Type: string, cardinality: 25. Sample values:
+    [''Extracted fact 2: Revenue increased by 15%'', ''Extracted fact 2: Contract
+    signed on Jan 15'', ''Extracted fact 1: Approved by Jane Doe'']'
   business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: extraction_model
-  source: week3_extractions
+  source: extractions_violated
   description: Model identifier. Must match known model naming pattern.
   business_rule: matches pattern ^(claude|gpt)-
   cross_column: Determines extraction strategy and cost profile
   annotation_method: heuristic (no LLM API key configured)
 - column: processing_time_ms
-  source: week3_extractions
-  description: 'Auto-profiled column. Type: integer, cardinality: 55.'
+  source: extractions_violated
+  description: 'Auto-profiled column. Type: integer, cardinality: 54.'
   business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: source_path
-  source: week3_extractions
+  source: extractions_violated
   description: File system or URL path reference.
   business_rule: non-empty string
   annotation_method: heuristic (no LLM API key configured)
 - column: token_count.input
-  source: week3_extractions
+  source: extractions_violated
   description: Token count metric for LLM operations. Must be non-negative integer.
   business_rule: value >= 0
   annotation_method: heuristic (no LLM API key configured)
 - column: token_count.output
-  source: week3_extractions
+  source: extractions_violated
   description: Token count metric for LLM operations. Must be non-negative integer.
   business_rule: value >= 0
   annotation_method: heuristic (no LLM API key configured)

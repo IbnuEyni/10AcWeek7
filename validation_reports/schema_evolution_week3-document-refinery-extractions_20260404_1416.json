@@ -1,0 +1,57 @@
+{
+  "report_id": "554f62dc-30ab-4f87-8a79-b4297b86402d",
+  "contract_id": "week3-document-refinery-extractions",
+  "generated_at": "2026-04-04T14:16:19.564101+00:00",
+  "snapshot_before": "/home/shuaib/Desktop/python/10Acd/10AcWeek7/schema_snapshots/week3-document-refinery-extractions/20260404_133046_violated.yaml",
+  "snapshot_after": "/home/shuaib/Desktop/python/10Acd/10AcWeek7/schema_snapshots/week3-document-refinery-extractions/20260404_141318.yaml",
+  "compatibility_verdict": "COMPATIBLE",
+  "total_changes": 2,
+  "breaking_changes": 0,
+  "compatible_changes": 2,
+  "changes": [
+    {
+      "column": "extracted_facts[*].confidence",
+      "change_type": "type_widening",
+      "old_value": "integer",
+      "new_value": "number",
+      "backward_compatible": true,
+      "required_action": "Validate no precision loss. Re-run statistical checks."
+    },
+    {
+      "column": "extracted_facts[*].confidence",
+      "change_type": "stats_shift",
+      "old_value": "mean=73.9253, std=14.8852",
+      "new_value": "mean=0.7661, std=0.0315",
+      "backward_compatible": true,
+      "required_action": "Investigate root cause. May indicate upstream data quality issue.",
+      "deviation_sigma": 4.91
+    }
+  ],
+  "blast_radius": {
+    "source": "registry",
+    "subscribers": [
+      {
+        "subscriber_id": "week4-cartographer",
+        "contact": "week4-team@org.com",
+        "validation_mode": "ENFORCE",
+        "breaking_fields": [
+          "extracted_facts.confidence",
+          "doc_id",
+          "extraction_model"
+        ]
+      }
+    ],
+    "total_affected": 0
+  },
+  "per_consumer_analysis": [
+    {
+      "subscriber_id": "week4-cartographer",
+      "contact": "week4-team@org.com",
+      "validation_mode": "ENFORCE",
+      "affected_changes": [],
+      "impact": "NONE"
+    }
+  ],
+  "migration_checklist": [],
+  "rollback_plan": {}
+}

@@ -1,0 +1,232 @@
+contract_id: week3-document-refinery-extractions
+captured_at: '2026-04-04T14:13:18.099289+00:00'
+columns:
+  doc_id:
+    type: string
+    null_fraction: 0.0
+    cardinality: 16
+    format: uuid
+    sample_values:
+    - 7ae6666c-1c30-53ac-b5d6-891c9ca433ea
+    - 008d05e3-0338-54e0-a59a-094eda5f521d
+    - 0dc295ed-aeaf-50a5-929a-e59d94e68158
+    - c78a91af-0aeb-5602-891f-8a8614268c7f
+    - d1460b45-a4a1-51a8-82ce-5f6c01b07135
+  entities:
+    type: array
+    null_fraction: 0.0
+    cardinality: 64
+  entities[*].canonical_value:
+    type: string
+    null_fraction: 0.0
+    cardinality: 211
+    sample_values:
+    - others
+    - financial_instruments
+    - 2020_audited_financial_statement_report
+    - 'ethiopia
+
+      republion
+
+      investment_commiss'
+    - sub
+  entities[*].entity_id:
+    type: string
+    null_fraction: 0.0
+    cardinality: 964
+    format: uuid
+    sample_values:
+    - 6c029ff3-a299-42ae-9799-0ecc947c24fa
+    - 1c7c7e3e-692e-4658-b691-c63ec6234300
+    - c4cba9bf-66b2-480f-b76f-7cf158a58b4b
+    - 397e2543-509d-44b9-bbc8-1e7cfe01592f
+    - 0c311893-2f2f-4262-ae09-ea6735e0a6cb
+  entities[*].name:
+    type: string
+    null_fraction: 0.0
+    cardinality: 211
+    sample_values:
+    - One
+    - "Statistical Bulletin                                \n                    \
+      \                                                                \n        \
+      \                                                                          \
+      \  \n                                                                      \
+      \              \n                                                          \
+      \                          \n       Issue No"
+    - Assigned
+    - Results
+    - Continued
+  entities[*].type:
+    type: string
+    null_fraction: 0.0
+    cardinality: 6
+    sample_values:
+    - LOCATION
+    - PERSON
+    - DATE
+    - AMOUNT
+    - OTHER
+  extracted_at:
+    type: string
+    null_fraction: 0.0
+    cardinality: 64
+    format: iso8601
+    sample_values:
+    - '2026-03-02T14:26:24.270229Z'
+    - '2026-03-04T01:14:50.338936Z'
+    - '2026-03-07T11:26:22.621649Z'
+    - '2026-03-05T23:17:13.838390Z'
+    - '2026-03-02T14:24:18.830049Z'
+  extracted_facts:
+    type: array
+    null_fraction: 0.0
+    cardinality: 64
+  extracted_facts[*].confidence:
+    type: number
+    null_fraction: 0.0
+    cardinality: 3
+    stats:
+      min: 0.75
+      max: 0.85
+      mean: 0.7661
+      stddev: 0.0315
+      p25: 0.75
+      p50: 0.75
+      p75: 0.75
+      p95: 0.85
+      p99: 0.85
+  extracted_facts[*].entity_refs:
+    type: array
+    null_fraction: 0.0
+    cardinality: 584
+  extracted_facts[*].fact_id:
+    type: string
+    null_fraction: 0.0
+    cardinality: 799
+    format: uuid
+    sample_values:
+    - 8063ba2e-876b-42d5-997b-233a9b9dde14
+    - 911e770e-ba91-4b40-99f9-7dbd2b22c080
+    - c506c026-6754-48c2-a781-8ba9631d056e
+    - fc514489-12ad-44f6-8e86-44510f39fa14
+    - b6c17b60-7175-4d54-a42b-cf75a12f58b0
+  extracted_facts[*].page_ref:
+    type: integer
+    null_fraction: 0.0238
+    cardinality: 85
+    stats:
+      min: 0.0
+      max: 91.0
+      mean: 25.2859
+      stddev: 29.1803
+      p25: 3.0
+      p50: 10.0
+      p75: 49.0
+      p95: 84.05
+      p99: 90.0
+  extracted_facts[*].source_excerpt:
+    type: string
+    null_fraction: 0.0
+    cardinality: 180
+    sample_values:
+    - ''
+    - "|  |  |  | \n--------------------------------------------------\n |  |  | \
+      \ | \n |  |  |  | \n |  |  |  | \n |  |  |  | \n |  |  |  | \n |  |  |  | \n\
+      \ |  |  |  | \n |  |  |  | \n |  |  |  |"
+    - ETHIOPIAN     STATISTIC
+    - "NEW STANDARD OR AMENDMENTS\n--------------------------------------------------\n\
+      IFRS 9 \u2013 Financial Instruments\nIFRS 16 \u2013 Leases\nIAS 7\u2013 Disclosure\
+      \ Initiative (Amendments to IAS 7)\nIAS 12\u2013 Recognition of Deferred Tax\
+      \ Assets for unrealized losses (Amendments to IAS 12)"
+    - "| Gen.Ins | Long Term Ins | Total | Total\n--------------------------------------------------\n\
+      \ | 2018 | 2018 | 2018 | 2017\nDue from ceding companies | 111,596,118 | 12,206,983\
+      \ | 1 23,803,101 | 114,986,795"
+  extracted_facts[*].text:
+    type: string
+    null_fraction: 0.0
+    cardinality: 202
+    sample_values:
+    - ''
+    - "|  |  |  | \n--------------------------------------------------\n |  |  | \
+      \ | \n |  |  |  | \n |  |  |  | \n |  |  |  | \n |  |  |  | \n |  |  |  | \n\
+      \ |  |  |  | \n |  |  |  | \n |  |  |  |"
+    - "NEW STANDARD OR AMENDMENTS\n--------------------------------------------------\n\
+      IFRS 9 \u2013 Financial Instruments\nIFRS 16 \u2013 Leases\nIAS 7\u2013 Disclosure\
+      \ Initiative (Amendments to IAS 7)\nIAS 12\u2013 Recognition of Deferred Tax\
+      \ Assets for unrealized losses (Amendments to IAS 12)"
+    - "| Gen.Ins | Long Term Ins | Total | Total\n--------------------------------------------------\n\
+      \ | 2018 | 2018 | 2018 | 2017\nDue from ceding companies | 111,596,118 | 12,206,983\
+      \ | 1 23,803,101 | 114,986,795"
+    - X                                               ETHIOPIAN REINSURANCE ANNUAL
+      REPORT
+  extraction_model:
+    type: string
+    null_fraction: 0.0
+    cardinality: 2
+    sample_values:
+    - claude-3-haiku-20240307
+    - claude-3-5-sonnet-20241022
+  processing_time_ms:
+    type: integer
+    null_fraction: 0.0
+    cardinality: 55
+    stats:
+      min: 200.0
+      max: 1082881.0
+      mean: 63848.5156
+      stddev: 153340.0064
+      p25: 3384.0
+      p50: 5525.0
+      p75: 47069.5
+      p95: 278533.1
+      p99: 596125.36
+  source_hash:
+    type: string
+    null_fraction: 0.0
+    cardinality: 16
+    format: sha256
+    sample_values:
+    - 59d3de3f40f3d6f667cdabb5a5194b5826abcaa1cc1f447b92a123d2fe3e3438
+    - 5d8c2f017e5c6c237bb24461135881a7c7e00050daf679dce729b49c3c50ffc9
+    - a37661acd869b6ae99603ef5f35f5334232113e0c6bbe1f9646fdcf3b5b81215
+    - 4f830746a2e5ec9729d831448dae7c4d0de4c55498a62c71135aacc12bb2b29e
+    - 64321de6ca3aa0af0be6e2628370ed4a48259535a474b9e9184851a3564a5090
+  source_path:
+    type: string
+    null_fraction: 0.0
+    cardinality: 16
+    format: path
+    sample_values:
+    - /data/documents/20191010_Pharmaceutical-Manufacturing-Opportunites-in-Ethiopia_VF.pdf
+    - /data/documents/2013-E.C-Audit-finding-information.pdf
+    - /data/documents/2019_Audited_Financial_Statement_Report.pdf
+    - /data/documents/2018_Audited_Financial_Statement_Report.pdf
+    - /data/documents/Consumer Price Index July 2025.pdf
+  token_count.input:
+    type: integer
+    null_fraction: 0.0
+    cardinality: 8
+    stats:
+      min: 200.0
+      max: 18400.0
+      mean: 2203.125
+      stddev: 4203.6431
+      p25: 200.0
+      p50: 600.0
+      p75: 2400.0
+      p95: 12000.0
+      p99: 18400.0
+  token_count.output:
+    type: integer
+    null_fraction: 0.0
+    cardinality: 7
+    stats:
+      min: 50.0
+      max: 4200.0
+      mean: 624.2188
+      stddev: 1049.8509
+      p25: 50.0
+      p50: 150.0
+      p75: 1150.0
+      p95: 3750.0
+      p99: 4200.0
