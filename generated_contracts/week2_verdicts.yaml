@@ -1,0 +1,414 @@
+kind: DataContract
+apiVersion: v3.0.0
+id: week2-digital-courtroom-verdicts
+info:
+  title: Week 2 Digital Courtroom — Verdict Records
+  version: 1.0.0
+  owner: week2-team
+  description: One record per evaluation verdict. Contains rubric scores and overall
+    pass/fail/warn.
+servers:
+  local:
+    type: local
+    path: outputs/week2/verdicts.jsonl
+    format: jsonl
+terms:
+  usage: Internal inter-system data contract. Do not publish.
+  limitations: All confidence fields must remain in 0.0-1.0 float range.
+schema:
+  confidence:
+    type: number
+    required: true
+    minimum: 0.0
+    maximum: 1.0
+    description: Confidence score. MUST be float 0.0-1.0. BREAKING CHANGE if changed
+      to 0-100.
+  evaluated_at:
+    type: string
+    required: true
+    format: iso8601
+    description: ISO 8601 timestamp of when evaluation completed.
+  overall_score:
+    type: number
+    required: true
+    minimum: 1.0
+    maximum: 5.0
+    description: Weighted average of all criterion scores. Float.
+  overall_verdict:
+    type: string
+    required: true
+    description: 'Final verdict. Must be exactly one of: PASS, FAIL, WARN.'
+    enum:
+    - PASS
+    - FAIL
+    - WARN
+  rubric_id:
+    type: string
+    required: true
+    format: sha256
+    description: SHA-256 hash of the rubric YAML used for evaluation.
+  rubric_version:
+    type: string
+    required: true
+    description: Semantic version of the rubric (e.g. 3.0.0).
+  scores.chief_justice_synthesis.evidence:
+    type: array
+    required: true
+  scores.chief_justice_synthesis.notes:
+    type: string
+    required: true
+  scores.chief_justice_synthesis.score:
+    type: integer
+    required: true
+    minimum: 1
+    maximum: 5
+  scores.git_forensic_analysis.evidence:
+    type: array
+    required: true
+  scores.git_forensic_analysis.notes:
+    type: string
+    required: true
+  scores.git_forensic_analysis.score:
+    type: integer
+    required: true
+    minimum: 1
+    maximum: 5
+  scores.graph_orchestration.evidence:
+    type: array
+    required: true
+  scores.graph_orchestration.notes:
+    type: string
+    required: true
+  scores.graph_orchestration.score:
+    type: integer
+    required: true
+    minimum: 1
+    maximum: 5
+  scores.judicial_nuance.evidence:
+    type: array
+    required: true
+  scores.judicial_nuance.notes:
+    type: string
+    required: true
+  scores.judicial_nuance.score:
+    type: integer
+    required: true
+    minimum: 1
+    maximum: 5
+  scores.report_accuracy.evidence:
+    type: array
+    required: true
+  scores.report_accuracy.notes:
+    type: string
+    required: true
+  scores.report_accuracy.score:
+    type: integer
+    required: true
+    minimum: 1
+    maximum: 5
+  scores.safe_tool_engineering.evidence:
+    type: array
+    required: true
+  scores.safe_tool_engineering.notes:
+    type: string
+    required: true
+  scores.safe_tool_engineering.score:
+    type: integer
+    required: true
+    minimum: 1
+    maximum: 5
+  scores.state_management_rigor.evidence:
+    type: array
+    required: true
+  scores.state_management_rigor.notes:
+    type: string
+    required: true
+  scores.state_management_rigor.score:
+    type: integer
+    required: true
+    minimum: 1
+    maximum: 5
+  scores.structured_output_enforcement.evidence:
+    type: array
+    required: true
+  scores.structured_output_enforcement.notes:
+    type: string
+    required: true
+  scores.structured_output_enforcement.score:
+    type: integer
+    required: true
+    minimum: 1
+    maximum: 5
+  scores.swarm_visual.evidence:
+    type: array
+    required: true
+  scores.swarm_visual.notes:
+    type: string
+    required: true
+  scores.swarm_visual.score:
+    type: integer
+    required: true
+    minimum: 1
+    maximum: 5
+  scores.theoretical_depth.evidence:
+    type: array
+    required: true
+  scores.theoretical_depth.notes:
+    type: string
+    required: true
+  scores.theoretical_depth.score:
+    type: integer
+    required: true
+    minimum: 1
+    maximum: 5
+  target_ref:
+    type: string
+    required: true
+    format: url
+    description: Relative path or document ID of the evaluation target.
+  verdict_id:
+    type: string
+    required: true
+    format: uuid
+    description: Primary key. UUIDv4. One per evaluation verdict.
+    unique: true
+quality:
+  type: SodaChecks
+  specification:
+    checks:
+    - missing_count(confidence) = 0
+    - missing_count(evaluated_at) = 0
+    - missing_count(overall_score) = 0
+    - missing_count(overall_verdict) = 0
+    - missing_count(rubric_id) = 0
+    - missing_count(rubric_version) = 0
+    - missing_count(scores.chief_justice_synthesis.evidence) = 0
+    - missing_count(scores.chief_justice_synthesis.notes) = 0
+    - missing_count(scores.chief_justice_synthesis.score) = 0
+    - missing_count(scores.git_forensic_analysis.evidence) = 0
+    - missing_count(scores.git_forensic_analysis.notes) = 0
+    - missing_count(scores.git_forensic_analysis.score) = 0
+    - missing_count(scores.graph_orchestration.evidence) = 0
+    - missing_count(scores.graph_orchestration.notes) = 0
+    - missing_count(scores.graph_orchestration.score) = 0
+    - missing_count(scores.judicial_nuance.evidence) = 0
+    - missing_count(scores.judicial_nuance.notes) = 0
+    - missing_count(scores.judicial_nuance.score) = 0
+    - missing_count(scores.report_accuracy.evidence) = 0
+    - missing_count(scores.report_accuracy.notes) = 0
+    - missing_count(scores.report_accuracy.score) = 0
+    - missing_count(scores.safe_tool_engineering.evidence) = 0
+    - missing_count(scores.safe_tool_engineering.notes) = 0
+    - missing_count(scores.safe_tool_engineering.score) = 0
+    - missing_count(scores.state_management_rigor.evidence) = 0
+    - missing_count(scores.state_management_rigor.notes) = 0
+    - missing_count(scores.state_management_rigor.score) = 0
+    - missing_count(scores.structured_output_enforcement.evidence) = 0
+    - missing_count(scores.structured_output_enforcement.notes) = 0
+    - missing_count(scores.structured_output_enforcement.score) = 0
+    - missing_count(scores.swarm_visual.evidence) = 0
+    - missing_count(scores.swarm_visual.notes) = 0
+    - missing_count(scores.swarm_visual.score) = 0
+    - missing_count(scores.theoretical_depth.evidence) = 0
+    - missing_count(scores.theoretical_depth.notes) = 0
+    - missing_count(scores.theoretical_depth.score) = 0
+    - missing_count(target_ref) = 0
+    - missing_count(verdict_id) = 0
+    - duplicate_count(verdict_id) = 0
+    - min(confidence_min) >= 0.0
+    - max(confidence_max) <= 1.0
+    - row_count >= 1
+lineage:
+  upstream: []
+  downstream: []
+llm_annotations:
+- column: confidence
+  source: week2_verdicts
+  description: Confidence score for the parent operation. Float 0.0-1.0 where 1.0
+    is highest confidence.
+  business_rule: 0.0 <= value <= 1.0
+  annotation_method: heuristic (no LLM API key configured)
+- column: overall_score
+  source: week2_verdicts
+  description: Evaluation score from rubric-based assessment.
+  business_rule: 1 <= value <= 5 (integer)
+  annotation_method: heuristic (no LLM API key configured)
+- column: overall_verdict
+  source: week2_verdicts
+  description: 'Auto-profiled column. Type: string, cardinality: 3. Sample values:
+    [''PASS'', ''WARN'', ''FAIL'']'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: rubric_version
+  source: week2_verdicts
+  description: 'Auto-profiled column. Type: string, cardinality: 1. Sample values:
+    [''3.0.0'']'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.chief_justice_synthesis.evidence
+  source: week2_verdicts
+  description: 'Auto-profiled column. Type: array, cardinality: 14.'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.chief_justice_synthesis.notes
+  source: week2_verdicts
+  description: 'Auto-profiled column. Type: string, cardinality: 1. Sample values:
+    [''Evaluated by multi-agent courtroom system'']'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.chief_justice_synthesis.score
+  source: week2_verdicts
+  description: Rubric criterion score. Integer 1-5 where 5 is highest.
+  business_rule: 1 <= value <= 5 (integer)
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.git_forensic_analysis.evidence
+  source: week2_verdicts
+  description: 'Auto-profiled column. Type: array, cardinality: 14.'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.git_forensic_analysis.notes
+  source: week2_verdicts
+  description: 'Auto-profiled column. Type: string, cardinality: 1. Sample values:
+    [''Evaluated by multi-agent courtroom system'']'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.git_forensic_analysis.score
+  source: week2_verdicts
+  description: Rubric criterion score. Integer 1-5 where 5 is highest.
+  business_rule: 1 <= value <= 5 (integer)
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.graph_orchestration.evidence
+  source: week2_verdicts
+  description: 'Auto-profiled column. Type: array, cardinality: 14.'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.graph_orchestration.notes
+  source: week2_verdicts
+  description: 'Auto-profiled column. Type: string, cardinality: 1. Sample values:
+    [''Evaluated by multi-agent courtroom system'']'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.graph_orchestration.score
+  source: week2_verdicts
+  description: Rubric criterion score. Integer 1-5 where 5 is highest.
+  business_rule: 1 <= value <= 5 (integer)
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.judicial_nuance.evidence
+  source: week2_verdicts
+  description: 'Auto-profiled column. Type: array, cardinality: 14.'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.judicial_nuance.notes
+  source: week2_verdicts
+  description: 'Auto-profiled column. Type: string, cardinality: 1. Sample values:
+    [''Evaluated by multi-agent courtroom system'']'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.judicial_nuance.score
+  source: week2_verdicts
+  description: Rubric criterion score. Integer 1-5 where 5 is highest.
+  business_rule: 1 <= value <= 5 (integer)
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.report_accuracy.evidence
+  source: week2_verdicts
+  description: 'Auto-profiled column. Type: array, cardinality: 14.'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.report_accuracy.notes
+  source: week2_verdicts
+  description: 'Auto-profiled column. Type: string, cardinality: 1. Sample values:
+    [''Evaluated by multi-agent courtroom system'']'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.report_accuracy.score
+  source: week2_verdicts
+  description: Rubric criterion score. Integer 1-5 where 5 is highest.
+  business_rule: 1 <= value <= 5 (integer)
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.safe_tool_engineering.evidence
+  source: week2_verdicts
+  description: 'Auto-profiled column. Type: array, cardinality: 14.'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.safe_tool_engineering.notes
+  source: week2_verdicts
+  description: 'Auto-profiled column. Type: string, cardinality: 1. Sample values:
+    [''Evaluated by multi-agent courtroom system'']'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.safe_tool_engineering.score
+  source: week2_verdicts
+  description: Rubric criterion score. Integer 1-5 where 5 is highest.
+  business_rule: 1 <= value <= 5 (integer)
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.state_management_rigor.evidence
+  source: week2_verdicts
+  description: 'Auto-profiled column. Type: array, cardinality: 14.'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.state_management_rigor.notes
+  source: week2_verdicts
+  description: 'Auto-profiled column. Type: string, cardinality: 1. Sample values:
+    [''Evaluated by multi-agent courtroom system'']'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.state_management_rigor.score
+  source: week2_verdicts
+  description: Rubric criterion score. Integer 1-5 where 5 is highest.
+  business_rule: 1 <= value <= 5 (integer)
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.structured_output_enforcement.evidence
+  source: week2_verdicts
+  description: 'Auto-profiled column. Type: array, cardinality: 14.'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.structured_output_enforcement.notes
+  source: week2_verdicts
+  description: 'Auto-profiled column. Type: string, cardinality: 1. Sample values:
+    [''Evaluated by multi-agent courtroom system'']'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.structured_output_enforcement.score
+  source: week2_verdicts
+  description: Rubric criterion score. Integer 1-5 where 5 is highest.
+  business_rule: 1 <= value <= 5 (integer)
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.swarm_visual.evidence
+  source: week2_verdicts
+  description: 'Auto-profiled column. Type: array, cardinality: 14.'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.swarm_visual.notes
+  source: week2_verdicts
+  description: 'Auto-profiled column. Type: string, cardinality: 1. Sample values:
+    [''Evaluated by multi-agent courtroom system'']'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.swarm_visual.score
+  source: week2_verdicts
+  description: Rubric criterion score. Integer 1-5 where 5 is highest.
+  business_rule: 1 <= value <= 5 (integer)
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.theoretical_depth.evidence
+  source: week2_verdicts
+  description: 'Auto-profiled column. Type: array, cardinality: 14.'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.theoretical_depth.notes
+  source: week2_verdicts
+  description: 'Auto-profiled column. Type: string, cardinality: 1. Sample values:
+    [''Evaluated by multi-agent courtroom system'']'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)
+- column: scores.theoretical_depth.score
+  source: week2_verdicts
+  description: Rubric criterion score. Integer 1-5 where 5 is highest.
+  business_rule: 1 <= value <= 5 (integer)
+  annotation_method: heuristic (no LLM API key configured)
+- column: target_ref
+  source: week2_verdicts
+  description: 'Auto-profiled column. Type: string, cardinality: 4. Sample values:
+    [''https://github.com/IbnuEyni/10Acweek2'', ''https://github.com/IbnuEyni/10Acweek2.git'',
+    ''https://github.com/abdurezakarage/Automaton-Auditor'']'
+  business_rule: See contract schema for constraints
+  annotation_method: heuristic (no LLM API key configured)

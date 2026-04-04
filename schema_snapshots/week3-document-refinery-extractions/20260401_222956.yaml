@@ -1,0 +1,267 @@
+contract_id: week3-document-refinery-extractions
+captured_at: '2026-04-01T22:29:56.827268+00:00'
+columns:
+  doc_id:
+    type: string
+    null_fraction: 0.0
+    cardinality: 16
+    format: uuid
+    sample_values:
+    - fbe1adf4-0410-56a7-aa91-653326fd39b6
+    - 2e2654f7-57c9-5e0a-b942-3e137c510447
+    - b1c99847-e2ef-52c4-ab3b-ca9cbdd84c8b
+    - 43b78c8f-a466-57df-bab9-9d0d1b0a87be
+    - d2b62199-1fbf-5513-bfdb-3b74d3134b1a
+  entities:
+    type: array
+    null_fraction: 0.0
+    cardinality: 64
+  entities[*].canonical_value:
+    type: string
+    null_fraction: 0.0
+    cardinality: 211
+    sample_values:
+    - government_bond
+    - united_bank
+    - 'annual______________________________________________
+
+      __________________________________________________________________________________
+
+      __________________________________________________________________________________
+
+      __________________________________________________________________________________
+
+      __________________________________________________________________________________
+
+      ______________________________report'
+    - july
+    - 2018_audited_financial_statement_report
+  entities[*].entity_id:
+    type: string
+    null_fraction: 0.0
+    cardinality: 964
+    format: uuid
+    sample_values:
+    - c0210ba5-e9bf-433d-9254-dba2d805ace1
+    - 79b42e46-a980-4469-aa8c-dbd66b93f7b7
+    - d2448e9b-09bb-4e72-b682-4f7704503ded
+    - defc5531-e3bd-4b00-8b05-eb639fee6231
+    - 81a9896a-bc0e-4587-a292-981391796e80
+  entities[*].name:
+    type: string
+    null_fraction: 0.0
+    cardinality: 211
+    sample_values:
+    - Indirect
+    - 'Discount Rate
+
+      Salary Increases'
+    - 2013-E.C-Audit-finding-information
+    - Kirkos Subcity
+    - Other
+  entities[*].type:
+    type: string
+    null_fraction: 0.0
+    cardinality: 6
+    sample_values:
+    - OTHER
+    - AMOUNT
+    - PERSON
+    - ORG
+    - LOCATION
+  extracted_at:
+    type: string
+    null_fraction: 0.0
+    cardinality: 64
+    format: iso8601
+    sample_values:
+    - '2026-03-04T01:37:08.675178Z'
+    - '2026-03-05T14:56:17.360956Z'
+    - '2026-03-02T14:24:58.950655Z'
+    - '2026-03-06T12:06:13.140499Z'
+    - '2026-03-06T14:41:11.012043Z'
+  extracted_facts:
+    type: array
+    null_fraction: 0.0
+    cardinality: 64
+  extracted_facts[*].confidence:
+    type: number
+    null_fraction: 0.0
+    cardinality: 3
+    stats:
+      min: 0.75
+      max: 0.85
+      mean: 0.7661
+      stddev: 0.0315
+      p25: 0.75
+      p50: 0.75
+      p75: 0.75
+      p95: 0.85
+      p99: 0.85
+  extracted_facts[*].entity_refs:
+    type: array
+    null_fraction: 0.0
+    cardinality: 584
+  extracted_facts[*].fact_id:
+    type: string
+    null_fraction: 0.0
+    cardinality: 799
+    format: uuid
+    sample_values:
+    - 58b22449-5aff-4bac-a9c1-6eaa0b69a10e
+    - e8b1d23d-32b0-4d04-8639-090e452c6e1f
+    - 1b55a916-15ab-4d12-962f-f317869fb896
+    - 07712d7d-b2b7-430a-9b84-31d5acb1a0c6
+    - b1b5edb7-8e16-47aa-b0a5-56b12c687037
+  extracted_facts[*].page_ref:
+    type: integer
+    null_fraction: 0.0238
+    cardinality: 85
+    stats:
+      min: 0.0
+      max: 91.0
+      mean: 25.2859
+      stddev: 29.1803
+      p25: 3.0
+      p50: 10.0
+      p75: 49.0
+      p95: 84.05
+      p99: 90.0
+  extracted_facts[*].source_excerpt:
+    type: string
+    null_fraction: 0.0
+    cardinality: 180
+    sample_values:
+    - ''
+    - "|  |  |  | \n--------------------------------------------------\n |  |  | \
+      \ | \n |  |  |  | \n |  |  |  | \n |  |  |  | \n |  |  |  |"
+    - 'Issue No. 25/2017 Page 11
+
+      --------------------------------------------------
+
+      Fig 4: Average Annual Food Inflation in Ethiopia since EFY2005 (Year-on-Year)
+
+      The average annual food inflation rate for the country stood at (16.2 %) in
+      EFY2017 compared to
+
+      (28.1 %) in EFY2016, about tweleve percentage poi'
+    - 'REINSURANCE CONTRACTS | 2018 USD
+
+      --------------------------------------------------
+
+      Reinsurance assets (receivables) | 169,877
+
+      Reinsurance liability (payables) | 56,513'
+    - "| GROSS AMOUNT\nETB | IMPAIRMENT\nETB\n--------------------------------------------------\n\
+      Not past due (0-30 days) | 17,931,598.68 | -\nPast due (31-120 days) | 70,231,611.98\
+      \ | -\nMore than 120 days | 35,568,764.63 | -\n | 123,803,100.98 | -"
+  extracted_facts[*].text:
+    type: string
+    null_fraction: 0.0
+    cardinality: 202
+    sample_values:
+    - ''
+    - "| Base metals and\narticles of base metal | 13.6% | 0.0% | 5.4% | 11.6% | 8.0%\n\
+      --------------------------------------------------\n | Electrical machinery\
+      \ | 15.2% | 0.6% | 8.3% | 21.2% | 11.2%\n |  |  |  |  |  | \n | Other machinery\
+      \ | 12.1% | 0.2% | 21.6% | 32.7% | 17.6%\n | Vehicles | 13.6% | 24.8% | 3.0%\
+      \ | 4.5% | 9.1%\n |  |  |  |  |  | \n | Aircraft | 0.0% | 0.0% | 15.8% | 0.0%\
+      \ | 7.0%\n | Other transport | 0.0% | 0.0% | 0.6% | 0.1% | 0.3%\n | equipment\
+      \ |  |  |  |  | \n | Furniture | 3.5% | 0.0% | 1.0%"
+    - 'Issue No. 21/2017 Page 8
+
+      --------------------------------------------------
+
+      12-month moving average Food and Non-Food Inflation rate (March EFY2016 - March
+      EFY2017)
+
+      Dis-aggregated, 12-month moving average food inflation increased by 19.3 percent
+      as compared to
+
+      the one observed a year ago and non-food inflation rate increased by 15.7 percent
+      in March
+
+      EFY2017 as compared to the one observed in March EFY2016.
+
+      Table 5: 12-month moving average Food and Non-Food Inflation rate (March EFY2016
+      - March E'
+    - "|  |  |  | \n--------------------------------------------------\n |  |  | \
+      \ | \n |  |  |  | \n |  |  |  | \n |  |  |  | \n |  |  |  |"
+    - 'REINSURANCE CONTRACTS | 2018 USD
+
+      --------------------------------------------------
+
+      Reinsurance assets (receivables) | 169,877
+
+      Reinsurance liability (payables) | 56,513'
+  extraction_model:
+    type: string
+    null_fraction: 0.0
+    cardinality: 2
+    sample_values:
+    - claude-3-5-sonnet-20241022
+    - claude-3-haiku-20240307
+  processing_time_ms:
+    type: integer
+    null_fraction: 0.0
+    cardinality: 55
+    stats:
+      min: 200.0
+      max: 1082881.0
+      mean: 63848.5156
+      stddev: 153340.0064
+      p25: 3384.0
+      p50: 5525.0
+      p75: 47069.5
+      p95: 278533.1
+      p99: 596125.36
+  source_hash:
+    type: string
+    null_fraction: 0.0
+    cardinality: 16
+    format: sha256
+    sample_values:
+    - 59d3de3f40f3d6f667cdabb5a5194b5826abcaa1cc1f447b92a123d2fe3e3438
+    - a37661acd869b6ae99603ef5f35f5334232113e0c6bbe1f9646fdcf3b5b81215
+    - 64321de6ca3aa0af0be6e2628370ed4a48259535a474b9e9184851a3564a5090
+    - 8dcdac000dbd954cd2abc6e82c42ba5b122777f0971df37cad7ffa81006a2327
+    - f754ac64d0809b9987b5cb5a36b4f3ab3fc0a4607dc35ae0345eeea56de31748
+  source_path:
+    type: string
+    null_fraction: 0.0
+    cardinality: 16
+    format: path
+    sample_values:
+    - /data/documents/Consumer Price Index March 2025.pdf
+    - /data/documents/Consumer Price Index July 2025.pdf
+    - /data/documents/2019_Audited_Financial_Statement_Report.pdf
+    - /data/documents/test.pdf
+    - /data/documents/test_native_digital.pdf
+  token_count.input:
+    type: integer
+    null_fraction: 0.0
+    cardinality: 8
+    stats:
+      min: 200.0
+      max: 18400.0
+      mean: 2203.125
+      stddev: 4203.6431
+      p25: 200.0
+      p50: 600.0
+      p75: 2400.0
+      p95: 12000.0
+      p99: 18400.0
+  token_count.output:
+    type: integer
+    null_fraction: 0.0
+    cardinality: 7
+    stats:
+      min: 50.0
+      max: 4200.0
+      mean: 624.2188
+      stddev: 1049.8509
+      p25: 50.0
+      p50: 150.0
+      p75: 1150.0
+      p95: 3750.0
+      p99: 4200.0

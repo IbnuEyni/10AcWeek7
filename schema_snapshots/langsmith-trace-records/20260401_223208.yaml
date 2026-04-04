@@ -1,0 +1,236 @@
+contract_id: langsmith-trace-records
+captured_at: '2026-04-01T22:32:08.422346+00:00'
+columns:
+  completion_tokens:
+    type: integer
+    null_fraction: 0.0
+    cardinality: 149
+    stats:
+      min: 113.0
+      max: 2709.0
+      mean: 958.5562
+      stddev: 502.2342
+      p25: 605.5
+      p50: 928.0
+      p75: 1289.75
+      p95: 1791.15
+      p99: 2559.52
+  end_time:
+    type: string
+    null_fraction: 0.0
+    cardinality: 151
+    format: iso8601
+    sample_values:
+    - '2026-03-08T00:14:30Z'
+    - '2026-03-05T23:17:19Z'
+    - '2026-03-06T10:44:11Z'
+    - '2026-03-15T01:28:17Z'
+    - '2026-02-28T23:54:06Z'
+  error:
+    type: 'null'
+    null_fraction: 1.0
+    cardinality: 0
+  id:
+    type: string
+    null_fraction: 0.0
+    cardinality: 160
+    format: uuid
+    sample_values:
+    - f9ea3cc9-c76d-46ee-89cb-8dc71dc5d435
+    - 41be31ed-b870-4679-9221-4990cf9bd25c
+    - a1154076-b2d1-4e33-b71b-c982e6352dbf
+    - 8546593b-78be-4323-8fc0-25c85e82848e
+    - 9036668e-86a8-4644-9ae2-6df0bb1a11d0
+  inputs.criterion:
+    type: string
+    null_fraction: 0.5625
+    cardinality: 5
+    sample_values:
+    - prosecutor
+    - defense
+    - tech_lead
+    - chief_justice
+    - evidence_aggregator
+  inputs.doc_id:
+    type: string
+    null_fraction: 0.6
+    cardinality: 16
+    sample_values:
+    - 2013-E.C-Audit-finding-information
+    - test_native_digital
+    - 2013-E.C-Assigned-regular-budget-and-expense
+    - test
+    - Consumer Price Index March 2025
+  inputs.evidence:
+    type: string
+    null_fraction: 0.4875
+    cardinality: 10
+    sample_values:
+    - Generated FDE Day-One onboarding brief
+    - Built ChromaDB semantic search index
+    - Generated documentation for 179 nodes
+    - 'Mode: Full, LLM: False'
+    - 'Total time: 3.61s, Nodes: 179, Edges: 65'
+  inputs.repo_url:
+    type: string
+    null_fraction: 0.9125
+    cardinality: 1
+    format: url
+    sample_values:
+    - https://github.com/IbnuEyni/10Acweek2
+  inputs.strategy:
+    type: string
+    null_fraction: 0.6
+    cardinality: 2
+    sample_values:
+    - layout_aware
+    - vision_augmented
+  inputs.target:
+    type: string
+    null_fraction: 0.925
+    cardinality: 5
+    sample_values:
+    - /home/shuaib/Desktop/python/10Acd/10AcWeek4/dbt-core/tests/functional/snapshots/.cartography/CODEBASE.md
+    - KnowledgeGraph
+    - /home/shuaib/Desktop/python/10Acd/10AcWeek4/dbt-core/tests/functional/snapshots/.cartography/onboarding_brief.md
+    - /home/shuaib/Desktop/python/10Acd/10AcWeek4/dbt-core/tests/functional/snapshots
+    - /home/shuaib/Desktop/python/10Acd/10AcWeek4/dbt-core/tests/functional/snapshots/.cartography/semantic_index
+  name:
+    type: string
+    null_fraction: 0.0
+    cardinality: 15
+    sample_values:
+    - judge_prosecutor
+    - judge_chief_justice
+    - Surveyor.start_analysis
+    - judge_evidence_aggregator
+    - judge_tech_lead
+  outputs.argument:
+    type: string
+    null_fraction: 0.5625
+    cardinality: 5
+    sample_values:
+    - prosecutor opinion
+    - chief_justice opinion
+    - defense opinion
+    - evidence_aggregator opinion
+    - tech_lead opinion
+  outputs.confidence:
+    type: string
+    null_fraction: 0.525
+    cardinality: 4
+    sample_values:
+    - '0.75'
+    - '0.85'
+    - '0.8'
+    - '1.0'
+  outputs.overall_score:
+    type: number
+    null_fraction: 0.9125
+    cardinality: 10
+    stats:
+      min: 3.5
+      max: 5.0
+      mean: 4.4
+      stddev: 0.4424
+      p25: 4.05
+      p50: 4.5
+      p75: 4.7
+      p95: 4.935
+      p99: 4.987
+  outputs.score:
+    type: integer
+    null_fraction: 0.5625
+    cardinality: 5
+    stats:
+      min: 1.0
+      max: 5.0
+      mean: 2.9857
+      stddev: 1.4687
+      p25: 2.0
+      p50: 3.0
+      p75: 4.0
+      p95: 5.0
+      p99: 5.0
+  parent_run_id:
+    type: string
+    null_fraction: 0.5625
+    cardinality: 14
+    format: uuid
+    sample_values:
+    - 06169836-0b69-4600-af7a-dc4993c2dd47
+    - fc267b85-af4d-4cc6-b9d6-2824e6298a1b
+    - deafb27d-d1ef-40bb-808f-6871d07ca364
+    - 09cf6af6-e875-486e-b084-f0b5400ccc1d
+    - 65afb87f-f9b6-4a8e-ab52-b8ad0ee2db87
+  prompt_tokens:
+    type: integer
+    null_fraction: 0.0
+    cardinality: 159
+    stats:
+      min: 608.0
+      max: 7904.0
+      mean: 3301.8562
+      stddev: 1575.4287
+      p25: 1967.25
+      p50: 3291.0
+      p75: 4381.5
+      p95: 5966.15
+      p99: 7805.64
+  run_type:
+    type: string
+    null_fraction: 0.0
+    cardinality: 2
+    sample_values:
+    - llm
+    - chain
+  session_id:
+    type: string
+    null_fraction: 0.0
+    cardinality: 1
+    format: uuid
+    sample_values:
+    - 0969d685-5a70-4339-b24a-28b40b0520ff
+  start_time:
+    type: string
+    null_fraction: 0.0
+    cardinality: 143
+    format: iso8601
+    sample_values:
+    - '2026-02-28T23:03:35Z'
+    - '2026-03-02T14:24:18Z'
+    - '2026-03-01T01:37:26Z'
+    - '2026-02-28T23:42:09Z'
+    - '2026-03-06T10:43:24Z'
+  tags:
+    type: array
+    null_fraction: 0.0
+    cardinality: 11
+  total_cost:
+    type: number
+    null_fraction: 0.0
+    cardinality: 133
+    stats:
+      min: 0.0051
+      max: 0.0571
+      mean: 0.0243
+      stddev: 0.01
+      p25: 0.0172
+      p50: 0.0225
+      p75: 0.029
+      p95: 0.0445
+      p99: 0.0552
+  total_tokens:
+    type: integer
+    null_fraction: 0.0
+    cardinality: 155
+    stats:
+      min: 913.0
+      max: 9950.0
+      mean: 4260.4125
+      stddev: 1788.3477
+      p25: 2818.75
+      p50: 3981.5
+      p75: 5311.0
+      p95: 7243.25
+      p99: 9563.91

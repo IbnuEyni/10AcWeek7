@@ -1,60 +1,20 @@
-# ── Sunday-submission components (not required for Thursday interim) ──
-contracts/attributor.py
-contracts/schema_analyzer.py
-contracts/ai_extensions.py
-contracts/report_generator.py
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
 
-# Extra generated contracts (only week3 + week5 required for interim)
-generated_contracts/langsmith_traces.yaml
-generated_contracts/langsmith_traces_dbt.yml
-generated_contracts/week1_intent_records.yaml
-generated_contracts/week1_intent_records_dbt.yml
-generated_contracts/week2_verdicts.yaml
-generated_contracts/week2_verdicts_dbt.yml
-generated_contracts/week4_lineage.yaml
-generated_contracts/week4_lineage_dbt.yml
+# IDE
+.idea/
+.vscode/
 
-# Extra outputs (only week3 + week5 required for interim)
-outputs/week1/
-outputs/week2/
-outputs/week4/
-outputs/traces/
-outputs/quarantine/
-outputs/week3/extractions_violated.jsonl
+# OS
+.DS_Store
 
-# Schema snapshots, baselines, embeddings (Sunday deliverable)
-schema_snapshots/
+# Large binary / generated artefacts that are not submission deliverables
+schema_snapshots/embedding_baselines.npz
 
-# Violation log (Sunday deliverable)
-violation_log/
-
-# Enforcer report (Sunday deliverable)
-enforcer_report/report_data.json
-
-# AI metrics (Sunday deliverable)
-validation_reports/ai_metrics.json
-validation_reports/langsmith-trace-records_*.json
-
-# Extra validation reports (keep only the first real week3 run)
-validation_reports/week3-document-refinery-extractions_20260401_2048.json
-validation_reports/week3-document-refinery-extractions_20260401_2051.json
-validation_reports/week3-document-refinery-extractions_20260401_2232.json
-validation_reports/week3-document-refinery-extractions_20260401_2236.json
-validation_reports/week3_violated.json
-validation_reports/week5-event-sourcing-platform-events_20260401_2048.json
-
-# Helper scripts not required for interim evaluation
-generate_interim_report.py
-generate_sample_data.py
-migrate_all.py
-migrate_traces.py
-migrate_week1.py
-migrate_week2.py
-migrate_week4.py
-
-# Source stubs
-src/
-
-# Misc
+# Challenge brief (not part of submission)
 TRP1 Challenge Week 7_ Data Contract Enforcer.md
-flow_diagram.png

@@ -1,0 +1,124 @@
+# contract_registry/subscriptions.yaml
+# Manually maintained registry of inter-system data dependencies.
+# Every arrow in the data-flow diagram must have a subscription entry here.
+# A subscription is a consumer's formal declaration of dependency on a contract.
+# Blast radius for any violation is computed by querying this file first,
+# then enriched via the Week 4 lineage graph for transitive depth.
+
+subscriptions:
+
+  # Week 3 → Week 4: Cartographer ingests extraction records as lineage node metadata
+  - contract_id: week3-document-refinery-extractions
+    subscriber_id: week4-cartographer
+    subscriber_team: week4
+    fields_consumed: [doc_id, extracted_facts, extraction_model]
+    breaking_fields:
+      - field: extracted_facts.confidence
+        reason: used for lineage edge weighting; scale change (0.0-1.0 → 0-100) corrupts all graph traversals
+      - field: doc_id
+        reason: primary key for node identity in lineage graph; rename breaks all node lookups
+      - field: extraction_model
+        reason: used to tag lineage nodes with model provenance
+    validation_mode: ENFORCE
+    registered_at: '2025-01-10T09:00:00Z'
+    contact: week4-team@org.com
+
+  # Week 4 → Week 7: ViolationAttributor requires lineage graph for blame chain traversal
+  - contract_id: week4-brownfield-cartographer-lineage
+    subscriber_id: week7-violation-attributor
+    subscriber_team: week7
+    fields_consumed: [nodes, edges, git_commit, snapshot_id]
+    breaking_fields:
+      - field: nodes[*].node_id
+        reason: primary key for graph traversal; format change breaks all BFS lookups
+      - field: edges[*].source
+        reason: used for upstream traversal in blame chain construction
+      - field: edges[*].target
+        reason: used for downstream traversal in blast radius computation
+      - field: git_commit
+        reason: used to anchor blame chain to a specific repo state
+    validation_mode: ENFORCE
+    registered_at: '2025-01-10T09:00:00Z'
+    contact: week7-team@org.com
+
+  # Week 5 → Week 7: Enforcer validates event records against event schema contracts
+  - contract_id: week5-event-sourcing-platform-events
+    subscriber_id: week7-contract-enforcer
+    subscriber_team: week7
+    fields_consumed: [event_id, event_type, aggregate_id, sequence_number, payload, schema_version, occurred_at, recorded_at]
+    breaking_fields:
+      - field: payload
+        reason: validated against event_type JSON Schema; structural change breaks payload validation
+      - field: event_type
+        reason: used to look up the correct payload schema; rename or removal breaks schema dispatch
+      - field: sequence_number
+        reason: monotonicity check requires consistent integer sequence per aggregate_id
+      - field: recorded_at
+        reason: temporal order check (recorded_at >= occurred_at) requires this field
+    validation_mode: AUDIT
+    registered_at: '2025-01-10T09:00:00Z'
+    contact: week7-team@org.com
+
+  # LangSmith → Week 7: AI Contract Extensions consume trace records for drift and cost monitoring
+  - contract_id: langsmith-trace-records
+    subscriber_id: week7-ai-contract-extensions
+    subscriber_team: week7
+    fields_consumed: [id, run_type, inputs, outputs, total_tokens, prompt_tokens, completion_tokens, total_cost, start_time, end_time, error]
+    breaking_fields:
+      - field: total_tokens
+        reason: used for token budget drift detection; scale or type change breaks trend baseline
+      - field: run_type
+        reason: used to filter llm runs for output schema violation rate; enum change breaks filtering
+      - field: total_cost
+        reason: used for cost anomaly detection; sign change or scale change breaks alerting
+      - field: inputs
+        reason: embedded for semantic drift detection; schema change invalidates baseline centroid
+      - field: outputs
+        reason: validated against output schema; structural change breaks violation rate metric
+    validation_mode: AUDIT
+    registered_at: '2025-01-10T09:00:00Z'
+    contact: week7-team@org.com
+
+  # Week 2 → Week 7: AI Extensions validate LLM structured outputs from verdict records
+  - contract_id: week2-digital-courtroom-verdicts
+    subscriber_id: week7-ai-contract-extensions
+    subscriber_team: week7
+    fields_consumed: [verdict_id, overall_verdict, overall_score, confidence, evaluated_at]
+    breaking_fields:
+      - field: overall_verdict
+        reason: enum check (PASS/FAIL/WARN) is the primary output schema violation metric
+      - field: confidence
+        reason: range check (0.0-1.0) validates LLM output quality signal
+    validation_mode: AUDIT
+    registered_at: '2025-01-10T09:00:00Z'
+    contact: week7-team@org.com
+
+  # Week 1 → Week 2: Courtroom consumes intent records; target_ref references code_refs.file
+  - contract_id: week1-intent-code-correlator
+    subscriber_id: week2-digital-courtroom
+    subscriber_team: week2
+    fields_consumed: [intent_id, code_refs, description]
+    breaking_fields:
+      - field: code_refs[*].file
+        reason: used as target_ref in verdict records; path change breaks cross-system traceability
+      - field: intent_id
+        reason: foreign key linking verdicts back to intents
+    validation_mode: WARN
+    registered_at: '2025-01-10T09:00:00Z'
+    contact: week2-team@org.com
+
+  # Week 7 violation log → Week 8 Sentinel (forward-looking registration)
+  - contract_id: week7-violation-log
+    subscriber_id: week8-sentinel
+    subscriber_team: week8
+    fields_consumed: [violation_id, check_id, detected_at, blame_chain, blast_radius]
+    breaking_fields:
+      - field: violation_id
+        reason: primary key for deduplication in Sentinel alert pipeline
+      - field: check_id
+        reason: used to route alerts to the correct monitoring channel
+      - field: detected_at
+        reason: used for time-windowed alert aggregation
+    validation_mode: AUDIT
+    registered_at: '2025-01-10T09:00:00Z'
+    contact: week8-team@org.com

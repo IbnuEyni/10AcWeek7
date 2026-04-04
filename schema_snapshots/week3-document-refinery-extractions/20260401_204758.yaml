@@ -1,0 +1,232 @@
+contract_id: week3-document-refinery-extractions
+captured_at: '2026-04-01T20:47:58.439235+00:00'
+columns:
+  doc_id:
+    type: string
+    null_fraction: 0.0
+    cardinality: 16
+    format: uuid
+    sample_values:
+    - 73564ce0-5606-5532-8cdc-a9b5fa645ac0
+    - c78a91af-0aeb-5602-891f-8a8614268c7f
+    - 008d05e3-0338-54e0-a59a-094eda5f521d
+    - 7ae6666c-1c30-53ac-b5d6-891c9ca433ea
+    - b1c99847-e2ef-52c4-ab3b-ca9cbdd84c8b
+  entities:
+    type: array
+    null_fraction: 0.0
+    cardinality: 64
+  entities[*].canonical_value:
+    type: string
+    null_fraction: 0.0
+    cardinality: 15
+    sample_values:
+    - 2013-e.c-audit-finding-information
+    - 2022_audited_financial_statement_report
+    - 2018_audited_financial_statement_report
+    - 2019_audited_financial_statement_report
+    - issue_no
+  entities[*].entity_id:
+    type: string
+    null_fraction: 0.0
+    cardinality: 64
+    format: uuid
+    sample_values:
+    - ee65bd52-04d9-4f77-81f2-db4d6910cc45
+    - 657d221f-28f4-4363-8f25-da115e9c1478
+    - 238cf825-093c-47c0-9ef9-6d1159aeac42
+    - 63972c28-24cc-4848-bc98-8c7db5125452
+    - 03529763-14b3-44eb-8bac-d84bd7e145a7
+  entities[*].name:
+    type: string
+    null_fraction: 0.0
+    cardinality: 15
+    sample_values:
+    - 2019 Audited Financial Statement Report
+    - Quarter
+    - 2013-E.C-Audit-finding-information
+    - Imports
+    - 2018 Audited Financial Statement Report
+  entities[*].type:
+    type: string
+    null_fraction: 0.0
+    cardinality: 2
+    sample_values:
+    - OTHER
+    - PERSON
+  extracted_at:
+    type: string
+    null_fraction: 0.0
+    cardinality: 64
+    format: iso8601
+    sample_values:
+    - '2026-03-07T11:25:50.797316Z'
+    - '2026-03-07T11:26:12.278615Z'
+    - '2026-03-05T15:28:11.006244Z'
+    - '2026-03-05T14:46:05.639718Z'
+    - '2026-03-02T14:26:23.347665Z'
+  extracted_facts:
+    type: array
+    null_fraction: 0.0
+    cardinality: 64
+  extracted_facts[*].confidence:
+    type: number
+    null_fraction: 0.0
+    cardinality: 3
+    stats:
+      min: 0.75
+      max: 0.85
+      mean: 0.8016
+      stddev: 0.0353
+      p25: 0.8
+      p50: 0.8
+      p75: 0.85
+      p95: 0.85
+      p99: 0.85
+  extracted_facts[*].entity_refs:
+    type: array
+    null_fraction: 0.0
+    cardinality: 64
+  extracted_facts[*].fact_id:
+    type: string
+    null_fraction: 0.0
+    cardinality: 64
+    format: uuid
+    sample_values:
+    - 476f2067-aae8-41ec-bafd-d984fae890d7
+    - ac9ced9f-fa3d-403c-9501-f4ab055583e2
+    - 3d345e88-bb69-4248-a24d-7e8552ea469f
+    - 47fc68f8-5082-493c-8e6d-d3a47fac8755
+    - 0b0be45e-4a04-48dc-90ef-704e8740dec5
+  extracted_facts[*].page_ref:
+    type: integer
+    null_fraction: 0.2969
+    cardinality: 2
+    stats:
+      min: 0.0
+      max: 15.0
+      mean: 0.6667
+      stddev: 3.0912
+      p25: 0.0
+      p50: 0.0
+      p75: 0.0
+      p95: 0.0
+      p99: 15.0
+  extracted_facts[*].source_excerpt:
+    type: string
+    null_fraction: 0.0
+    cardinality: 7
+    sample_values:
+    - "|  |  |  | \n--------------------------------------------------\n |  |  | \
+      \ | \n |  |  |  | \n |  |  |  | \n |  |  |  | \n |  |  |  | \n |  |  |  | \n\
+      \ |  |  |  | \n |  |  |  | \n |  |  |  |"
+    - 'Issue No. 25/2017 July EFY2017 Page 1
+
+      --------------------------------------------------
+
+      1. Summary
+
+      The Consumer Price Index (CPI), a key economic statistics, is surveyed, analyzed,
+      and
+
+      made available to data users on a monthly basis.
+
+      The year-on-year, general inflation rate (annual percentage chang'
+    - Processed via vision_augmented strategy
+    - "Figure 2013-E.C-Assigned-regular-budget-and-expense_p0_fig0: \u12A0\u1263\u122A\
+      \ 1."
+    - 'Issue No. 21/2017 March EFY2017
+
+      --------------------------------------------------
+
+      1. Summary
+
+      The Consumer Price Index (CPI), a key economic statistics, is surveyed, analyzed,
+      and
+
+      made available to data users on a monthly basis.
+
+      The year-on-year, general inflation rate (annual percentage change) in'
+  extracted_facts[*].text:
+    type: string
+    null_fraction: 0.0
+    cardinality: 16
+    sample_values:
+    - "|  |  |  | \n--------------------------------------------------\n |  |  | \
+      \ | \n |  |  |  | \n |  |  |  | \n |  |  |  | \n |  |  |  | \n |  |  |  | \n\
+      \ |  |  |  | \n |  |  |  | \n |  |  |  |"
+    - 'Document processed: 2019_Audited_Financial_Statement_Report.pdf'
+    - 'Document processed: 2013-E.C-Procurement-information.pdf'
+    - 'Document processed: 2013-E.C-Audit-finding-information.pdf'
+    - 'Document processed: 2022_Audited_Financial_Statement_Report.pdf'
+  extraction_model:
+    type: string
+    null_fraction: 0.0
+    cardinality: 2
+    sample_values:
+    - claude-3-5-sonnet-20241022
+    - claude-3-haiku-20240307
+  processing_time_ms:
+    type: integer
+    null_fraction: 0.0
+    cardinality: 55
+    stats:
+      min: 200.0
+      max: 1082881.0
+      mean: 63848.5156
+      stddev: 153340.0064
+      p25: 3384.0
+      p50: 5525.0
+      p75: 47069.5
+      p95: 278533.1
+      p99: 596125.36
+  source_hash:
+    type: string
+    null_fraction: 0.0
+    cardinality: 16
+    format: sha256
+    sample_values:
+    - 5d8c2f017e5c6c237bb24461135881a7c7e00050daf679dce729b49c3c50ffc9
+    - 886bc4a92dd17a284389f085fbe99dd05b0c10ab75f5de52fbd81dde4830807a
+    - fcec82dc0d523268f9c001b2e029ec6a513a79de149f59f6c84e4bbaa95bacdc
+    - 18ab98a5de0258b68181772bc5dedf86fb749aed0a706a2a7c719e2fc57c6b7f
+    - 4f830746a2e5ec9729d831448dae7c4d0de4c55498a62c71135aacc12bb2b29e
+  source_path:
+    type: string
+    null_fraction: 0.0
+    cardinality: 16
+    format: path
+    sample_values:
+    - /data/documents/CBE Annual Report 2012-13.pdf
+    - /data/documents/test_native_digital.pdf
+    - /data/documents/2019_Audited_Financial_Statement_Report.pdf
+    - /data/documents/2018_Audited_Financial_Statement_Report.pdf
+    - /data/documents/2021_Audited_Financial_Statement_Report.pdf
+  token_count.input:
+    type: integer
+    null_fraction: 0.0
+    cardinality: 8
+    stats:
+      min: 200.0
+      max: 18400.0
+      mean: 2203.125
+      stddev: 4203.6431
+      p25: 200.0
+      p50: 600.0
+      p75: 2400.0
+      p95: 12000.0
+      p99: 18400.0
+  token_count.output:
+    type: integer
+    null_fraction: 0.0
+    cardinality: 7
+    stats:
+      min: 50.0
+      max: 4200.0
+      mean: 624.2188
+      stddev: 1049.8509
+      p25: 50.0
+      p50: 150.0
+      p75: 1150.0
+      p95: 3750.0
+      p99: 4200.0

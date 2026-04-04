@@ -1,0 +1,30 @@
+version: 2
+models:
+- name: week4_lineage
+  description: dbt schema for week4-brownfield-cartographer-lineage
+  columns:
+  - name: captured_at
+    description: ISO 8601 timestamp of when the snapshot was taken.
+    tests:
+    - not_null
+  - name: codebase_root
+    description: Absolute path to the root of the analysed codebase.
+    tests:
+    - not_null
+  - name: edges
+    description: ''
+    tests:
+    - not_null
+  - name: git_commit
+    description: 40-character hex SHA of the git commit analysed.
+    tests:
+    - not_null
+  - name: nodes
+    description: ''
+    tests:
+    - not_null
+  - name: snapshot_id
+    description: Primary key. UUIDv4. One per lineage snapshot.
+    tests:
+    - not_null
+    - unique

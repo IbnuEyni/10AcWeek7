@@ -1,0 +1,192 @@
+{
+  "week3-document-refinery-extractions.extracted_facts[*].confidence": {
+    "mean": 0.7661451814768462,
+    "stddev": 0.03147852554757241,
+    "count": 799
+  },
+  "week3-document-refinery-extractions.extracted_facts[*].page_ref": {
+    "mean": 25.285897435897436,
+    "stddev": 29.18028059283632,
+    "count": 780
+  },
+  "week3-document-refinery-extractions.processing_time_ms": {
+    "mean": 63848.515625,
+    "stddev": 153340.00635189682,
+    "count": 64
+  },
+  "week3-document-refinery-extractions.token_count.input": {
+    "mean": 2203.125,
+    "stddev": 4203.643090745812,
+    "count": 64
+  },
+  "week3-document-refinery-extractions.token_count.output": {
+    "mean": 624.21875,
+    "stddev": 1049.850889244962,
+    "count": 64
+  },
+  "week5-event-sourcing-platform-events.payload.analysis_duration_ms": {
+    "mean": 2534.4,
+    "stddev": 1170.4926484177506,
+    "count": 5
+  },
+  "week5-event-sourcing-platform-events.payload.approved_amount_usd": {
+    "mean": 42661.166000000005,
+    "stddev": 20314.00391497314,
+    "count": 5
+  },
+  "week5-event-sourcing-platform-events.payload.confidence_score": {
+    "mean": 0.764,
+    "stddev": 0.112,
+    "count": 10
+  },
+  "week5-event-sourcing-platform-events.payload.context_token_count": {
+    "mean": 2875.6,
+    "stddev": 1570.3713700905273,
+    "count": 5
+  },
+  "week5-event-sourcing-platform-events.payload.event_replay_from_position": {
+    "mean": 0.0,
+    "stddev": 0.0,
+    "count": 5
+  },
+  "week5-event-sourcing-platform-events.payload.fraud_score": {
+    "mean": 0.09,
+    "stddev": 0.04195235392680607,
+    "count": 5
+  },
+  "week5-event-sourcing-platform-events.payload.interest_rate": {
+    "mean": 8.5,
+    "stddev": 1.1009995458672996,
+    "count": 5
+  },
+  "week5-event-sourcing-platform-events.payload.recommended_limit_usd": {
+    "mean": 37133.146,
+    "stddev": 18989.98824954939,
+    "count": 5
+  },
+  "week5-event-sourcing-platform-events.payload.requested_amount_usd": {
+    "mean": 33999.666,
+    "stddev": 33584.80732489237,
+    "count": 5
+  },
+  "week5-event-sourcing-platform-events.sequence_number": {
+    "mean": 2.4615384615384617,
+    "stddev": 1.277942132756627,
+    "count": 65
+  },
+  "week4-brownfield-cartographer-lineage.edges[*].confidence": {
+    "mean": 0.8499999999999998,
+    "stddev": 2.220446049250313e-16,
+    "count": 8420
+  },
+  "langsmith-trace-records.completion_tokens": {
+    "mean": 958.55625,
+    "stddev": 502.23418027443887,
+    "count": 160
+  },
+  "langsmith-trace-records.outputs.overall_score": {
+    "mean": 4.400000000000001,
+    "stddev": 0.44239607334862924,
+    "count": 14
+  },
+  "langsmith-trace-records.outputs.score": {
+    "mean": 2.9857142857142858,
+    "stddev": 1.4686520266932546,
+    "count": 70
+  },
+  "langsmith-trace-records.prompt_tokens": {
+    "mean": 3301.85625,
+    "stddev": 1575.4286910507683,
+    "count": 160
+  },
+  "langsmith-trace-records.total_cost": {
+    "mean": 0.02428375,
+    "stddev": 0.009998274147946734,
+    "count": 160
+  },
+  "langsmith-trace-records.total_tokens": {
+    "mean": 4260.4125,
+    "stddev": 1788.3476605078079,
+    "count": 160
+  },
+  "week2-digital-courtroom-verdicts.confidence": {
+    "mean": 0.955,
+    "stddev": 0.01837117307087383,
+    "count": 16
+  },
+  "week2-digital-courtroom-verdicts.overall_score": {
+    "mean": 2.9812499999999997,
+    "stddev": 0.884038142559471,
+    "count": 16
+  },
+  "week2-digital-courtroom-verdicts.scores.chief_justice_synthesis.score": {
+    "mean": 2.75,
+    "stddev": 0.9013878188659973,
+    "count": 16
+  },
+  "week2-digital-courtroom-verdicts.scores.git_forensic_analysis.score": {
+    "mean": 3.0625,
+    "stddev": 0.9662265521087692,
+    "count": 16
+  },
+  "week2-digital-courtroom-verdicts.scores.graph_orchestration.score": {
+    "mean": 3.5,
+    "stddev": 1.224744871391589,
+    "count": 16
+  },
+  "week2-digital-courtroom-verdicts.scores.judicial_nuance.score": {
+    "mean": 2.8125,
+    "stddev": 0.9499177595981665,
+    "count": 16
+  },
+  "week2-digital-courtroom-verdicts.scores.report_accuracy.score": {
+    "mean": 2.9375,
+    "stddev": 1.0288798520721456,
+    "count": 16
+  },
+  "week2-digital-courtroom-verdicts.scores.safe_tool_engineering.score": {
+    "mean": 2.75,
+    "stddev": 0.9013878188659973,
+    "count": 16
+  },
+  "week2-digital-courtroom-verdicts.scores.state_management_rigor.score": {
+    "mean": 3.625,
+    "stddev": 1.2183492931011204,
+    "count": 16
+  },
+  "week2-digital-courtroom-verdicts.scores.structured_output_enforcement.score": {
+    "mean": 2.4375,
+    "stddev": 0.49607837082461076,
+    "count": 16
+  },
+  "week2-digital-courtroom-verdicts.scores.swarm_visual.score": {
+    "mean": 2.8125,
+    "stddev": 0.8816709987291178,
+    "count": 16
+  },
+  "week2-digital-courtroom-verdicts.scores.theoretical_depth.score": {
+    "mean": 3.125,
+    "stddev": 0.7806247497997998,
+    "count": 16
+  },
+  "week1-intent-code-correlator.code_refs[*].confidence": {
+    "mean": 0.8499999999999998,
+    "stddev": 2.220446049250313e-16,
+    "count": 211
+  },
+  "week1-intent-code-correlator.code_refs[*].line_end": {
+    "mean": 51.0,
+    "stddev": 0.0,
+    "count": 211
+  },
+  "week1-intent-code-correlator.code_refs[*].line_start": {
+    "mean": 1.0,
+    "stddev": 0.0,
+    "count": 211
+  },
+  "langsmith-trace-records.outputs.confidence": {
+    "mean": 0.8015625,
+    "stddev": 0.0353207954858041,
+    "count": 64
+  }
+}
