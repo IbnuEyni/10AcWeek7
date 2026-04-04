@@ -131,13 +131,12 @@ def check_embedding_drift(data_path, baseline_path=None, threshold=0.15, sample_
 PROMPT_INPUT_SCHEMA = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "type": "object",
-    "required": ["doc_id", "source_path", "content_preview"],
+    "required": ["doc_id", "source_path", "extracted_facts"],
     "properties": {
-        "doc_id":          {"type": "string", "minLength": 36, "maxLength": 36},
-        "source_path":     {"type": "string", "minLength": 1},
-        "content_preview": {"type": "string", "maxLength": 8000},
+        "doc_id":         {"type": "string", "minLength": 36, "maxLength": 36},
+        "source_path":   {"type": "string", "minLength": 1},
+        "extracted_facts": {"type": "array"},
     },
-    "additionalProperties": False,
 }
 
 
@@ -162,10 +161,6 @@ def check_prompt_input_schema(data_path):
                 errors.append(f"{field}: length {len(val)} < minLength {rules['minLength']}")
             if "maxLength" in rules and isinstance(val, str) and len(val) > rules["maxLength"]:
                 errors.append(f"{field}: length {len(val)} > maxLength {rules['maxLength']}")
-        # additionalProperties: False only applies to the prompt input subset
-        # Week 3 records are extraction outputs; we validate only the fields
-        # that would be interpolated into the prompt (doc_id, source_path, content_preview)
-        # We do NOT flag extra fields — the full record has many more fields by design.
         if errors:
             invalid.append({"record": r.get("doc_id", "unknown"), "errors": errors})
         else:
