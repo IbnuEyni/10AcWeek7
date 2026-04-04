@@ -1,34 +1,54 @@
 {
-  "report_id": "20260401_221711",
-  "generated_at": "2026-04-01T22:17:11.216441+00:00",
-  "data_health_score": 0,
-  "health_narrative": "Data health score is 0/100. 388/401 checks passed across all contracts. 13 checks failed.",
+  "report_id": "20260404_134006",
+  "generated_at": "2026-04-04T13:40:06.581617+00:00",
+  "data_health_score": 37,
+  "health_narrative": "Data health score is 37/100. 200/206 checks passed across all contracts. 6 checks failed.",
   "violations_this_week": {
     "total": 5,
     "by_severity": {
-      "CRITICAL": 3
+      "CRITICAL": 3,
+      "HIGH": 3
     },
     "top_violations": [
       {
-        "check_id": "week3-document-refinery-extractions.extracted_facts[*].page_ref.range",
+        "check_id": "langsmith-trace-records.outputs.confidence.type",
         "severity": "CRITICAL",
-        "plain_description": "The week3 system's 'extracted_facts[*].page_ref' field has a CRITICAL violation: extracted_facts[*].page_ref has 331 values outside [0.0, 15.0]. Actual range: [0.0000, 91.0000], mean=25.2859. This affects 331 records and may impact downstream consumers that depend on this field."
-      },
-      {
-        "check_id": "week3-document-refinery-extractions.extracted_facts[*].page_ref.range",
-        "severity": "CRITICAL",
-        "plain_description": "The week3 system's 'extracted_facts[*].page_ref' field has a CRITICAL violation: extracted_facts[*].page_ref has 331 values outside [0.0, 15.0]. Actual range: [0.0000, 91.0000], mean=25.2859. This affects 331 records and may impact downstream consumers that depend on this field."
+        "plain_description": "The LangSmith Trace Records's 'outputs.confidence' field failed its CRITICAL check: outputs.confidence: expected string, found float This affects 64 records. Downstream consumers at risk: week7-ai-contract-extensions."
       },
       {
         "check_id": "week3-document-refinery-extractions.extracted_facts[*].confidence.range",
         "severity": "CRITICAL",
-        "plain_description": "The week3 system's 'extracted_facts[*].confidence' field has a CRITICAL violation: extracted_facts[*].confidence has 178 values outside [0.0, 1.0]. Actual range: [50.0000, 98.8000], mean=73.9253. This affects 178 records and may impact downstream consumers that depend on this field."
+        "plain_description": "The Week 3 Document Refinery's 'extracted_facts[*].confidence' field failed its CRITICAL check: extracted_facts[*].confidence has 178 values outside [0.0, 1.0]. Actual range: [50.0000, 98.8000], mean=73.9253. This affects 178 records. Downstream consumers at risk: week4-cartographer."
+      },
+      {
+        "check_id": "week3-document-refinery-extractions.extracted_facts[*].page_ref.range",
+        "severity": "CRITICAL",
+        "plain_description": "The Week 3 Document Refinery's 'extracted_facts[*].page_ref' field failed its CRITICAL check: extracted_facts[*].page_ref has 21 values outside [0.0, 15.0]. Actual range: [1.0000, 20.0000], mean=10.3218. This affects 21 records. Downstream consumers at risk: week4-cartographer."
       }
     ]
   },
   "schema_changes_detected": {
-    "summary": "Schema snapshots are tracked in schema_snapshots/. Run schema_analyzer.py to detect changes.",
-    "changes": []
+    "summary": "2 schema change(s) detected in the past 7 days. 1 breaking.",
+    "changes": [
+      {
+        "contract_id": "week3-document-refinery-extractions",
+        "column": "extracted_facts[*].confidence",
+        "change_type": "type_narrowing",
+        "compatibility": "BREAKING",
+        "required_action": "CRITICAL. Requires explicit migration plan with rollback.",
+        "old_value": "number",
+        "new_value": "integer"
+      },
+      {
+        "contract_id": "week3-document-refinery-extractions",
+        "column": "extracted_facts[*].confidence",
+        "change_type": "stats_shift",
+        "compatibility": "COMPATIBLE",
+        "required_action": "Investigate root cause. May indicate upstream data quality issue.",
+        "old_value": "mean=0.7661, std=0.0315",
+        "new_value": "mean=73.9253, std=14.8852"
+      }
+    ]
   },
   "ai_system_risk_assessment": {
     "embedding_drift": {
@@ -41,22 +61,22 @@
     },
     "prompt_input_schema": {
       "check_type": "prompt_input_schema",
-      "status": "PASS",
+      "status": "FAIL",
       "total_records": 64,
-      "valid": 64,
-      "invalid": 0,
-      "violation_rate": 0.0,
-      "quarantine_path": null,
-      "message": "0/64 records failed prompt input validation"
+      "valid": 0,
+      "invalid": 64,
+      "violation_rate": 1.0,
+      "quarantine_path": "/home/shuaib/Desktop/python/10Acd/10AcWeek7/outputs/quarantine/prompt_input_20260404_133827.jsonl",
+      "message": "64/64 records failed prompt input validation"
     },
     "llm_output_schema": {
-      "check_type": "llm_output_schema",
-      "status": "PASS",
       "total_outputs": 16,
       "schema_violations": 0,
       "violation_rate": 0.0,
-      "baseline_violation_rate": 0.0,
       "trend": "stable",
+      "status": "PASS",
+      "baseline_rate": 0.0,
+      "check_type": "llm_output_schema",
       "message": "0/16 LLM outputs failed schema validation (trend: stable)"
     },
     "overall_ai_risk": "LOW"
@@ -64,18 +84,21 @@
   "recommended_actions": [
     {
       "priority": 1,
-      "action": "Fix CRITICAL violation in week3-document-refinery-extractions: week3-document-refinery-extractions.extracted_facts[*].page_ref.range",
-      "detail": "extracted_facts[*].page_ref has 331 values outside [0.0, 15.0]. Actual range: [0.0000, 91.0000], mean=25.2859."
+      "action": "Fix CRITICAL violation in src/langsmith/: langsmith-trace-records.outputs.confidence.type",
+      "detail": "outputs.confidence: expected string, found float",
+      "severity": "CRITICAL"
     },
     {
       "priority": 2,
-      "action": "Fix CRITICAL violation in week3-document-refinery-extractions: week3-document-refinery-extractions.extracted_facts[*].page_ref.range",
-      "detail": "extracted_facts[*].page_ref has 331 values outside [0.0, 15.0]. Actual range: [0.0000, 91.0000], mean=25.2859."
+      "action": "Update src/week3/extractor.py to output confidence as float 0.0\u20131.0 per contract week3-document-refinery-extractions clause extracted_facts[*].confidence.range",
+      "detail": "extracted_facts[*].confidence has 178 values outside [0.0, 1.0]. Actual range: [50.0000, 98.8000], mean=73.9253.",
+      "severity": "CRITICAL"
     },
     {
       "priority": 3,
-      "action": "Fix CRITICAL violation in week3-document-refinery-extractions: week3-document-refinery-extractions.extracted_facts[*].confidence.range",
-      "detail": "extracted_facts[*].confidence has 178 values outside [0.0, 1.0]. Actual range: [50.0000, 98.8000], mean=73.9253."
+      "action": "Fix CRITICAL violation in src/week3/extractor.py: week3-document-refinery-extractions.extracted_facts[*].page_ref.range",
+      "detail": "extracted_facts[*].page_ref has 21 values outside [0.0, 15.0]. Actual range: [1.0000, 20.0000], mean=10.3218.",
+      "severity": "CRITICAL"
     }
   ]
 }
