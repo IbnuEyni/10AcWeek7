@@ -188,5 +188,30 @@
     "mean": 0.8015625,
     "stddev": 0.0353207954858041,
     "count": 64
+  },
+  "custom-extractions_violated.extracted_facts[*].confidence": {
+    "mean": 73.9253,
+    "stddev": 14.8852,
+    "count": 178
+  },
+  "custom-extractions_violated.extracted_facts[*].page_ref": {
+    "mean": 10.3218,
+    "stddev": 5.5491,
+    "count": 178
+  },
+  "custom-extractions_violated.processing_time_ms": {
+    "mean": 2484.3455,
+    "stddev": 1239.9883,
+    "count": 55
+  },
+  "custom-extractions_violated.token_count.input": {
+    "mean": 4716.5091,
+    "stddev": 1890.1705,
+    "count": 55
+  },
+  "custom-extractions_violated.token_count.output": {
+    "mean": 1152.9091,
+    "stddev": 562.7963,
+    "count": 55
   }
 }

@@ -1,6 +1,6 @@
 {
-  "run_date": "2026-04-04T14:21:23.759575+00:00",
-  "prompt_hash": "8c997554063ece7f",
+  "run_date": "2026-04-04T16:13:11.738322+00:00",
+  "prompt_hash": "24211e278df60aa1",
   "embedding_drift": {
     "check_type": "embedding_drift",
     "drift_score": 0.0,
@@ -12,13 +12,13 @@
   },
   "prompt_input_schema": {
     "check_type": "prompt_input_schema",
-    "status": "FAIL",
+    "status": "PASS",
     "total_records": 64,
-    "valid": 0,
-    "invalid": 64,
-    "violation_rate": 1.0,
-    "quarantine_path": "/home/shuaib/Desktop/python/10Acd/10AcWeek7/outputs/quarantine/prompt_input_20260404_142123.jsonl",
-    "message": "64/64 records failed prompt input validation"
+    "valid": 64,
+    "invalid": 0,
+    "violation_rate": 0.0,
+    "quarantine_path": null,
+    "message": "0/64 records failed prompt input validation"
   },
   "llm_output_schema": {
     "total_outputs": 16,

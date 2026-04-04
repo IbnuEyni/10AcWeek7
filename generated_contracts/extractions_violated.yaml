@@ -125,20 +125,20 @@ llm_annotations:
 - column: entities[*].canonical_value
   source: extractions_violated
   description: 'Auto-profiled column. Type: string, cardinality: 6. Sample values:
-    [''new_york'', ''5000'', ''acme_corp'']'
+    [''2025-01-15'', ''5000'', ''jane_doe'']'
   business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: entities[*].name
   source: extractions_violated
   description: 'Auto-profiled column. Type: string, cardinality: 6. Sample values:
-    [''$5000'', ''Jane Doe'', ''Acme Corp'']'
+    [''2025-01-15'', ''Acme Corp'', ''Jane Doe'']'
   business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: entities[*].type
   source: extractions_violated
-  description: 'Categorical type field. Observed values: [''ORG'', ''OTHER'', ''AMOUNT'',
-    ''LOCATION'', ''DATE'']'
-  business_rule: value in ['ORG', 'OTHER', 'AMOUNT', 'LOCATION', 'DATE']
+  description: 'Categorical type field. Observed values: [''DATE'', ''ORG'', ''OTHER'',
+    ''AMOUNT'', ''PERSON'']'
+  business_rule: value in ['DATE', 'ORG', 'OTHER', 'AMOUNT', 'PERSON']
   annotation_method: heuristic (no LLM API key configured)
 - column: extracted_facts
   source: extractions_violated
@@ -164,15 +164,15 @@ llm_annotations:
 - column: extracted_facts[*].source_excerpt
   source: extractions_violated
   description: 'Auto-profiled column. Type: string, cardinality: 5. Sample values:
-    [''Verbatim excerpt 5 from source document'', ''Verbatim excerpt 2 from source
-    document'', ''Verbatim excerpt 1 from source document'']'
+    [''Verbatim excerpt 1 from source document'', ''Verbatim excerpt 3 from source
+    document'', ''Verbatim excerpt 4 from source document'']'
   business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: extracted_facts[*].text
   source: extractions_violated
   description: 'Auto-profiled column. Type: string, cardinality: 25. Sample values:
-    [''Extracted fact 2: Revenue increased by 15%'', ''Extracted fact 2: Contract
-    signed on Jan 15'', ''Extracted fact 1: Approved by Jane Doe'']'
+    [''Extracted fact 4: Revenue increased by 15%'', ''Extracted fact 2: Revenue increased
+    by 15%'', ''Extracted fact 3: Total amount is $5000'']'
   business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: extraction_model

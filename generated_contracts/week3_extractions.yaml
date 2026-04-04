@@ -147,21 +147,22 @@ llm_annotations:
 - column: entities[*].canonical_value
   source: week3_extractions
   description: 'Auto-profiled column. Type: string, cardinality: 211. Sample values:
-    [''others'', ''financial_instruments'', ''2020_audited_financial_statement_report'']'
+    [''negative'', ''contents_______________________________________________________________\n__________________________________________________________________________________\n__________________________________________________________________________________\n__________________________________________________________________________________\n__________________________________________________________________________________\n__________________________________________________________________________________\n___________executive'',
+    ''ethiopian_reinsurance'']'
   business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: entities[*].name
   source: week3_extractions
   description: 'Auto-profiled column. Type: string, cardinality: 211. Sample values:
-    [''One'', ''Statistical Bulletin                                \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n       Issue
-    No'', ''Assigned'']'
+    [''2013-E.C-Procurement-information'', ''Directors                                                                   \n                                                                                  \n                                                                                  \n      Report'',
+    ''Defining'']'
   business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: entities[*].type
   source: week3_extractions
   description: 'Categorical type field. Observed values: [''LOCATION'', ''PERSON'',
-    ''DATE'', ''AMOUNT'', ''OTHER'']'
-  business_rule: value in ['LOCATION', 'PERSON', 'DATE', 'AMOUNT', 'OTHER']
+    ''ORG'', ''DATE'', ''OTHER'']'
+  business_rule: value in ['LOCATION', 'PERSON', 'ORG', 'DATE', 'OTHER']
   annotation_method: heuristic (no LLM API key configured)
 - column: extracted_facts
   source: week3_extractions
@@ -187,20 +188,24 @@ llm_annotations:
 - column: extracted_facts[*].source_excerpt
   source: week3_extractions
   description: 'Auto-profiled column. Type: string, cardinality: 180. Sample values:
-    ['''', ''|  |  |  | \n--------------------------------------------------\n |  |  |  |
-    \n |  |  |  | \n |  |  |  | \n |  |  |  | \n |  |  |  | \n |  |  |  | \n |  |  |  |
-    \n |  |  |  | \n |  |  |  |'', ''ETHIOPIAN     STATISTIC'']'
+    ['''', ''6  Import tax expenditure report: FY 201'', ''43 Import tax expenditure
+    report: FY 201'']'
   business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: extracted_facts[*].text
   source: week3_extractions
   description: 'Auto-profiled column. Type: string, cardinality: 202. Sample values:
-    ['''', ''|  |  |  | \n--------------------------------------------------\n |  |  |  |
-    \n |  |  |  | \n |  |  |  | \n |  |  |  | \n |  |  |  | \n |  |  |  | \n |  |  |  |
-    \n |  |  |  | \n |  |  |  |'', ''NEW STANDARD OR AMENDMENTS\n--------------------------------------------------\nIFRS
-    9 – Financial Instruments\nIFRS 16 – Leases\nIAS 7– Disclosure Initiative (Amendments
-    to IAS 7)\nIAS 12– Recognition of Deferred Tax Assets for unrealized losses (Amendments
-    to IAS 12)'']'
+    ['''', ''| Gen.Ins | Long Term Ins | Total | Total\n--------------------------------------------------\nLease
+    liability | 2018 | 2018 | 2018 | 2017\nBalance at beginning of the year | 4,337,893
+    |  | 4,337,893 | -\nLease liability Addition (Adjustment) | (90,373) |  | (90,373)
+    | 4,095,785\nInterest expense on Lease | 582,656 |  | 582,656 | 242,108\nBalance
+    at end of the year | 4,830,175 | - | 4,830,175 | 4,337,893'', ''| Issue No. 21/2017\nPage
+    12\n--------------------------------------------------\nEnquiries | \n | 5. GLOSSARY\n•
+    General Inflation: The highest level of aggregation of\ninflation which covers
+    all the items within the scope\nof the inflation.\n• Food Inflation: inflation
+    which covers all food items\nwithin the scope of the inflation.\n• Non-food Inflation:
+    inflation which covers all non-\nfood items within the scope of the inflation.\n•
+    Year-on-Year percentage change: The Yearly per-\ncentage change is the'']'
   business_rule: See contract schema for constraints
   annotation_method: heuristic (no LLM API key configured)
 - column: extraction_model

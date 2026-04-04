@@ -1,0 +1,147 @@
+{
+  "report_id": "1d849910-b564-4dde-b26a-f2198790419d",
+  "contract_id": "week3-document-refinery-extractions",
+  "generated_at": "2026-04-04T16:10:45.642886+00:00",
+  "snapshot_before": "schema_snapshots/week3-document-refinery-extractions/20260401_200810.yaml",
+  "snapshot_after": "schema_snapshots/week3-document-refinery-extractions/20260404_133046_violated.yaml",
+  "compatibility_verdict": "BREAKING",
+  "total_changes": 9,
+  "breaking_changes": 1,
+  "compatible_changes": 8,
+  "changes": [
+    {
+      "column": "entities[*].type",
+      "change_type": "enum_addition",
+      "old_value": "cardinality=2",
+      "new_value": "cardinality=6",
+      "backward_compatible": true,
+      "required_action": "Additive: notify all consumers."
+    },
+    {
+      "column": "extracted_facts[*].confidence",
+      "change_type": "type_narrowing",
+      "old_value": "number",
+      "new_value": "integer",
+      "backward_compatible": false,
+      "required_action": "CRITICAL. Requires explicit migration plan with rollback."
+    },
+    {
+      "column": "extracted_facts[*].confidence",
+      "change_type": "stats_shift",
+      "old_value": "mean=0.8016, std=0.0353",
+      "new_value": "mean=73.9253, std=14.8852",
+      "backward_compatible": true,
+      "required_action": "Investigate root cause. May indicate upstream data quality issue.",
+      "deviation_sigma": 2071.49
+    },
+    {
+      "column": "extracted_facts[*].page_ref",
+      "change_type": "stats_shift",
+      "old_value": "mean=0.6667, std=3.0912",
+      "new_value": "mean=25.2859, std=29.1803",
+      "backward_compatible": true,
+      "required_action": "Investigate root cause. May indicate upstream data quality issue.",
+      "deviation_sigma": 7.96
+    },
+    {
+      "column": "extracted_facts[*].page_ref",
+      "change_type": "enum_addition",
+      "old_value": "cardinality=2",
+      "new_value": "cardinality=85",
+      "backward_compatible": true,
+      "required_action": "Additive: notify all consumers."
+    },
+    {
+      "column": "entities[*].name",
+      "change_type": "enum_addition",
+      "old_value": "cardinality=15",
+      "new_value": "cardinality=211",
+      "backward_compatible": true,
+      "required_action": "Additive: notify all consumers."
+    },
+    {
+      "column": "extracted_facts[*].text",
+      "change_type": "enum_addition",
+      "old_value": "cardinality=16",
+      "new_value": "cardinality=202",
+      "backward_compatible": true,
+      "required_action": "Additive: notify all consumers."
+    },
+    {
+      "column": "entities[*].canonical_value",
+      "change_type": "enum_addition",
+      "old_value": "cardinality=15",
+      "new_value": "cardinality=211",
+      "backward_compatible": true,
+      "required_action": "Additive: notify all consumers."
+    },
+    {
+      "column": "extracted_facts[*].source_excerpt",
+      "change_type": "enum_addition",
+      "old_value": "cardinality=7",
+      "new_value": "cardinality=180",
+      "backward_compatible": true,
+      "required_action": "Additive: notify all consumers."
+    }
+  ],
+  "blast_radius": {
+    "source": "registry",
+    "subscribers": [
+      {
+        "subscriber_id": "week4-cartographer",
+        "contact": "week4-team@org.com",
+        "validation_mode": "ENFORCE",
+        "breaking_fields": [
+          "extracted_facts.confidence",
+          "doc_id",
+          "extraction_model"
+        ]
+      }
+    ],
+    "total_affected": 1
+  },
+  "per_consumer_analysis": [
+    {
+      "subscriber_id": "week4-cartographer",
+      "contact": "week4-team@org.com",
+      "validation_mode": "ENFORCE",
+      "affected_changes": [
+        {
+          "column": "extracted_facts[*].confidence",
+          "change_type": "type_narrowing",
+          "failure_mode": "CRITICAL. Requires explicit migration plan with rollback."
+        }
+      ],
+      "impact": "BREAKING"
+    }
+  ],
+  "migration_checklist": [
+    {
+      "step": 1,
+      "action": "Address type_narrowing on column 'extracted_facts[*].confidence'",
+      "detail": "CRITICAL. Requires explicit migration plan with rollback.",
+      "column": "extracted_facts[*].confidence",
+      "change_type": "type_narrowing"
+    },
+    {
+      "step": 2,
+      "action": "Run ValidationRunner on all downstream consumers",
+      "detail": "Verify no contract violations after migration"
+    },
+    {
+      "step": 3,
+      "action": "Update schema snapshots and baselines",
+      "detail": "Re-run ContractGenerator to establish new baselines"
+    }
+  ],
+  "rollback_plan": {
+    "description": "Revert to previous schema version if migration fails",
+    "steps": [
+      "Revert the upstream code change via git revert",
+      "Re-run data pipeline with previous schema",
+      "Validate all downstream consumers pass contract checks",
+      "Update violation log with rollback event"
+    ],
+    "estimated_downtime": "< 30 minutes if automated, < 2 hours if manual"
+  }
+}

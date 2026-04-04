@@ -1,0 +1,209 @@
+contract_id: custom-extractions_violated
+captured_at: '2026-04-04T18:30:57.282413+00:00'
+columns:
+  doc_id:
+    type: string
+    null_fraction: 0.0
+    cardinality: 55
+    format: uuid
+    sample_values:
+    - d231a8a8-efef-414a-990a-8bc43731aa60
+    - 2b0c204f-a643-4a0f-94c1-a428791b81b3
+    - a315d88a-8c98-4e10-bb54-9169e8682a2d
+    - c4930c42-d9c5-454d-8bde-7e605fda9269
+    - 58349708-7d63-4a5b-9caa-9a40d0c8dd0d
+  entities:
+    type: array
+    null_fraction: 0.0
+    cardinality: 55
+  entities[*].canonical_value:
+    type: string
+    null_fraction: 0.0
+    cardinality: 6
+    sample_values:
+    - '2025-01-15'
+    - '5000'
+    - jane_doe
+    - acme_corp
+    - new_york
+  entities[*].entity_id:
+    type: string
+    null_fraction: 0.0
+    cardinality: 163
+    format: uuid
+    sample_values:
+    - 1fd0f7dc-7e9b-4c22-b8a0-356e149ed426
+    - 3d461e7d-e5a3-4bdc-a2e8-c71d923a3180
+    - ae72d4a6-a699-47ce-a591-ba4116457cd1
+    - 34aed40e-1c30-4bec-815a-fd4cc1e4a870
+    - 377afdd2-d724-4d80-9ecd-bd1c3f2b367b
+  entities[*].name:
+    type: string
+    null_fraction: 0.0
+    cardinality: 6
+    sample_values:
+    - '2025-01-15'
+    - Acme Corp
+    - Jane Doe
+    - Widget
+    - $5000
+  entities[*].type:
+    type: string
+    null_fraction: 0.0
+    cardinality: 6
+    sample_values:
+    - DATE
+    - ORG
+    - OTHER
+    - AMOUNT
+    - PERSON
+  extracted_at:
+    type: string
+    null_fraction: 0.0
+    cardinality: 15
+    format: iso8601
+    sample_values:
+    - '2026-03-24T16:41:46Z'
+    - '2026-03-31T16:41:46Z'
+    - '2026-03-29T16:41:46Z'
+    - '2026-03-27T16:41:46Z'
+    - '2026-03-30T16:41:46Z'
+  extracted_facts:
+    type: array
+    null_fraction: 0.0
+    cardinality: 55
+  extracted_facts[*].confidence:
+    type: number
+    null_fraction: 0.0
+    cardinality: 156
+    stats:
+      min: 50.0
+      max: 98.8
+      mean: 73.9253
+      stddev: 14.8852
+      p25: 59.25
+      p50: 75.35
+      p75: 87.8
+      p95: 96.49
+      p99: 98.446
+  extracted_facts[*].entity_refs:
+    type: array
+    null_fraction: 0.0
+    cardinality: 140
+  extracted_facts[*].fact_id:
+    type: string
+    null_fraction: 0.0
+    cardinality: 178
+    format: uuid
+    sample_values:
+    - e2ff462d-e05e-42f6-ad27-0dca9fcf19a3
+    - 2d0e2057-76ce-4f10-9bdb-57a74a451b7b
+    - 043c6950-cf2b-4968-9f82-029d8133b239
+    - bc657c42-74f9-476f-aed5-eeb44be55b38
+    - 8ee7fa38-ff2b-4266-aaf1-86d3fba51a11
+  extracted_facts[*].page_ref:
+    type: integer
+    null_fraction: 0.5112
+    cardinality: 20
+    stats:
+      min: 1.0
+      max: 20.0
+      mean: 10.3218
+      stddev: 5.5491
+      p25: 6.0
+      p50: 9.0
+      p75: 15.0
+      p95: 19.0
+      p99: 20.0
+  extracted_facts[*].source_excerpt:
+    type: string
+    null_fraction: 0.0
+    cardinality: 5
+    sample_values:
+    - Verbatim excerpt 1 from source document
+    - Verbatim excerpt 3 from source document
+    - Verbatim excerpt 4 from source document
+    - Verbatim excerpt 5 from source document
+    - Verbatim excerpt 2 from source document
+  extracted_facts[*].text:
+    type: string
+    null_fraction: 0.0
+    cardinality: 25
+    sample_values:
+    - 'Extracted fact 4: Revenue increased by 15%'
+    - 'Extracted fact 2: Revenue increased by 15%'
+    - 'Extracted fact 3: Total amount is $5000'
+    - 'Extracted fact 5: Located in New York'
+    - 'Extracted fact 1: Located in New York'
+  extraction_model:
+    type: string
+    null_fraction: 0.0
+    cardinality: 3
+    sample_values:
+    - claude-3-haiku-20240307
+    - gpt-4o-2024-05-13
+    - claude-3-5-sonnet-20241022
+  processing_time_ms:
+    type: integer
+    null_fraction: 0.0
+    cardinality: 54
+    stats:
+      min: 268.0
+      max: 4851.0
+      mean: 2484.3455
+      stddev: 1239.9883
+      p25: 1607.0
+      p50: 2426.0
+      p75: 3498.0
+      p95: 4493.8
+      p99: 4828.32
+  source_hash:
+    type: string
+    null_fraction: 0.0
+    cardinality: 55
+    format: sha256
+    sample_values:
+    - 2e9d48d6d2273a9c996bc788dea4924869673eb14ea3a7264f28ed5d1c17024a
+    - d622b2fe7e7acce59eab302b5f4466c3d8e12faa04f9afb03c5dd69bc834102c
+    - 52aa82824b2a64ccf79ad00ddc0c47b8c9c428349ea9f06bdc19189929c0eb6e
+    - 04b50fa9e0395e64bb6cc97e0d032c53cfd76c5128025750ba9d6eb865302988
+    - 5d69d4a3fba9e2c0b020bab9641af4b2d178295f866d00948b731dc221c4c42f
+  source_path:
+    type: string
+    null_fraction: 0.0
+    cardinality: 55
+    format: path
+    sample_values:
+    - /data/documents/doc_39.pdf
+    - /data/documents/doc_37.pdf
+    - /data/documents/doc_55.pdf
+    - /data/documents/doc_16.pdf
+    - /data/documents/doc_7.pdf
+  token_count.input:
+    type: integer
+    null_fraction: 0.0
+    cardinality: 55
+    stats:
+      min: 1096.0
+      max: 7846.0
+      mean: 4716.5091
+      stddev: 1890.1705
+      p25: 3206.0
+      p50: 4655.0
+      p75: 6503.0
+      p95: 7539.3
+      p99: 7829.8
+  token_count.output:
+    type: integer
+    null_fraction: 0.0
+    cardinality: 55
+    stats:
+      min: 202.0
+      max: 1952.0
+      mean: 1152.9091
+      stddev: 562.7963
+      p25: 610.0
+      p50: 1285.0
+      p75: 1644.0
+      p95: 1920.4
+      p99: 1946.06

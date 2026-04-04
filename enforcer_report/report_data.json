@@ -1,12 +1,12 @@
 {
-  "report_id": "20260404_140636",
-  "generated_at": "2026-04-04T14:06:36.044377+00:00",
-  "data_health_score": 37,
-  "health_narrative": "Data health score is 37/100. 200/206 checks passed across all contracts. 6 checks failed.",
+  "report_id": "20260404_161312",
+  "generated_at": "2026-04-04T16:13:12.056956+00:00",
+  "data_health_score": 58,
+  "health_narrative": "Data health score is 58/100. 212/217 checks passed across all contracts. 5 checks failed.",
   "violations_this_week": {
-    "total": 8,
+    "total": 13,
     "by_severity": {
-      "CRITICAL": 3,
+      "CRITICAL": 2,
       "HIGH": 3
     },
     "top_violations": [
@@ -21,14 +21,14 @@
         "plain_description": "The Week 3 Document Refinery's 'extracted_facts[*].confidence' field failed its CRITICAL check: extracted_facts[*].confidence has 178 values outside [0.0, 1.0]. Actual range: [50.0000, 98.8000], mean=73.9253. This affects 178 records. Downstream consumers at risk: week4-cartographer."
       },
       {
-        "check_id": "week3-document-refinery-extractions.extracted_facts[*].page_ref.range",
-        "severity": "CRITICAL",
-        "plain_description": "The Week 3 Document Refinery's 'extracted_facts[*].page_ref' field failed its CRITICAL check: extracted_facts[*].page_ref has 21 values outside [0.0, 15.0]. Actual range: [1.0000, 20.0000], mean=10.3218. This affects 21 records. Downstream consumers at risk: week4-cartographer."
+        "check_id": "week3-document-refinery-extractions.extracted_facts[*].confidence.drift",
+        "severity": "HIGH",
+        "plain_description": "The Week 3 Document Refinery's 'extracted_facts[*].confidence' field failed its HIGH check: Statistical drift detected: extracted_facts[*].confidence mean shifted by 2324.10 standard deviations This affects 0 records. Downstream consumers at risk: week4-cartographer."
       }
     ]
   },
   "schema_changes_detected": {
-    "summary": "4 schema change(s) detected in the past 7 days. 2 breaking.",
+    "summary": "22 schema change(s) detected in the past 7 days. 4 breaking.",
     "changes": [
       {
         "contract_id": "week3-document-refinery-extractions",
@@ -47,6 +47,168 @@
         "required_action": "Investigate root cause. May indicate upstream data quality issue.",
         "old_value": "mean=0.7661, std=0.0315",
         "new_value": "mean=73.9253, std=14.8852"
+      },
+      {
+        "contract_id": "week3-document-refinery-extractions",
+        "column": "entities[*].type",
+        "change_type": "enum_addition",
+        "compatibility": "COMPATIBLE",
+        "required_action": "Additive: notify all consumers.",
+        "old_value": "cardinality=2",
+        "new_value": "cardinality=6"
+      },
+      {
+        "contract_id": "week3-document-refinery-extractions",
+        "column": "entities[*].canonical_value",
+        "change_type": "enum_addition",
+        "compatibility": "COMPATIBLE",
+        "required_action": "Additive: notify all consumers.",
+        "old_value": "cardinality=15",
+        "new_value": "cardinality=211"
+      },
+      {
+        "contract_id": "week3-document-refinery-extractions",
+        "column": "entities[*].name",
+        "change_type": "enum_addition",
+        "compatibility": "COMPATIBLE",
+        "required_action": "Additive: notify all consumers.",
+        "old_value": "cardinality=15",
+        "new_value": "cardinality=211"
+      },
+      {
+        "contract_id": "week3-document-refinery-extractions",
+        "column": "extracted_facts[*].text",
+        "change_type": "enum_addition",
+        "compatibility": "COMPATIBLE",
+        "required_action": "Additive: notify all consumers.",
+        "old_value": "cardinality=16",
+        "new_value": "cardinality=202"
+      },
+      {
+        "contract_id": "week3-document-refinery-extractions",
+        "column": "extracted_facts[*].source_excerpt",
+        "change_type": "enum_addition",
+        "compatibility": "COMPATIBLE",
+        "required_action": "Additive: notify all consumers.",
+        "old_value": "cardinality=7",
+        "new_value": "cardinality=180"
+      },
+      {
+        "contract_id": "week3-document-refinery-extractions",
+        "column": "extracted_facts[*].confidence",
+        "change_type": "type_narrowing",
+        "compatibility": "BREAKING",
+        "required_action": "CRITICAL. Requires explicit migration plan with rollback.",
+        "old_value": "number",
+        "new_value": "integer"
+      },
+      {
+        "contract_id": "week3-document-refinery-extractions",
+        "column": "extracted_facts[*].confidence",
+        "change_type": "stats_shift",
+        "compatibility": "COMPATIBLE",
+        "required_action": "Investigate root cause. May indicate upstream data quality issue.",
+        "old_value": "mean=0.8016, std=0.0353",
+        "new_value": "mean=73.9253, std=14.8852"
+      },
+      {
+        "contract_id": "week3-document-refinery-extractions",
+        "column": "extracted_facts[*].page_ref",
+        "change_type": "stats_shift",
+        "compatibility": "COMPATIBLE",
+        "required_action": "Investigate root cause. May indicate upstream data quality issue.",
+        "old_value": "mean=0.6667, std=3.0912",
+        "new_value": "mean=25.2859, std=29.1803"
+      },
+      {
+        "contract_id": "week3-document-refinery-extractions",
+        "column": "extracted_facts[*].page_ref",
+        "change_type": "enum_addition",
+        "compatibility": "COMPATIBLE",
+        "required_action": "Additive: notify all consumers.",
+        "old_value": "cardinality=2",
+        "new_value": "cardinality=85"
+      },
+      {
+        "contract_id": "week3-document-refinery-extractions",
+        "column": "entities[*].type",
+        "change_type": "enum_addition",
+        "compatibility": "COMPATIBLE",
+        "required_action": "Additive: notify all consumers.",
+        "old_value": "cardinality=2",
+        "new_value": "cardinality=6"
+      },
+      {
+        "contract_id": "week3-document-refinery-extractions",
+        "column": "extracted_facts[*].confidence",
+        "change_type": "type_narrowing",
+        "compatibility": "BREAKING",
+        "required_action": "CRITICAL. Requires explicit migration plan with rollback.",
+        "old_value": "number",
+        "new_value": "integer"
+      },
+      {
+        "contract_id": "week3-document-refinery-extractions",
+        "column": "extracted_facts[*].confidence",
+        "change_type": "stats_shift",
+        "compatibility": "COMPATIBLE",
+        "required_action": "Investigate root cause. May indicate upstream data quality issue.",
+        "old_value": "mean=0.8016, std=0.0353",
+        "new_value": "mean=73.9253, std=14.8852"
+      },
+      {
+        "contract_id": "week3-document-refinery-extractions",
+        "column": "extracted_facts[*].page_ref",
+        "change_type": "stats_shift",
+        "compatibility": "COMPATIBLE",
+        "required_action": "Investigate root cause. May indicate upstream data quality issue.",
+        "old_value": "mean=0.6667, std=3.0912",
+        "new_value": "mean=25.2859, std=29.1803"
+      },
+      {
+        "contract_id": "week3-document-refinery-extractions",
+        "column": "extracted_facts[*].page_ref",
+        "change_type": "enum_addition",
+        "compatibility": "COMPATIBLE",
+        "required_action": "Additive: notify all consumers.",
+        "old_value": "cardinality=2",
+        "new_value": "cardinality=85"
+      },
+      {
+        "contract_id": "week3-document-refinery-extractions",
+        "column": "entities[*].name",
+        "change_type": "enum_addition",
+        "compatibility": "COMPATIBLE",
+        "required_action": "Additive: notify all consumers.",
+        "old_value": "cardinality=15",
+        "new_value": "cardinality=211"
+      },
+      {
+        "contract_id": "week3-document-refinery-extractions",
+        "column": "extracted_facts[*].text",
+        "change_type": "enum_addition",
+        "compatibility": "COMPATIBLE",
+        "required_action": "Additive: notify all consumers.",
+        "old_value": "cardinality=16",
+        "new_value": "cardinality=202"
+      },
+      {
+        "contract_id": "week3-document-refinery-extractions",
+        "column": "entities[*].canonical_value",
+        "change_type": "enum_addition",
+        "compatibility": "COMPATIBLE",
+        "required_action": "Additive: notify all consumers.",
+        "old_value": "cardinality=15",
+        "new_value": "cardinality=211"
+      },
+      {
+        "contract_id": "week3-document-refinery-extractions",
+        "column": "extracted_facts[*].source_excerpt",
+        "change_type": "enum_addition",
+        "compatibility": "COMPATIBLE",
+        "required_action": "Additive: notify all consumers.",
+        "old_value": "cardinality=7",
+        "new_value": "cardinality=180"
       },
       {
         "contract_id": "week3-document-refinery-extractions",
@@ -75,17 +237,18 @@
       "status": "PASS",
       "threshold": 0.15,
       "sample_size": 200,
-      "message": "Embedding drift=0.0000 (within threshold 0.15)"
+      "embedding_method": "character-hash-64d",
+      "message": "Embedding drift=0.0000 (within threshold 0.15) [character-hash-64d]"
     },
     "prompt_input_schema": {
       "check_type": "prompt_input_schema",
-      "status": "FAIL",
+      "status": "PASS",
       "total_records": 64,
-      "valid": 0,
-      "invalid": 64,
-      "violation_rate": 1.0,
-      "quarantine_path": "/home/shuaib/Desktop/python/10Acd/10AcWeek7/outputs/quarantine/prompt_input_20260404_140622.jsonl",
-      "message": "64/64 records failed prompt input validation"
+      "valid": 64,
+      "invalid": 0,
+      "violation_rate": 0.0,
+      "quarantine_path": null,
+      "message": "0/64 records failed prompt input validation"
     },
     "llm_output_schema": {
       "total_outputs": 16,
@@ -114,9 +277,9 @@
     },
     {
       "priority": 3,
-      "action": "Fix CRITICAL violation in src/week3/extractor.py: week3-document-refinery-extractions.extracted_facts[*].page_ref.range",
-      "detail": "extracted_facts[*].page_ref has 21 values outside [0.0, 15.0]. Actual range: [1.0000, 20.0000], mean=10.3218.",
-      "severity": "CRITICAL"
+      "action": "Investigate statistical drift in extracted_facts[*].confidence in src/week3/extractor.py. Re-establish baseline in schema_snapshots/baselines.json after confirming the scale change is intentional.",
+      "detail": "Statistical drift detected: extracted_facts[*].confidence mean shifted by 2324.10 standard deviations",
+      "severity": "HIGH"
     }
   ]
 }

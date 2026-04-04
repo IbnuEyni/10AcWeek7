@@ -1,0 +1,271 @@
+contract_id: week3-document-refinery-extractions
+captured_at: '2026-04-04T16:12:54.019527+00:00'
+columns:
+  doc_id:
+    type: string
+    null_fraction: 0.0
+    cardinality: 16
+    format: uuid
+    sample_values:
+    - d1460b45-a4a1-51a8-82ce-5f6c01b07135
+    - 7ae6666c-1c30-53ac-b5d6-891c9ca433ea
+    - 2e2654f7-57c9-5e0a-b942-3e137c510447
+    - 0db50b75-4487-5312-b5fc-b65ee33cac82
+    - 0dc295ed-aeaf-50a5-929a-e59d94e68158
+  entities:
+    type: array
+    null_fraction: 0.0
+    cardinality: 64
+  entities[*].canonical_value:
+    type: string
+    null_fraction: 0.0
+    cardinality: 211
+    sample_values:
+    - leather
+    - directors
+    - more
+    - plastics
+    - differences
+  entities[*].entity_id:
+    type: string
+    null_fraction: 0.0
+    cardinality: 964
+    format: uuid
+    sample_values:
+    - 829e4e35-99e4-4363-8fc9-bf0e85bc446a
+    - e65636f4-a585-451a-99c6-c4e7ed81dfd5
+    - 1fb1a1e1-aba0-4891-8f30-9cf8cb2d5443
+    - 64e86112-c276-4265-9462-eda2bf78d1ae
+    - 22de1f91-25db-4c2d-a906-5922f0459b36
+  entities[*].name:
+    type: string
+    null_fraction: 0.0
+    cardinality: 211
+    sample_values:
+    - International Accounting Standards Board
+    - Leather
+    - Fire
+    - Savings
+    - Recent Improvements
+  entities[*].type:
+    type: string
+    null_fraction: 0.0
+    cardinality: 6
+    sample_values:
+    - LOCATION
+    - DATE
+    - ORG
+    - OTHER
+    - AMOUNT
+  extracted_at:
+    type: string
+    null_fraction: 0.0
+    cardinality: 64
+    format: iso8601
+    sample_values:
+    - '2026-03-02T14:26:23.347665Z'
+    - '2026-03-05T15:14:27.898065Z'
+    - '2026-03-07T11:25:50.797316Z'
+    - '2026-03-04T12:32:26.502990Z'
+    - '2026-03-05T23:30:12.216403Z'
+  extracted_facts:
+    type: array
+    null_fraction: 0.0
+    cardinality: 64
+  extracted_facts[*].confidence:
+    type: number
+    null_fraction: 0.0
+    cardinality: 3
+    stats:
+      min: 0.75
+      max: 0.85
+      mean: 0.7661
+      stddev: 0.0315
+      p25: 0.75
+      p50: 0.75
+      p75: 0.75
+      p95: 0.85
+      p99: 0.85
+  extracted_facts[*].entity_refs:
+    type: array
+    null_fraction: 0.0
+    cardinality: 584
+  extracted_facts[*].fact_id:
+    type: string
+    null_fraction: 0.0
+    cardinality: 799
+    format: uuid
+    sample_values:
+    - 49f2d16b-a974-4ca2-a749-8735ba5bec1b
+    - 692ed96a-03df-4a21-948f-276e00fbcb60
+    - 93308d6a-1cd7-4da5-88c8-d4a189a88f50
+    - fbe1d34b-3ada-46e0-9a6c-330baf6e698f
+    - f1b3a74f-3b0b-4d3e-bb6c-f433171b5b6c
+  extracted_facts[*].page_ref:
+    type: integer
+    null_fraction: 0.0238
+    cardinality: 85
+    stats:
+      min: 0.0
+      max: 91.0
+      mean: 25.2859
+      stddev: 29.1803
+      p25: 3.0
+      p50: 10.0
+      p75: 49.0
+      p95: 84.05
+      p99: 90.0
+  extracted_facts[*].source_excerpt:
+    type: string
+    null_fraction: 0.0
+    cardinality: 180
+    sample_values:
+    - ''
+    - "Issue No. 21/2017 Page 2 |  |  |  | \n--------------------------------------------------\n\
+      Beginning from March-EFY 2016 the magnitude of the inflation rate steadily declined\
+      \ up to March-EFY\n2017. In March EFY-2017 General inflation was 13.6% as compared\
+      \ to the one observed in March-\nEFY2016. |  |  |"
+    - 'NEW STANDARDS OR AMENDMENTS | EFFECTIVE FOR ANNUAL PERIODS
+
+      BEGINNING ON OR AFTER
+
+      --------------------------------------------------
+
+      Classification and Measurement of Share-based payment
+
+      Transactions (Amendments to IFRS 2) | 1 January 2018
+
+      Sale or Contribution of Assets between an Investor and its
+
+      As'
+    - "FINANCIAL INSTRUMENTS | EFFECT ON PROFIT/LOSS |  | EFFECT ON EQUITY | \n--------------------------------------------------\n\
+      \ | 0.5% increase | 0.5% decrease | 0.5% increase | 0.5% decrease\nTime deposits\
+      \ | (2,864,835) | 2,864,835 | (2,864,835) | 2,864,835\nTotal | (2,864,835) |\
+      \ 2,864,835 | (2,864,835) |"
+    - '| 2017
+
+      ETB
+
+      --------------------------------------------------
+
+      Staff loans | 556,523
+
+      Cash at bank | 236,988,391
+
+      Time deposits | 603,624,670
+
+      Government Bond | 80,828,317
+
+      Total | 921,997,901'
+  extracted_facts[*].text:
+    type: string
+    null_fraction: 0.0
+    cardinality: 202
+    sample_values:
+    - ''
+    - "|  |  |  | 2018/19 |  |  | 2019/20 |  |  | 2020/21 | \n--------------------------------------------------\n\
+      \ | Animal products |  |  | 134.01 |  |  | 139.41 |  |  | 298.65 | \nVegetable\
+      \ products |  |  | 749.10 |  |  | 704.77 |  |  | 1,592.27 |  | \n | Animal or\
+      \ vegetable fats |  |  | 8,237.56 |  |  | 3,520.99 |  |  | 21,800.60 | \nPrepared\
+      \ food and beverages (incl. sugar) |  |  | 7,508.84 |  |  | 4,438.81 |  |  |\
+      \ 6,950.20 |  | \n | Mineral oil and fuel |  |  | 11,296.09 |  |  | 14,084.75\
+      \ |  |  | 7,138"
+    - '| 2017
+
+      ETB
+
+      --------------------------------------------------
+
+      Staff loans | 556,523
+
+      Cash at bank | 236,988,391
+
+      Time deposits | 603,624,670
+
+      Government Bond | 80,828,317
+
+      Total | 921,997,901'
+    - 'Department | Budget | Actual | Variance
+
+      --------------------------------------------------
+
+      Engineering | $50,000 | $48,000 | -$2,000
+
+      Marketing | $30,000 | $32,000 | +$2,000
+
+      Sales | $40,000 | $38,000 | -$2,000
+
+      Operations | $20,000 | $19,000 | -$1,000'
+    - X                                               ETHIOPIAN REINSURANCE ANNUAL
+      REPORT
+  extraction_model:
+    type: string
+    null_fraction: 0.0
+    cardinality: 2
+    sample_values:
+    - claude-3-haiku-20240307
+    - claude-3-5-sonnet-20241022
+  processing_time_ms:
+    type: integer
+    null_fraction: 0.0
+    cardinality: 55
+    stats:
+      min: 200.0
+      max: 1082881.0
+      mean: 63848.5156
+      stddev: 153340.0064
+      p25: 3384.0
+      p50: 5525.0
+      p75: 47069.5
+      p95: 278533.1
+      p99: 596125.36
+  source_hash:
+    type: string
+    null_fraction: 0.0
+    cardinality: 16
+    format: sha256
+    sample_values:
+    - a37661acd869b6ae99603ef5f35f5334232113e0c6bbe1f9646fdcf3b5b81215
+    - fcec82dc0d523268f9c001b2e029ec6a513a79de149f59f6c84e4bbaa95bacdc
+    - 886bc4a92dd17a284389f085fbe99dd05b0c10ab75f5de52fbd81dde4830807a
+    - 73d46070a62df663f320b2e926ba8d9f9a577dd7cf32a1ec3082c30a8978c02b
+    - 8dcdac000dbd954cd2abc6e82c42ba5b122777f0971df37cad7ffa81006a2327
+  source_path:
+    type: string
+    null_fraction: 0.0
+    cardinality: 16
+    format: path
+    sample_values:
+    - /data/documents/20191010_Pharmaceutical-Manufacturing-Opportunites-in-Ethiopia_VF.pdf
+    - /data/documents/test.pdf
+    - /data/documents/2018_Audited_Financial_Statement_Report.pdf
+    - /data/documents/Annual_Report_JUNE-2018.pdf
+    - /data/documents/2013-E.C-Assigned-regular-budget-and-expense.pdf
+  token_count.input:
+    type: integer
+    null_fraction: 0.0
+    cardinality: 8
+    stats:
+      min: 200.0
+      max: 18400.0
+      mean: 2203.125
+      stddev: 4203.6431
+      p25: 200.0
+      p50: 600.0
+      p75: 2400.0
+      p95: 12000.0
+      p99: 18400.0
+  token_count.output:
+    type: integer
+    null_fraction: 0.0
+    cardinality: 7
+    stats:
+      min: 50.0
+      max: 4200.0
+      mean: 624.2188
+      stddev: 1049.8509
+      p25: 50.0
+      p50: 150.0
+      p75: 1150.0
+      p95: 3750.0
+      p99: 4200.0
