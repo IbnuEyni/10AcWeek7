@@ -61,7 +61,48 @@ def registry_blast_radius(contract_id, failing_field, registry):
     return affected
 
 
+KNOWN_CONTRACT_IDS = [
+    "week1-intent-code-correlator",
+    "week2-digital-courtroom-verdicts",
+    "week3-document-refinery-extractions",
+    "week4-brownfield-cartographer-lineage",
+    "week5-event-sourcing-platform-events",
+    "langsmith-trace-records",
+]
+
+
+def extract_contract_id(check_id):
+    """Reliably extract contract_id from check_id by matching known IDs."""
+    for cid in KNOWN_CONTRACT_IDS:
+        if check_id.startswith(cid + ".") or check_id == cid:
+            return cid
+    # Fallback: everything before the first non-hyphenated segment
+    parts = check_id.split(".")
+    cid_parts = []
+    for p in parts:
+        if "-" in p or p.startswith("week") or p.startswith("langsmith"):
+            cid_parts.append(p)
+        else:
+            break
+    return ".".join(cid_parts) if cid_parts else parts[0]
+
+
 def load_lineage_graph():
+    """Load the latest Week 4 lineage snapshot."""
+    path = os.path.join(BASE_DIR, "outputs/week4/lineage_snapshots.jsonl")
+    if not os.path.exists(path):
+        return {"nodes": [], "edges": []}
+    records = []
+    with open(path) as f:
+        for line in f:
+            line = line.strip()
+            if line:
+                records.append(json.loads(line))
+    if not records:
+        return {"nodes": [], "edges": []}
+    return records[-1]
+
+
     """Load the latest Week 4 lineage snapshot."""
     path = os.path.join(BASE_DIR, "outputs/week4/lineage_snapshots.jsonl")
     if not os.path.exists(path):
@@ -216,19 +257,7 @@ def attribute_violation(check_result, graph, registry=None):
 
     # Step 1: Registry blast radius (primary source)
     registry = registry or []
-    contract_id = check_id.split(".")[0] if "." in check_id else check_id
-    # Reconstruct contract_id from check_id prefix (e.g. week3-document-refinery-extractions)
-    # check_id format: {contract_id}.{column}.{check_type}
-    parts = check_id.split(".")
-    # contract_id is everything before the column name (heuristic: first part with dashes)
-    cid_parts = []
-    for p in parts:
-        if "-" in p or p.startswith("week") or p.startswith("langsmith"):
-            cid_parts.append(p)
-        else:
-            break
-    contract_id = ".".join(cid_parts) if cid_parts else parts[0]
-    # failing field is the column_name from the check result
+    contract_id = extract_contract_id(check_id)
     failing_field = check_result.get("column_name", "")
     registry_subscribers = registry_blast_radius(contract_id, failing_field, registry)
     registry_affected_ids = [s["subscriber_id"] for s in registry_subscribers]
@@ -321,6 +350,8 @@ def main():
     parser.add_argument("--violation-report", help="Path to validation report JSON")
     parser.add_argument("--check-id", help="Specific check_id to attribute")
     parser.add_argument("--output", default="violation_log/violations.jsonl", help="Output JSONL path")
+    parser.add_argument("--injected", action="store_true",
+                        help="Mark violations as intentionally injected (sets injection_note: true)")
     args = parser.parse_args()
 
     graph = load_lineage_graph()
@@ -337,6 +368,9 @@ def main():
         for check in failed_checks:
             print(f"Attributing: {check['check_id']}...")
             violation = attribute_violation(check, graph, registry)
+            if args.injected:
+                violation["injection_note"] = True
+                violation["injection_description"] = "Intentionally injected violation for contract enforcement demonstration"
             violations.append(violation)
             print(f"  Blame chain: {len(violation['blame_chain'])} candidates")
             print(f"  Blast radius: {len(violation['blast_radius']['affected_nodes'])} affected nodes")
