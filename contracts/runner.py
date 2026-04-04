@@ -659,6 +659,8 @@ def main():
     parser.add_argument("--output", help="Output path for validation report JSON")
     parser.add_argument("--quarantine", action="store_true",
                         help="Write records failing CRITICAL checks to outputs/quarantine/")
+    parser.add_argument("--mode", choices=["AUDIT", "WARN", "ENFORCE"], default="AUDIT",
+                        help="AUDIT: log only. WARN: block on CRITICAL. ENFORCE: block on CRITICAL+HIGH.")
     args = parser.parse_args()
 
     contract_path = os.path.join(BASE_DIR, args.contract) if not os.path.isabs(args.contract) else args.contract
@@ -669,6 +671,16 @@ def main():
 
     runner = ValidationRunner(contract, records, data_path)
     report = runner.run_all()
+
+    # Mode enforcement
+    if args.mode == "ENFORCE":
+        blocking = [r for r in report["results"] if r["status"] == "FAIL" and r["severity"] in ("CRITICAL", "HIGH")]
+        if blocking:
+            print(f"  [ENFORCE] Pipeline blocked: {len(blocking)} CRITICAL/HIGH failures.")
+    elif args.mode == "WARN":
+        blocking = [r for r in report["results"] if r["status"] == "FAIL" and r["severity"] == "CRITICAL"]
+        if blocking:
+            print(f"  [WARN] Pipeline blocked: {len(blocking)} CRITICAL failures.")
 
     # Quarantine records that fail CRITICAL checks
     if args.quarantine:
