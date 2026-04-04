@@ -103,17 +103,6 @@ def load_lineage_graph():
     return records[-1]
 
 
-    """Load the latest Week 4 lineage snapshot."""
-    path = os.path.join(BASE_DIR, "outputs/week4/lineage_snapshots.jsonl")
-    if not os.path.exists(path):
-        return {"nodes": [], "edges": []}
-    records = load_jsonl(path)
-    if not records:
-        return {"nodes": [], "edges": []}
-    # Use the most recent snapshot (last record)
-    return records[-1]
-
-
 def find_upstream_nodes(graph, failing_node_id):
     """BFS upstream from failing node through the lineage graph."""
     nodes_by_id = {n["node_id"]: n for n in graph.get("nodes", [])}
