@@ -35,19 +35,26 @@ def load_registry():
 
 
 def registry_blast_radius(contract_id, failing_field, registry):
-    """Step 1: Query registry for subscribers affected by a breaking field change."""
+    """Query registry for subscribers affected by a breaking field change.
+    Normalises both sides to handle [*] notation differences between the
+    ValidationRunner check_id paths and the registry breaking_fields entries.
+    Registry is the PRIMARY blast radius source — called before lineage traversal.
+    """
     affected = []
     for sub in registry:
         if sub.get("contract_id") != contract_id:
             continue
         breaking = [bf["field"] if isinstance(bf, dict) else bf
                     for bf in sub.get("breaking_fields", [])]
-        # Normalise failing_field: strip [*] notation for comparison
-        # e.g. "extracted_facts[*].confidence" -> "extracted_facts.confidence"
-        norm_failing = re.sub(r'\[\*\]', '', failing_field)
+        # Normalise to bare dotted path for comparison:
+        # "extracted_facts[*].confidence" -> "extracted_facts.confidence"
+        def _norm(f):
+            return re.sub(r'\[\*\]', '', f).strip('.')
+        norm_failing = _norm(failing_field)
         is_breaking = any(
-            norm_failing == bf or norm_failing.startswith(bf.split("[")[0])
-            or failing_field == bf or failing_field.startswith(bf.split("[")[0])
+            norm_failing == _norm(bf)
+            or norm_failing.startswith(_norm(bf))
+            or _norm(bf).startswith(norm_failing)
             for bf in breaking
         )
         affected.append({
@@ -218,12 +225,20 @@ def compute_confidence(commit, hops):
 
 
 def attribute_violation(check_result, graph, registry=None):
-    """Attribute a single violation to upstream commits."""
+    """Attribute a single violation to upstream commits.
+    Order: registry blast radius FIRST (primary source), then lineage traversal (enrichment).
+    """
     check_id = check_result.get("check_id", "")
     column = check_result.get("column_name", "")
 
-    # Determine which node to start from based on contract/check
-    # Map contract prefixes to likely lineage nodes
+    # ── Step 1: Registry blast radius (PRIMARY — before any lineage work) ──
+    registry = registry or []
+    contract_id = extract_contract_id(check_id)
+    failing_field = check_result.get("column_name", "")
+    registry_subscribers = registry_blast_radius(contract_id, failing_field, registry)
+    registry_affected_ids = [s["subscriber_id"] for s in registry_subscribers]
+
+    # ── Step 2: Lineage traversal (ENRICHMENT — downstream blast radius depth) ──
     node_mapping = {
         "week3": ["table::extractions", "service::week3-refinery", "file::src/week3/extractor.py"],
         "week4": ["service::week4-cartographer", "file::src/week4/cartographer.py"],
@@ -231,45 +246,30 @@ def attribute_violation(check_result, graph, registry=None):
         "week2": ["file::src/week2/courtroom.py"],
         "week1": ["file::src/main.py"],
     }
-
     starting_nodes = []
     for prefix, nodes in node_mapping.items():
         if prefix in check_id:
             starting_nodes = nodes
             break
 
-    # Find upstream nodes via lineage
     all_upstream = []
     for start_node in starting_nodes:
-        upstream = find_upstream_nodes(graph, start_node)
-        all_upstream.extend(upstream)
+        all_upstream.extend(find_upstream_nodes(graph, start_node))
 
-    # Step 1: Registry blast radius (primary source)
-    registry = registry or []
-    contract_id = extract_contract_id(check_id)
-    failing_field = check_result.get("column_name", "")
-    registry_subscribers = registry_blast_radius(contract_id, failing_field, registry)
-    registry_affected_ids = [s["subscriber_id"] for s in registry_subscribers]
-
-    # Step 2: Lineage graph downstream traversal (enrichment)
     downstream = []
     for start_node in starting_nodes:
         downstream.extend(find_downstream_nodes(graph, start_node))
     downstream = list(set(downstream))
 
-    # Get git blame for upstream files
+    # ── Step 3: Git blame on upstream source files ──
     blame_chain = []
     seen_commits = set()
-
-    # Also check the direct source files
     source_files = []
     for node in all_upstream:
         meta = node.get("node", {}).get("metadata", {})
         path = meta.get("path", "")
         if path and path.endswith(".py"):
             source_files.append((path, node.get("hops", 1)))
-
-    # Add direct files from starting nodes
     for sn in starting_nodes:
         if "::" in sn:
             path = sn.split("::", 1)[1]
@@ -277,8 +277,7 @@ def attribute_violation(check_result, graph, registry=None):
                 source_files.append((path, 0))
 
     for file_path, hops in source_files:
-        commits = git_log_file(file_path)
-        for commit in commits:
+        for commit in git_log_file(file_path):
             if commit["commit_hash"] in seen_commits:
                 continue
             seen_commits.add(commit["commit_hash"])
@@ -292,13 +291,11 @@ def attribute_violation(check_result, graph, registry=None):
                 "confidence_score": compute_confidence(commit, hops),
             })
 
-    # Sort by confidence descending, limit to 5
     blame_chain.sort(key=lambda x: x["confidence_score"], reverse=True)
     blame_chain = blame_chain[:5]
     for i, entry in enumerate(blame_chain):
         entry["rank"] = i + 1
 
-    # Ensure at least 1 candidate
     if not blame_chain:
         blame_chain.append({
             "rank": 1,
@@ -310,13 +307,10 @@ def attribute_violation(check_result, graph, registry=None):
             "confidence_score": 0.05,
         })
 
-    # Infer affected pipelines from downstream nodes
-    affected_pipelines = []
-    for d in downstream:
-        if "service::" in d:
-            affected_pipelines.append(d.replace("service::", "") + "-pipeline")
-        elif "file::" in d:
-            affected_pipelines.append(d.replace("file::", ""))
+    affected_pipelines = [
+        d.replace("service::", "") + "-pipeline" if "service::" in d else d.replace("file::", "")
+        for d in downstream if "service::" in d or "file::" in d
+    ]
 
     return {
         "violation_id": str(uuid.uuid4()),
